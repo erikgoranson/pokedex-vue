@@ -53,6 +53,7 @@ function storeSelectedPokemon(str: string){
 </script>
 
 <template>
+  <section class="h-1/6 overflow-x-auto">
   <table v-if="filteredData?.length">
     <thead>
       <tr>
@@ -83,9 +84,10 @@ function storeSelectedPokemon(str: string){
     </thead>
     <tr class="nonHeaderRow">No matches found</tr>
     </table>
+  </section>
 </template>
 
-<style scoped>
+<style>
 th {
   text-transform: capitalize;
   @apply px-6 py-4;
@@ -95,7 +97,7 @@ td {
   @apply whitespace-nowrap px-6 py-4 font-medium;
 }
 table {
-  @apply min-w-full text-left text-sm font-light;
+  @apply min-w-full text-left text-sm font-light h-fit;
 }
 thead {
   @apply border-b font-medium dark:border-neutral-500

@@ -1,8 +1,18 @@
 <script setup lang="ts">
 import { usePokemonStore } from '@/stores/pokemon';
 import axios from 'axios';
-import { reactive, ref, watch, type PropType } from "vue";
+import { reactive, ref, watch, type PropType, onMounted } from "vue";
 import type { SearchItem } from '@/components/types';
+import pkmn from '@/json/defaultPokemon.json'
+
+import Detail from './DetailHeader.vue';
+import BaseStatistics from './BaseStatistics.vue';
+import SpeciesDetails from './SpeciesDetails.vue';
+import Evolutions from './Evolutions.vue';
+import Abilities from './Abilities.vue';
+import Moves from './Moves.vue';
+import Locations from './Locations.vue';
+import Links from './Links.vue';
 
 interface PokemonData {
   name: string,
@@ -24,27 +34,15 @@ const props = defineProps({
   defaultPkmn: {
     type: Object as PropType<PokemonData>,
     default: {
-      name: "missingno",
-      id: 0,
-      types: <PokemonTypes>{
-        slot:0,
-        type: [
-          <PokemonType>{
-            name: 'bird',
-            url: ''
-          },
-          <PokemonType>{
-            name: 'normal',
-            url: ''
-          }
-        ] as PokemonType[]
-      }
+      name: pkmn.name,
+      id: pkmn.id,
+      types: pkmn.types
     } //import
   }
 })
 
 const store = usePokemonStore();
-const selectedPokemonData = ref<PokemonData>({} as PokemonData);
+const selectedPokemonData = ref<PokemonData>(props.defaultPkmn);
 const pokemon = reactive(store);
 const pokemonUpdatesCount = ref(0);
 
@@ -73,32 +71,29 @@ watch(pokemon, (newValue, oldValue) => {
   ashFetchum(selectedPokemonEndpoint);
 });
 
+onMounted(() => {
+    selectedPokemonData.value = props.defaultPkmn;
+});
+
 </script>
 
 <template>
-  <div>
-    <p v-if="store.data.name">{{ store.data }}</p>
-    <p v-else>{{ props.defaultPkmn }}</p>
-    <br>
-    <p>get info from stuff:</p>
-    <p>{{ getPokemonEndpoint(store.data) }}</p>
-    <br>
-    <p>the output</p>
-    <br>
-    <!--<p>{{ infos.types }}</p>-->
-
-    <p v-if="selectedPokemonData.id">#{{ selectedPokemonData.id }}<br>{{ selectedPokemonData.name }}<br>
-      <span v-for="(type, index) in selectedPokemonData.types as PokemonTypes">
-      {{ type.type.name }}
-      </span>
-    </p>
-    <p v-else>
-      #{{ props.defaultPkmn.id }}<br>
-      {{ props.defaultPkmn.name }}<br>
-      <span v-for="(type, index) in props.defaultPkmn.types as PokemonTypes">
-        {{ type }} 
-      </span>
-    </p>
-  </div>
+    <div class=" bg-neutral-900 p-6 text-neutral-700 shadow-lg dark:bg-white-600 dark:text-neutral-200 dark:shadow-black/30">
+      <Detail :data="selectedPokemonData"></Detail>
+      <hr />
+      <BaseStatistics></BaseStatistics>
+      <hr />
+      <SpeciesDetails></SpeciesDetails>
+      <hr />
+      <Evolutions></Evolutions>
+      <hr />
+      <Abilities></Abilities>
+      <hr />
+      <Moves></Moves>
+      <hr />
+      <Locations></Locations>
+      <hr />
+      <Links></Links>
+    </div>
 </template>
 

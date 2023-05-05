@@ -60,7 +60,7 @@ function populateSearchData() {
 async function fetchPokedexInfo() {
   //fetch selected pokedex's data unless already cached
   if (gridData.value.length == 0){
-    const pokedexResponse = await axios.get<PokedexInfo>('https://pokeapi.co/api/v2/pokedex/3');
+    const pokedexResponse = await axios.get<PokedexInfo>('https://pokeapi.co/api/v2/pokedex/2');
     console.log('api call was run');
 
     pokedex.value = pokedexResponse.data;
@@ -78,7 +78,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class>
+  <div class=" bg-neutral-900 p-6 text-neutral-700 shadow-lg dark:bg-white-600 dark:text-neutral-200 dark:shadow-black/30">
     <form id="search">Search <input name="query" v-model="searchQuery"></form>
     <div>
       <Grid 
