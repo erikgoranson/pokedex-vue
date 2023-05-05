@@ -17,7 +17,18 @@ import Links from './Links.vue';
 interface PokemonData {
   name: string,
   id: number,
-  types: PokemonTypes
+  types: PokemonTypes,
+  //temp
+  moves: Array<Move>, 
+  order: number,
+  species: Array<DefaultDTO>,
+  sprites: {}, //later
+  stats: Array<Stat>,
+}
+
+interface DefaultDTO {
+  name: string,
+  url: string,
 }
 
 interface PokemonTypes {
@@ -30,19 +41,36 @@ interface PokemonType {
   url: string,
 }
 
+interface Move extends DefaultDTO { 
+  version_group_details: {},
+}
+
+interface Stat {
+  base_stat: number,
+  effort: 0,
+  stat: DefaultDTO,
+}
+
 const props = defineProps({
   defaultPkmn: {
     type: Object as PropType<PokemonData>,
     default: {
       name: pkmn.name,
       id: pkmn.id,
-      types: pkmn.types
+      types: pkmn.types,
+      moves: pkmn.moves, 
+      order: pkmn.order,
+      species: pkmn.species,
+      sprites: pkmn.sprites,
+      stats: pkmn.stats,
     } //import
   }
 })
 
 const store = usePokemonStore();
 const selectedPokemonData = ref<PokemonData>(props.defaultPkmn);
+//const selectPokemonSpeciesData = 
+
 const pokemon = reactive(store);
 const pokemonUpdatesCount = ref(0);
 
@@ -56,6 +84,8 @@ async function ashFetchum(url: string){
     .then(response => {
       selectedPokemonData.value = response.data;
     });
+
+    console.log(selectedPokemonData.value)
   return response;
 }
 
