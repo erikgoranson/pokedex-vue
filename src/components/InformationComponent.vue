@@ -2,7 +2,7 @@
 import { usePokemonStore } from '@/stores/pokemon';
 import axios from 'axios';
 import { reactive, ref, watch, type PropType, onMounted } from "vue";
-import type { SearchItem } from '@/components/types';
+import type { SearchItem, Move } from '@/components/types';
 import pkmn from '@/json/defaultPokemon.json'
 
 import Detail from './DetailHeader.vue';
@@ -39,10 +39,6 @@ interface PokemonTypes {
 interface PokemonType {
   name: string,
   url: string,
-}
-
-interface Move extends DefaultDTO { 
-  version_group_details: {},
 }
 
 interface Stat {
@@ -119,7 +115,7 @@ onMounted(() => {
       <hr />
       <Abilities></Abilities>
       <hr />
-      <Moves></Moves>
+      <Moves :data="selectedPokemonData.moves"></Moves>
       <hr />
       <Locations></Locations>
       <hr />
