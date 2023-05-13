@@ -1,22 +1,21 @@
-import {defineStore} from 'pinia'
+import {defineStore} from 'pinia';
+import type { SearchItem } from '@/components/types';
 
-interface TableItem {
-    id: string, //then just set these as the custom headers I wanted?
-    name: string,
-    "national id": string,
-    types: string,
-    url: string,
-  } 
 
 export const usePokemonStore = defineStore('pokemon', {
     state: () => {
         return{
-            data: <TableItem>{}
+            data: <SearchItem>{},
+            isDefault: true,
         }
     }, 
     actions:{
-        changePokemon (payload: TableItem) {
-            this.data = payload
+        changePokemon (payload: SearchItem) {
+            this.changeDefaultPokemon(payload);
+            this.isDefault = false;
+        },
+        changeDefaultPokemon(payload: SearchItem) {
+            this.data = payload;
         }
     }
 })

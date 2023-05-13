@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { usePokemonStore } from '@/stores/pokemon';
+import { ref, watch, onMounted } from "vue";
 import axios from 'axios';
-import { reactive, ref, watch, type PropType, onMounted } from "vue";
-import type { SearchItem, Move } from '@/components/types';
-import pkmn from '@/json/defaultPokemon.json'
-
+import { usePokemonStore } from '@/stores/pokemon';
+import type { SearchItem, Move, PokemonData } from '@/components/types';
 import Detail from './DetailHeader.vue';
 import BaseStatistics from './BaseStatistics.vue';
 import SpeciesDetails from './SpeciesDetails.vue';
@@ -14,64 +12,18 @@ import Moves from './Moves.vue';
 import Locations from './Locations.vue';
 import Links from './Links.vue';
 
-interface PokemonData {
-  name: string,
-  id: number,
-  types: PokemonTypes,
-  //temp
-  moves: Array<Move>, 
-  order: number,
-  species: Array<DefaultDTO>,
-  sprites: {}, //later
-  stats: Array<Stat>,
+const defaultPokemonEntry = <PokemonData>{
+  name: 'missingno',
+  types: {},
+  id: 0,
+  moves: [] as Move[]
 }
 
-interface DefaultDTO {
-  name: string,
-  url: string,
-}
-
-interface PokemonTypes {
-  slot: number,
-  type: PokemonType[],
-}
-
-interface PokemonType {
-  name: string,
-  url: string,
-}
-
-interface Stat {
-  base_stat: number,
-  effort: 0,
-  stat: DefaultDTO,
-}
-
-const props = defineProps({
-  defaultPkmn: {
-    type: Object as PropType<PokemonData>,
-    default: {
-      name: pkmn.name,
-      id: pkmn.id,
-      types: pkmn.types,
-      moves: pkmn.moves, 
-      order: pkmn.order,
-      species: pkmn.species,
-      sprites: pkmn.sprites,
-      stats: pkmn.stats,
-    } //import
-  }
-})
-
-const store = usePokemonStore();
-const selectedPokemonData = ref<PokemonData>(props.defaultPkmn);
-//const selectPokemonSpeciesData = 
-
-const pokemon = reactive(store);
-const pokemonUpdatesCount = ref(0);
+const pokemonStore = usePokemonStore();
+const selectedPokemonData = ref<PokemonData>(defaultPokemonEntry); 
 
 function getPokemonEndpoint(payload: SearchItem){
-  return payload ? `https://pokeapi.co/api/v2/pokemon/${payload['national id']}` : '';
+  return payload ? `/src/assets/data/api/v2/pokemon/${payload['national id']}/index.json` : '';
 }
 
 async function ashFetchum(url: string){
@@ -81,45 +33,39 @@ async function ashFetchum(url: string){
       selectedPokemonData.value = response.data;
     });
 
-    console.log(selectedPokemonData.value)
+    //console.log(selectedPokemonData.value)
   return response;
 }
 
-const increasePokemonUpdatesCount = () => {
-  pokemonUpdatesCount.value++;
-  console.log('something heppen'); //debug
-  console.log(pokemonUpdatesCount.value); //debug
-};
-
-watch(pokemon, (newValue, oldValue) => {
-  increasePokemonUpdatesCount(); 
-  let selectedPokemonEndpoint = getPokemonEndpoint(store.data);
+watch(pokemonStore, (newValue, oldValue) => {
+  let selectedPokemonEndpoint = getPokemonEndpoint(pokemonStore.data);
+  //console.log(selectedPokemonEndpoint);
   ashFetchum(selectedPokemonEndpoint);
 });
 
 onMounted(() => {
-    selectedPokemonData.value = props.defaultPkmn;
+    selectedPokemonData.value = defaultPokemonEntry; 
 });
 
 </script>
 
 <template>
     <div class=" bg-neutral-900 p-6 text-neutral-700 shadow-lg dark:bg-white-600 dark:text-neutral-200 dark:shadow-black/30">
-      <Detail :data="selectedPokemonData"></Detail>
+      <Detail :data="selectedPokemonData" />
       <hr />
-      <BaseStatistics></BaseStatistics>
+      <BaseStatistics />
       <hr />
-      <SpeciesDetails></SpeciesDetails>
+      <SpeciesDetails />
       <hr />
-      <Evolutions></Evolutions>
+      <Evolutions />
       <hr />
-      <Abilities></Abilities>
+      <Abilities />
       <hr />
-      <Moves :data="selectedPokemonData.moves"></Moves>
+      <Moves :data="selectedPokemonData.moves" />
       <hr />
-      <Locations></Locations>
+      <Locations />
       <hr />
-      <Links></Links>
+      <Links />
     </div>
 </template>
 

@@ -1,23 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, defineProps } from 'vue';
-import axios from 'axios';
+import { ref, onMounted, defineProps, reactive, watch } from 'vue';
+import axios, { all } from 'axios';
 import Grid from '@/components/Grid.vue';
 import type { SearchItem } from '@/components/types';
-
-interface PokedexInfo {
-    name: string,
-    pokemon_entries: PokemonEntry[]
-}
-
-interface PokemonEntry {
-    entry_number: string, //may need to update types.ts
-    pokemon_species: PokemonSpecies
-}
-
-interface PokemonSpecies {
-    name: string,
-    url: string
-}
+import type { DefaultDTO, PokedexInfo, PokemonEntry, PokemonSpecies, VersionGroup, Selection } from '@/components/types';
+import { useVersionStore } from '@/stores/version';
+import { usePokemonStore } from '@/stores/pokemon';
 
 const props = defineProps({
     gridColumns: {
@@ -30,51 +18,57 @@ const props = defineProps({
     }
 })
 
+const versionStore = useVersionStore();
+const pokemonStore = usePokemonStore();
+
 const gridData = ref<SearchItem[]>(<SearchItem[]>[]);
 const searchQuery = ref('');
-const pokedex = ref<PokedexInfo>(<PokedexInfo>{});
+const pokedex = ref<PokemonEntry[]>(<PokemonEntry[]>[]);
 
-function getCachedPokedexData(){
-  const entries: PokemonEntry[] = localStorage.getItem(props.localStorageKey) ? JSON.parse(localStorage.getItem(props.localStorageKey) || '') : [];
-  return entries;
+async function getPokedexes(pokedexes: DefaultDTO[]) {
+  //console.log(pokedexes)
+  const allEntries: PokemonEntry[] = [];
+  const response = await axios.all(
+    pokedexes.map((p) => axios
+      .get(`/src/assets/data${p.url}index.json`)
+      .then((results) => {
+        allEntries.push(...results.data.pokemon_entries)
+      })
+    )
+  )
+  pokedex.value = allEntries;
+  gridData.value = buildGridData(pokedex.value);
+  populateDefaultEntry()
 }
 
-function populateSearchData() {
-  //retreive any pokedex previously cached to localStorage 
-  let pokedexData: PokemonEntry[] = pokedex.value.pokemon_entries;
-  if (pokedex.value.name == undefined){
-    pokedexData = getCachedPokedexData();
-  }
-  
-  //transform the data to the search panel's layout and apply it
-  const searchData = pokedexData.map((p: PokemonEntry) => <SearchItem>{
-    id: String(p.entry_number).padStart(3, "0"),
-    name: p.pokemon_species.name,
-    "national id": p.pokemon_species.url.slice(0, -1).split("/").pop() || '',
-    types: 'type1/Type2',
-    url: p.pokemon_species.url,
+function buildGridData(pokedex: PokemonEntry[]){
+  const gridData = pokedex.map((p: PokemonEntry) => 
+    <SearchItem>{
+      id: String(p.entry_number).padStart(3, "0"),
+      name: p.pokemon_species.name,
+      "national id": p.pokemon_species.url.slice(0, -1).split("/").pop() || '',
+      types: 'type1/Type2',
+      url: p.pokemon_species.url,
   })
-  gridData.value = searchData;
+  return gridData;
 }
 
-async function fetchPokedexInfo() {
-  //fetch selected pokedex's data unless already cached
-  if (gridData.value.length == 0){
-    const pokedexResponse = await axios.get<PokedexInfo>('https://pokeapi.co/api/v2/pokedex/2');
-    console.log('api call was run');
-
-    pokedex.value = pokedexResponse.data;
-    localStorage.setItem(props.localStorageKey, JSON.stringify(pokedexResponse.data.pokemon_entries));
-    console.log('cached results to the local storage');
-
-    populateSearchData(); 
+function populateDefaultEntry() {
+  if(pokemonStore.isDefault){ 
+    const currentDexFirstEntry = gridData.value[0];
+    pokemonStore.changeDefaultPokemon(currentDexFirstEntry) 
   }
 }
 
 onMounted(async () => {
-    populateSearchData(),
-    await fetchPokedexInfo()
+    getPokedexes(versionStore.data.version_group.pokedexes);
 });
+
+watch(versionStore, (newValue, oldValue) => {
+    getPokedexes(versionStore.data.version_group.pokedexes);
+    
+}); 
+
 </script>
 
 <template>

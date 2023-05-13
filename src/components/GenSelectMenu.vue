@@ -1,29 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, reactive } from 'vue';
 import axios, { all } from 'axios';
-import type { DefaultDTO } from '@/components/types';
-
-interface VersionGroup {
-    id: number,
-    generation?: DefaultDTO,
-    move_learn_methods?: Array<DefaultDTO>,
-    name: string,
-    order?: number,
-    pokedexes?: Array<DefaultDTO>,
-    regions: Array<DefaultDTO>,
-    versions?: Array<DefaultDTO>,
-}
-
-interface SelectionGroup {
-    generationName: string,
-    version_groups: Array<VersionGroup>, 
-}
-
-interface Selection {
-    name: string, 
-    generationName: string,
-    version_group?: VersionGroup, 
-}
+import type { DefaultDTO, VersionGroup, SelectionGroup, Selection } from '@/components/types';
+import { useVersionStore } from '@/stores/version';
 
 ///version groups to be excluded for the marked reasons
 const excludedVersionGroups: string[] = [
@@ -44,7 +23,7 @@ const excludedVersionGroups: string[] = [
 const selectData = ref<SelectionGroup[]>([]);
 const selectDataKey: string = 'versionSelectData';
 
-const selectedVersion = ref<Selection>({} as Selection);
+const versionStore = useVersionStore();
 const selectedVersionKey: string = 'selectedVersion';
 
 async function populateGenerationData() {
@@ -95,7 +74,6 @@ async function populateGenerationData() {
         };
     });
     
-    //console.log(selectionData);
     selectData.value = selectionData;
     localStorage.setItem(selectDataKey, JSON.stringify(selectionData));
 }
@@ -105,6 +83,7 @@ function retrieveLocalStorageData(key: string){
     return data;
 }
 
+//for mount only
 function getSelectedVersion(){
     const retrievedSelection = retrieveLocalStorageData(selectedVersionKey);
 
@@ -116,11 +95,16 @@ function getSelectedVersion(){
             name:'red-blue',
             generation: <DefaultDTO>{
                 name: 'generation-i',
-            }
+            },
+            pokedexes: <DefaultDTO[]>[
+                <DefaultDTO>{
+                    url: '/api/v2/pokedex/2/'
+                }
+            ]
         }
     }
 
-    selectedVersion.value = retrievedSelection.length === 0 ? defaultSelection : retrievedSelection;
+    versionStore.changeVersion(retrievedSelection.length === 0 ? defaultSelection : retrievedSelection);
 }
 
 function getSelectData(){
@@ -137,7 +121,7 @@ function buildPrettyVersionName(versions: DefaultDTO[]){
     return output;
 }
 
-function constructSelection(selectedGroup: VersionGroup ){
+function constructSelection( selectedGroup: VersionGroup ){
     const output = <Selection>{ 
         name:buildPrettyVersionName(selectedGroup.versions as DefaultDTO[]), generationName: selectedGroup.generation?.name, 
         version_group: selectedGroup
@@ -153,8 +137,8 @@ onMounted(async () => {
     }
 });
 
-watch(selectedVersion, (newValue, oldValue) => {
-    localStorage.setItem(selectedVersionKey, JSON.stringify(selectedVersion.value));
+watch(versionStore, (newValue, oldValue) => {
+    localStorage.setItem(selectedVersionKey, JSON.stringify(versionStore.data));
 });
 
 </script>
@@ -162,8 +146,8 @@ watch(selectedVersion, (newValue, oldValue) => {
 <template>
     <div class="grid grid-cols-1 gap-0 text-sm overflow-x-auto">
         <div>
-            <select v-model="selectedVersion">
-                <option selected disabled :value="selectedVersion">{{ selectedVersion.name }} version</option><!--default selection text-->
+            <select v-model="versionStore.data">
+                <option selected disabled :value="versionStore.data">{{ versionStore.data.name }} version</option><!--default selection text-->
                 <optgroup 
                     v-for="(sd, index) in selectData" 
                     :key="sd.generationName" 
@@ -178,7 +162,7 @@ watch(selectedVersion, (newValue, oldValue) => {
             </select>
         </div>
         <div class="capitalize">
-            Generation {{ selectedVersion.version_group?.generation?.name.split('-')[1].toUpperCase() }}
+            Generation {{ versionStore.data.version_group?.generation?.name.split('-')[1].toUpperCase() }}
         </div>
     </div>
 </template>

@@ -1,14 +1,15 @@
 <script setup lang="ts">
 //based on https://vuejs.org/examples/#grid
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { usePokemonStore } from '@/stores/pokemon';
+import type { SearchItem } from '@/components/types';
 
 const props = defineProps({
   data: Array,
   columns: Array<string>,
   filterKey: String
-})
-
+});
+const pokemonStore = usePokemonStore();
 const sortKey = ref('');
 const sortOrders = ref<[]>(
   props.columns?.reduce((o: any, key: any) => ((o[key] = 1), o), {}) as []
@@ -45,9 +46,8 @@ function capitalize(str:string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function storeSelectedPokemon(str: string){
-  const store = usePokemonStore();
-  store.changePokemon(str);
+function storeSelectedPokemon(entry: SearchItem){ 
+  pokemonStore.changePokemon(entry);
 }
 
 </script>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
-import { computed, ref, type Ref } from 'vue';
+import { computed, reactive, ref, type Ref, watch} from 'vue';
 import type { Move } from '@/components/types';
+import { useVersionStore } from '@/stores/version';
 
 const props = defineProps({
   data: {
@@ -9,6 +10,9 @@ const props = defineProps({
     required: true
   },
 })
+
+const store = useVersionStore();
+const version = reactive(store);
 
 //categories for all possible move learn methods
 const learnMethods = ['level-up' , 'machine', 'egg' , 'tutor' , 'transfer' , 'other'] as const; 
@@ -23,7 +27,10 @@ const filteredMoveData = computed(() => {
     let { data } = props;
     let results: Move[] = [] as Move[];
 
-    let generation = 'red-blue'; //need to set this reactively
+    //let generation = 'red-blue'; //need to set this reactively
+    //let generation = JSON.parse(localStorage.getItem('selectedVersion') || '').version_group.name;//not sure if this works without being reactive
+    let generation = store.data.version_group?.name;
+    console.log(store.data);
 
     data
         .filter((element: Move) => 
@@ -112,6 +119,10 @@ function testPossibleSelection(key: string){
             //
     }
 }
+
+watch(version, (newValue, oldValue) => {
+    //localStorage.setItem(selectedVersionKey, JSON.stringify(selectedVersion.value));
+}); 
 
 </script>
 
