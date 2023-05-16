@@ -1,20 +1,20 @@
 import {defineStore} from 'pinia';
-import type { SearchItem } from '@/components/types';
+import type { GridItem } from '@/components/types';
 
 
 export const usePokemonStore = defineStore('pokemon', {
     state: () => {
         return{
-            data: <SearchItem>{},
+            data: <GridItem>{},
             isDefault: true,
         }
     }, 
     actions:{
-        changePokemon (payload: SearchItem) {
+        changePokemon (payload: GridItem) {
             this.changeDefaultPokemon(payload);
             this.isDefault = false;
         },
-        changeDefaultPokemon(payload: SearchItem) {
+        changeDefaultPokemon(payload: GridItem) {
             this.data = payload;
         }
     }

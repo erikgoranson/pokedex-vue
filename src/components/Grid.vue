@@ -2,7 +2,7 @@
 //based on https://vuejs.org/examples/#grid
 import { computed, ref, watch } from 'vue';
 import { usePokemonStore } from '@/stores/pokemon';
-import type { SearchItem } from '@/components/types';
+import type { GridItem } from '@/components/types';
 
 const props = defineProps({
   data: Array,
@@ -46,7 +46,7 @@ function capitalize(str:string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function storeSelectedPokemon(entry: SearchItem){ 
+function storeSelectedPokemon(entry: GridItem){ 
   pokemonStore.changePokemon(entry);
 }
 

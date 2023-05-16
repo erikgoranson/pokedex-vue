@@ -27,10 +27,14 @@ export interface VersionGroup {
     versions?: Array<DefaultDTO>,
 }
 
+export interface ExtendedPokemonData extends PokemonData {
+    entry_number: string,
+  }
+
 export interface PokemonData {
     name: string,
     id: number,
-    types: PokemonTypes,
+    types: Array<PokemonTypes>,
     //temp
     moves: Array<Move>, 
     order: number,
@@ -41,10 +45,10 @@ export interface PokemonData {
   
 export  interface PokemonTypes {
     slot: number,
-    type: PokemonType[],
+    type: DefaultDTO,
 }
   
-export  interface PokemonType {
+export interface PokemonType { 
     name: string,
     url: string,
 }
@@ -83,10 +87,11 @@ export interface Selection {
     version_group: VersionGroup, 
 }
 
-export interface SearchItem {
-    id: string, 
+export interface GridItem { //should be gridrow or gridItem I think
+    id: number, 
     name: string,
-    "national id": string,
-    types: string,
-    url: string,
+    "national ID": number,
+    type1: string,
+    type2: string,
+    payload: PokemonData,
 } 

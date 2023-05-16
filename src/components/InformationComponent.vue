@@ -2,7 +2,7 @@
 import { ref, watch, onMounted } from "vue";
 import axios from 'axios';
 import { usePokemonStore } from '@/stores/pokemon';
-import type { SearchItem, Move, PokemonData } from '@/components/types';
+import type { Move, ExtendedPokemonData, DefaultDTO, PokemonTypes } from '@/components/types';
 import Detail from './DetailHeader.vue';
 import BaseStatistics from './BaseStatistics.vue';
 import SpeciesDetails from './SpeciesDetails.vue';
@@ -12,35 +12,29 @@ import Moves from './Moves.vue';
 import Locations from './Locations.vue';
 import Links from './Links.vue';
 
-const defaultPokemonEntry = <PokemonData>{
-  name: 'missingno',
-  types: {},
+const defaultPokemonEntry = <ExtendedPokemonData>{
+  name: 'missingno.',
+  types: [
+    { slot: 1,
+      type: <DefaultDTO>{ 
+        name: 'bird',
+      }
+    },
+    { slot: 2,
+      type: <DefaultDTO>{ 
+        name: 'normal',
+      }
+    },
+  ] as PokemonTypes[], 
   id: 0,
   moves: [] as Move[]
 }
 
 const pokemonStore = usePokemonStore();
-const selectedPokemonData = ref<PokemonData>(defaultPokemonEntry); 
-
-function getPokemonEndpoint(payload: SearchItem){
-  return payload ? `/src/assets/data/api/v2/pokemon/${payload['national id']}/index.json` : '';
-}
-
-async function ashFetchum(url: string){
-  const response = await axios
-    .get<PokemonData>(url)
-    .then(response => {
-      selectedPokemonData.value = response.data;
-    });
-
-    //console.log(selectedPokemonData.value)
-  return response;
-}
+const selectedPokemonData = ref<ExtendedPokemonData>(defaultPokemonEntry); 
 
 watch(pokemonStore, (newValue, oldValue) => {
-  let selectedPokemonEndpoint = getPokemonEndpoint(pokemonStore.data);
-  //console.log(selectedPokemonEndpoint);
-  ashFetchum(selectedPokemonEndpoint);
+  selectedPokemonData.value = pokemonStore.data.payload as ExtendedPokemonData;
 });
 
 onMounted(() => {

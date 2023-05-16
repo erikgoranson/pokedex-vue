@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
+import type { ExtendedPokemonData } from '@/components/types';
 
 interface PokemonData {
   name: string,
@@ -19,7 +20,7 @@ interface PokemonType{
 
 const props = defineProps({
   data: {
-    type: Object as () => PokemonData,
+    type: Object as () => ExtendedPokemonData,
     required: true
   },
 })
