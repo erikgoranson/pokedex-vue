@@ -28,7 +28,7 @@ export interface VersionGroup {
 }
 
 export interface ExtendedPokemonData extends PokemonData {
-    entry_number: string,
+    entry_number: string, //what is this????
   }
 
 export interface PokemonData {
@@ -38,12 +38,26 @@ export interface PokemonData {
     //temp
     moves: Array<Move>, 
     order: number,
-    species: Array<DefaultDTO>,
-    sprites: {}, //later
+    species: DefaultDTO, //genus comes from this endpoint "genera"; flavor-text comes from flaror_text_entries. could also get the species name from here for ease of printing. seems to prefer a single name over 'mimikyu-disguised' and other shit
+    sprites: Sprites,
     stats: Array<Stat>,
 }
+
+export interface Sprites {
+    front_default: string,
+    other: OtherArt,
+}
+
+interface OtherArt {
+    ['official-artwork']: OfficialArtwork,
+}
+
+interface OfficialArtwork {
+    front_default: string,
+    front_shiny: string,
+}
   
-export  interface PokemonTypes {
+export interface PokemonTypes {
     slot: number,
     type: DefaultDTO,
 }
@@ -66,13 +80,50 @@ export interface PokedexInfo {
 
 export interface PokemonEntry {
     entry_number: string, //may need to update types.ts
-    pokemon_species: PokemonSpecies
+    pokemon_species: DefaultDTO
 }
 
 export interface PokemonSpecies {
+    base_happiness: number,
+    capture_rate: number,
+    color: {},
+    egg_groups: {},
+    evolution_chain: {},
+    evolves_from_species: {},
+    flavor_text_entries: Array<FlavorText>, 
+    //form_descriptions	[],
+    forms_switchable: boolean,
+    gender_rate: number,
+    genera: Array<Genus>, 
+    generation: boolean,
+    growth_rate: boolean,
+    habitat: boolean,
+    has_gender_differences: boolean,
+    hatch_counter: number,
+    id: number,
+    is_baby: boolean,
+    is_legendary: boolean,
+    is_mythical: boolean,
     name: string,
-    url: string
+    //names	[…],
+    order: number,
+    //pal_park_encounters	[…],
+    //pokedex_numbers	[…],
+    shape: {},
+    //varieties	[…],
 }
+
+export interface Genus {
+    genus: string,
+    language: DefaultDTO
+}
+
+export interface FlavorText {
+    flavor_text: string,
+    language: DefaultDTO,
+    version: DefaultDTO,
+}
+
 
 //custom types 
 
