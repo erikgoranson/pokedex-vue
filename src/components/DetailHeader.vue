@@ -41,7 +41,7 @@ const filteredFlavorTextEntry = computed(() => {
 <template>
 
   <InformationSection>
-    <div class="flex flex-wrap -mx-2 mb-8">
+    <div class="flex flex-wrap -mx-2 ">
       <div class="w-2/5 md:w-2/5 lg:w-1/5 px-1 mb-2">
         <div id="pkmn-image" class="relative border h-28 text-sm text-grey-dark flex items-center justify-center">
           <img class="" :src="props.data.sprites.front_default" />

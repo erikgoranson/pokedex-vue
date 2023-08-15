@@ -2,7 +2,7 @@
 import { ref, watch, onMounted } from "vue";
 import axios from 'axios';
 import { usePokemonStore } from '@/stores/pokemon';
-import type { Move, ExtendedPokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText } from '@/components/types';
+import type { Move, ExtendedPokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat } from '@/components/types';
 import Detail from './DetailHeader.vue';
 import BaseStatistics from './BaseStatistics.vue';
 import SpeciesDetails from './SpeciesDetails.vue';
@@ -111,8 +111,7 @@ selectedPokemonSpeciesData.value = defaultPokemonSpecies;
 <template>
     <div class=" bg-neutral-900 p-6 text-neutral-700 shadow-lg dark:bg-white-600 dark:text-neutral-200 dark:shadow-black/30">
       <Detail :data="selectedPokemonData" :species="selectedPokemonSpeciesData" />
-      <hr />
-      <BaseStatistics />
+      <BaseStatistics :stats="selectedPokemonData.stats"/>
       <hr />
       <SpeciesDetails />
       <hr />
