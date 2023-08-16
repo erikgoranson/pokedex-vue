@@ -27,9 +27,12 @@ const defaultPokemonEntry = <ExtendedPokemonData>{
     },
   ] as PokemonTypes[], 
   id: 18,
+  height: 0,
+  weight: 0,
   moves: [] as Move[],
   species: { name: '', url: '/src/assets/data/api/v2/pokemon-species/666/index.json' }, //default or random for missingno, whatever
   sprites: {},
+  stats: [] as PokemonStat[],
 }
 
 const defaultPokemonSpecies = <PokemonSpecies>{
@@ -63,7 +66,7 @@ const defaultPokemonSpecies = <PokemonSpecies>{
       }
     },
   ] as Genus[], 
-  generation: false,
+  generation: {},
   growth_rate: false,
   habitat: false,
   has_gender_differences: false,
@@ -113,7 +116,7 @@ selectedPokemonSpeciesData.value = defaultPokemonSpecies;
       <Detail :data="selectedPokemonData" :species="selectedPokemonSpeciesData" />
       <BaseStatistics :stats="selectedPokemonData.stats"/>
       <hr />
-      <SpeciesDetails />
+      <SpeciesDetails :data="selectedPokemonData" :species="selectedPokemonSpeciesData"/>
       <hr />
       <Evolutions />
       <hr />

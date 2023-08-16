@@ -87,7 +87,7 @@ function storeSelectedPokemon(entry: GridItem){
   </section>
 </template>
 
-<style>
+<style scoped>
 th {
   text-transform: capitalize;
   @apply px-6 py-4;

@@ -69,7 +69,7 @@ const filteredFlavorTextEntry = computed(() => {
 
 </template>
 
-<style>
+<style scoped>
 
 h5 {
   text-transform: capitalize;

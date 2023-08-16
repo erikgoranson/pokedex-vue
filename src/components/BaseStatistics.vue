@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
 import type { PokemonStat } from '@/components/types';
+import getStatLabel from '@/components/types'
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -13,6 +14,7 @@ const props = defineProps({
 const totalStats = computed(() => {
 
   let total = 0;
+  
   if(props.stats == undefined || props.stats.length == 0){
     return total;
   }
@@ -20,31 +22,6 @@ const totalStats = computed(() => {
   return total;
 
 })
-
-function getStatLabel(statName: string){
-  let output = '';
-  switch (statName) {
-    case 'hp':
-      output = statName; //this is fine
-      break;
-    case 'attack':
-      output = 'atk';
-      break;
-    case 'defense':
-      output = 'def';
-      break;
-    case 'special-attack':
-      output = 'spa';
-      break;
-    case 'special-defense':
-      output = 'spd';
-      break;
-    case 'speed':
-      output = 'spe';
-      break;
-  }
-  return output.toUpperCase();
-}
 
 function getStatWidthStyle(stat:number) {
   const calculatedStat = Math.round(stat/255*100);

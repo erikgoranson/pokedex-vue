@@ -34,6 +34,8 @@ export interface ExtendedPokemonData extends PokemonData {
 export interface PokemonData {
     name: string,
     id: number,
+    height: number,
+    weight: number,
     types: Array<PokemonTypes>,
     //temp
     moves: Array<Move>, 
@@ -87,7 +89,7 @@ export interface PokemonSpecies {
     base_happiness: number,
     capture_rate: number,
     color: {},
-    egg_groups: {},
+    egg_groups: Array<DefaultDTO>,
     evolution_chain: {},
     evolves_from_species: {},
     flavor_text_entries: Array<FlavorText>, 
@@ -95,7 +97,7 @@ export interface PokemonSpecies {
     forms_switchable: boolean,
     gender_rate: number,
     genera: Array<Genus>, 
-    generation: boolean,
+    generation: DefaultDTO,
     growth_rate: boolean,
     habitat: boolean,
     has_gender_differences: boolean,
@@ -152,3 +154,29 @@ export interface GridItem { //should be gridrow or gridItem I think
     type2: string,
     payload: PokemonData,
 } 
+
+export function getStatLabel(statName: string){
+    let output = '';
+    switch (statName) {
+      case 'hp':
+        output = statName; 
+        break;
+      case 'attack':
+        output = 'atk';
+        break;
+      case 'defense':
+        output = 'def';
+        break;
+      case 'special-attack':
+        output = 'spa';
+        break;
+      case 'special-defense':
+        output = 'spd';
+        break;
+      case 'speed':
+        output = 'spe';
+        break;
+    }
+    return output.toUpperCase();
+  }
+export default getStatLabel; //IDE demanded this
