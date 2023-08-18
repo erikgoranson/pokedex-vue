@@ -2,7 +2,7 @@
 import { ref, watch, onMounted } from "vue";
 import axios from 'axios';
 import { usePokemonStore } from '@/stores/pokemon';
-import type { Move, ExtendedPokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat } from '@/components/types';
+import type { Move, ExtendedPokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat,PokemonAbility, Ability } from '@/components/types';
 import Detail from './DetailHeader.vue';
 import BaseStatistics from './BaseStatistics.vue';
 import SpeciesDetails from './SpeciesDetails.vue';
@@ -33,6 +33,7 @@ const defaultPokemonEntry = <ExtendedPokemonData>{
   species: { name: '', url: '/src/assets/data/api/v2/pokemon-species/666/index.json' }, //default or random for missingno, whatever
   sprites: {},
   stats: [] as PokemonStat[],
+  abilities: [] as PokemonAbility[],
 }
 
 const defaultPokemonSpecies = <PokemonSpecies>{
@@ -85,6 +86,8 @@ const selectedPokemonData = ref<ExtendedPokemonData>(defaultPokemonEntry);
 
 const selectedPokemonSpeciesData = ref<PokemonSpecies>({} as PokemonSpecies); 
 
+const selectedPokemonAbilities = ref<Ability[]>([] as Ability[]); 
+
 async function getPkmnSpeciesInfo() {
   const id = selectedPokemonData.value.id;
   const endpoint = `/src/assets/data/api/v2/pokemon-species/${id}/index.json`;
@@ -95,14 +98,29 @@ async function getPkmnSpeciesInfo() {
   })
 }
 
+async function getPkmnAbilitiesInfo() {
+  selectedPokemonAbilities.value = [];
+  selectedPokemonData.value.abilities.forEach(async ability => {
+    const partialEndpoint = ability.ability.url;
+    const fullEndpoint = `/src/assets/data${partialEndpoint}index.json`;
+
+    await axios.get<Ability>(fullEndpoint).then((result) => {
+      selectedPokemonAbilities.value.push(result.data);
+    })
+  })
+}
+
 watch(pokemonStore, (newValue, oldValue) => {
   selectedPokemonData.value = pokemonStore.data.payload as ExtendedPokemonData;
   getPkmnSpeciesInfo();
+  getPkmnAbilitiesInfo();
+
 });
 
 onMounted(() => {
     selectedPokemonSpeciesData.value = defaultPokemonSpecies;
     getPkmnSpeciesInfo();
+    getPkmnAbilitiesInfo();
 });
 
 //default value load-in
@@ -120,7 +138,7 @@ selectedPokemonSpeciesData.value = defaultPokemonSpecies;
       <hr />
       <Evolutions />
       <hr />
-      <Abilities />
+      <Abilities :abilities="selectedPokemonData.abilities" :abilitiesInfo="selectedPokemonAbilities"/>
       <hr />
       <Moves :data="selectedPokemonData.moves" />
       <hr />

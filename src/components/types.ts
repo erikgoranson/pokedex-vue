@@ -43,7 +43,39 @@ export interface PokemonData {
     species: DefaultDTO, //genus comes from this endpoint "genera"; flavor-text comes from flaror_text_entries. could also get the species name from here for ease of printing. seems to prefer a single name over 'mimikyu-disguised' and other shit
     sprites: Sprites,
     stats: Array<PokemonStat>,
+    abilities: Array<PokemonAbility>,
 }
+
+export interface PokemonAbility {
+    is_hidden: boolean,
+    slot: number,
+    ability: DefaultDTO,
+}
+
+export interface Ability {
+    id: number,
+    name: string,
+    is_main_series: boolean,
+    generation: DefaultDTO,
+    //names:
+    //effect_entries: {},
+    //effect_changes: {}, 
+    flavor_text_entries: Array<AbilityFlavorText>,
+    pokemon: Array<AbilityPokemon>,
+}
+
+export interface AbilityFlavorText  {
+    flavor_text: string,
+    language: DefaultDTO,
+    version_group: DefaultDTO,
+}
+
+export interface AbilityPokemon  {
+    is_hidden: boolean,
+    slot: number,
+    pokemon: Array<DefaultDTO>,
+}
+
 
 export interface Sprites {
     front_default: string,
@@ -132,7 +164,6 @@ export interface PokemonStat {
     base_stat: number,
 }
 
-
 //custom types 
 
 export interface SelectionGroup {
@@ -146,7 +177,7 @@ export interface Selection {
     version_group: VersionGroup, 
 }
 
-export interface GridItem { //should be gridrow or gridItem I think
+export interface GridItem { 
     id: number, 
     name: string,
     "national ID": number,
@@ -154,6 +185,8 @@ export interface GridItem { //should be gridrow or gridItem I think
     type2: string,
     payload: PokemonData,
 } 
+
+//functions
 
 export function getStatLabel(statName: string){
     let output = '';
