@@ -108,11 +108,7 @@ const eeveeTest = computed(() => {
 
 <template>
     <InformationSection>
-        EVOLUTIONS
-        <br><br>
-        EVOLVES FROM: {{ previousEvolution?.name ? previousEvolution?.name : 'N/A' }}
-        <br><br>
-        FULL CHAIN:
+        <div class="flex justify-center items-center">EVOLUTIONS</div>
         <div v-if="eeveeTest == true" class="overflow-x-auto">
             <table>
                 <tr class="flex flex-col items-center justify-center">
