@@ -122,8 +122,8 @@ export interface PokemonSpecies {
     capture_rate: number,
     color: {},
     egg_groups: Array<DefaultDTO>,
-    evolution_chain: {},
-    evolves_from_species: {},
+    evolution_chain: DefaultDTO,
+    evolves_from_species: DefaultDTO,
     flavor_text_entries: Array<FlavorText>, 
     //form_descriptions	[],
     forms_switchable: boolean,
@@ -146,6 +146,52 @@ export interface PokemonSpecies {
     shape: {},
     //varieties	[…],
 }
+
+export interface EvolutionChain {
+    id: number,
+    baby_trigger_item: DefaultDTO,
+    chain: ChainLink,
+}
+
+export interface ChainLink  {
+    is_baby: boolean,
+    species: DefaultDTO,
+    evolution_details: EvolutionDetail,
+    evolves_to: Array<ChainLink>
+}
+
+export interface EvolutionDetail   {
+    //item
+    trigger: EvolutionTrigger,
+    gender: number,
+    //held_item: 
+    known_move: Move,
+    known_move_type: PokemonType,
+    //location
+
+}
+
+export interface EvolutionTrigger    {
+    id: number,
+    name: string,
+    //names,
+    pokemon_species: Array<PokemonSpecies>,
+    min_level: number,
+    min_happiness: number,
+    min_beauty: number,
+    min_affection: number,
+    needs_overworld_rain: boolean,
+    party_species: PokemonSpecies,
+    party_type: PokemonType,
+    relative_physical_stats: number,
+    time_of_day: string,
+    trade_species: PokemonSpecies,
+    turn_upside_down: boolean,
+}
+
+//item
+
+//location
 
 export interface Genus {
     genus: string,

@@ -2,7 +2,7 @@
 import { ref, watch, onMounted } from "vue";
 import axios from 'axios';
 import { usePokemonStore } from '@/stores/pokemon';
-import type { Move, ExtendedPokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat,PokemonAbility, Ability } from '@/components/types';
+import type { Move, ExtendedPokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat,PokemonAbility, Ability, EvolutionChain } from '@/components/types';
 import Detail from './DetailHeader.vue';
 import BaseStatistics from './BaseStatistics.vue';
 import SpeciesDetails from './SpeciesDetails.vue';
@@ -41,7 +41,7 @@ const defaultPokemonSpecies = <PokemonSpecies>{
   capture_rate: 0,
   color: {},
   egg_groups:{},
-  evolution_chain: {},
+  evolution_chain: { url: '/api/v2/evolution-chain/1/',} as DefaultDTO,
   evolves_from_species: {},
   flavor_text_entries: [
     {
@@ -60,7 +60,7 @@ const defaultPokemonSpecies = <PokemonSpecies>{
   gender_rate: 0,
   genera: [
     {
-      genus: 'birb',
+      genus: 'birb "pokemon"',
       language: <DefaultDTO>{ 
         name: 'en',
         url: '???'
@@ -88,6 +88,8 @@ const selectedPokemonSpeciesData = ref<PokemonSpecies>({} as PokemonSpecies);
 
 const selectedPokemonAbilities = ref<Ability[]>([] as Ability[]); 
 
+const selectedPokemonEvolutionChain = ref<EvolutionChain>({} as EvolutionChain);
+
 async function getPkmnSpeciesInfo() {
   const id = selectedPokemonData.value.id;
   const endpoint = `/src/assets/data/api/v2/pokemon-species/${id}/index.json`;
@@ -96,6 +98,8 @@ async function getPkmnSpeciesInfo() {
     //return result.data;
     selectedPokemonSpeciesData.value = result.data;
   })
+
+  getPkmnEvolutionChain();
 }
 
 async function getPkmnAbilitiesInfo() {
@@ -110,17 +114,27 @@ async function getPkmnAbilitiesInfo() {
   })
 }
 
+async function getPkmnEvolutionChain(){
+  const partialEndpoint = selectedPokemonSpeciesData.value.evolution_chain.url;
+  const fullEndpoint = `/src/assets/data${partialEndpoint}index.json`;
+  await axios.get<EvolutionChain>(fullEndpoint)
+  .then((result) => {
+    selectedPokemonEvolutionChain.value = result.data;
+  })
+}
+
 watch(pokemonStore, (newValue, oldValue) => {
   selectedPokemonData.value = pokemonStore.data.payload as ExtendedPokemonData;
   getPkmnSpeciesInfo();
   getPkmnAbilitiesInfo();
-
 });
 
 onMounted(() => {
-    selectedPokemonSpeciesData.value = defaultPokemonSpecies;
-    getPkmnSpeciesInfo();
-    getPkmnAbilitiesInfo();
+    //selectedPokemonSpeciesData.value = defaultPokemonSpecies;
+    //getPkmnSpeciesInfo();
+    //getPkmnEvolutionChain();
+    //getPkmnAbilitiesInfo();
+    
 });
 
 //default value load-in
@@ -136,7 +150,7 @@ selectedPokemonSpeciesData.value = defaultPokemonSpecies;
       <hr />
       <SpeciesDetails :data="selectedPokemonData" :species="selectedPokemonSpeciesData"/>
       <hr />
-      <Evolutions />
+      <Evolutions :chain="selectedPokemonEvolutionChain" :previous="selectedPokemonSpeciesData.evolves_from_species"/>
       <hr />
       <Abilities :abilities="selectedPokemonData.abilities" :abilitiesInfo="selectedPokemonAbilities"/>
       <hr />
