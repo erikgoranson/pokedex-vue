@@ -23,9 +23,11 @@ const gridData = ref<GridItem[]>(<GridItem[]>[]);
 const searchQuery = ref('');
 
 const nationalDexKey = "nationalDex";
+const cacheExists = ref(false);
 
 //doesnt need to be truly reactive since this data should not change except when new versions release
 const nationalDex = computed(() => {
+  const cacheState = cacheExists.value;
   const entries = retrieveLocalStorageData(nationalDexKey) as nationalDexEntry[];
   return entries;
 })
@@ -57,6 +59,7 @@ async function buildNationalDexStoreCache(resync: boolean){
 
   //check whether to proceed
   if(nationalDex.value.length !== 0){ //cache already exists
+    cacheExists.value = true;
     if(resync === false){ //resync was not requested
       return;
     }
@@ -90,6 +93,7 @@ async function buildNationalDexStoreCache(resync: boolean){
   })
 
   localStorage.setItem(nationalDexKey, JSON.stringify(nationalDexTmp));
+  cacheExists.value = true;
 }
 
 interface nationalDexEntry {
@@ -143,12 +147,19 @@ function buildGridItem(pkmn: nationalDexEntry){
 
 onMounted(async () => {
   buildNationalDexStoreCache(false);
-  getGridData(versionStore.data.version_group.pokedexes);
 });
 
 watch(versionStore, (newValue, oldValue) => {
   getGridData(versionStore.data.version_group.pokedexes);
 }); 
+
+
+watch(cacheExists, (newValue, oldValue) => {
+  if(cacheExists.value){
+    getGridData(versionStore.data.version_group.pokedexes);
+  }
+}); 
+
 
 </script>
 
