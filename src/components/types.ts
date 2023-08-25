@@ -113,7 +113,7 @@ export interface PokedexInfo {
 }
 
 export interface PokemonEntry {
-    entry_number: string, //may need to update types.ts
+    entry_number: number, //may need to update types.ts
     pokemon_species: DefaultDTO
 }
 

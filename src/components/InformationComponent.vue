@@ -90,6 +90,18 @@ const selectedPokemonAbilities = ref<Ability[]>([] as Ability[]);
 
 const selectedPokemonEvolutionChain = ref<EvolutionChain>({} as EvolutionChain);
 
+async function getPkmnDataInfo(id: number){
+  const endpoint = `/src/assets/data/api/v2/pokemon/${id}/index.json`;
+  await axios.get<ExtendedPokemonData>(endpoint)
+  .then((result) => {
+    selectedPokemonData.value = result.data;
+    getPkmnSpeciesInfo();
+    getPkmnAbilitiesInfo();
+
+    isLoaded = true;
+  })
+}
+
 async function getPkmnSpeciesInfo() {
   const id = selectedPokemonData.value.id;
   const endpoint = `/src/assets/data/api/v2/pokemon-species/${id}/index.json`;
@@ -124,9 +136,22 @@ async function getPkmnEvolutionChain(){
 }
 
 watch(pokemonStore, (newValue, oldValue) => {
-  selectedPokemonData.value = pokemonStore.data.payload as ExtendedPokemonData;
-  getPkmnSpeciesInfo();
-  getPkmnAbilitiesInfo();
+
+  getPkmnDataInfo(pokemonStore.data["national ID"]);
+
+  /*
+  if(pokemonStore.data.payload.id === undefined){
+    //const stuff = pokemonStore.data;
+    //const pkmnData = getPkmnDataInfo(pokemonStore.data["national ID"])
+    //stuff.payload = pkmnData
+    getPkmnDataInfo(pokemonStore.data["national ID"]);
+  } else {
+    selectedPokemonData.value = pokemonStore.data.payload as ExtendedPokemonData;
+    getPkmnSpeciesInfo();
+    getPkmnAbilitiesInfo();
+  }
+  */
+ 
 });
 
 onMounted(() => {
@@ -141,9 +166,12 @@ onMounted(() => {
 selectedPokemonData.value = defaultPokemonEntry; 
 selectedPokemonSpeciesData.value = defaultPokemonSpecies;
 
+let isLoaded = false;
+
 </script>
 
 <template>
+  <div v-if="!isLoaded">LOADING...</div>
     <div class=" bg-neutral-900 p-6 text-neutral-700 shadow-lg dark:bg-white-600 dark:text-neutral-200 dark:shadow-black/30">
       <Detail :data="selectedPokemonData" :species="selectedPokemonSpeciesData" />
       <BaseStatistics :stats="selectedPokemonData.stats"/>
