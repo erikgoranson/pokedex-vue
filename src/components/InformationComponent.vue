@@ -98,7 +98,7 @@ async function getPkmnDataInfo(id: number){
     getPkmnSpeciesInfo();
     getPkmnAbilitiesInfo();
 
-    isLoaded = true;
+    //isLoaded = true;
   })
 }
 
@@ -124,6 +124,7 @@ async function getPkmnAbilitiesInfo() {
       selectedPokemonAbilities.value.push(result.data);
     })
   })
+  isLoaded = true; //maybe here?
 }
 
 async function getPkmnEvolutionChain(){
