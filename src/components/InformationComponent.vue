@@ -105,7 +105,7 @@ async function getPkmnDataInfo(id: number){
 async function getPkmnSpeciesInfo() {
   const id = selectedPokemonData.value.id;
   const endpoint = `/src/assets/data/api/v2/pokemon-species/${id}/index.json`;
-  console.log('running getspecies... ');
+  //console.log('running getspecies... ');
   await axios.get<PokemonSpecies>(endpoint).then((result) => {
     //return result.data;
     selectedPokemonSpeciesData.value = result.data;
@@ -136,30 +136,10 @@ async function getPkmnEvolutionChain(){
 }
 
 watch(pokemonStore, (newValue, oldValue) => {
-
   getPkmnDataInfo(pokemonStore.data["national ID"]);
-
-  /*
-  if(pokemonStore.data.payload.id === undefined){
-    //const stuff = pokemonStore.data;
-    //const pkmnData = getPkmnDataInfo(pokemonStore.data["national ID"])
-    //stuff.payload = pkmnData
-    getPkmnDataInfo(pokemonStore.data["national ID"]);
-  } else {
-    selectedPokemonData.value = pokemonStore.data.payload as ExtendedPokemonData;
-    getPkmnSpeciesInfo();
-    getPkmnAbilitiesInfo();
-  }
-  */
- 
 });
 
 onMounted(() => {
-    //selectedPokemonSpeciesData.value = defaultPokemonSpecies;
-    //getPkmnSpeciesInfo();
-    //getPkmnEvolutionChain();
-    //getPkmnAbilitiesInfo();
-    
 });
 
 //default value load-in

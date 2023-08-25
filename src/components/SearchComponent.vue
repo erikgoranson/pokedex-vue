@@ -22,13 +22,13 @@ const pokemonStore = usePokemonStore();
 const gridData = ref<GridItem[]>(<GridItem[]>[]);
 const searchQuery = ref('');
 
+const nationalDexKey = "nationalDex";
+
 //doesnt need to be truly reactive since this data should not change except when new versions release
 const nationalDex = computed(() => {
-  const nationalDexKey = "nationalDex";
   const entries = retrieveLocalStorageData(nationalDexKey) as nationalDexEntry[];
   return entries;
 })
-
 
 function getPokemonType(types: PokemonTypes[], slot: Slots){ 
   let final: string = ''
@@ -45,8 +45,6 @@ function retrieveLocalStorageData(key: string){
     return data;
 }
 
-
-
 function populateDefaultEntry() {
   if(pokemonStore.isDefault){ 
     const currentDexFirstEntry = gridData.value[0];
@@ -54,21 +52,12 @@ function populateDefaultEntry() {
   }
 }
 
-//plan is to run this whenever the app is first set up
 async function buildNationalDexStoreCache(resync: boolean){
-  const entries: PokemonEntry[] = [];
-  let tempGrid2 = [] as GridItem[];
   const nationalDexTmp = [] as nationalDexEntry[];
 
-  //check if "store" exists 
-  const existingNationalDex = retrieveLocalStorageData("nationalDex") as nationalDexEntry[];
-  console.log('finding existing national dex');
-
   //check whether to proceed
-  if(existingNationalDex.length !== 0){
-    console.log('national dex found')
-    if(resync === false){
-      console.log('canceling get national dex request...')
+  if(nationalDex.value.length !== 0){ //cache already exists
+    if(resync === false){ //resync was not requested
       return;
     }
   }
@@ -80,12 +69,8 @@ async function buildNationalDexStoreCache(resync: boolean){
       return response.data;
     })
 
-  console.log('national dex is below:')
-  console.log(nationalDexResponse)
-
-  //then build promises for all entries
+  //build promises for all entries
   const promises = nationalDexResponse.pokemon_entries.map(m => {
-    //nationalID should be the entry number
     const nationalId = m.entry_number;
     const endpoint = `/src/assets/data/api/v2/pokemon/${nationalId}/index.json`;
     return axios.get<PokemonData>(endpoint)
@@ -100,19 +85,13 @@ async function buildNationalDexStoreCache(resync: boolean){
     })
   })
 
-  //run the promise
   await Promise.all(promises).then(() => {
-    console.log('nationaldex is ready')
+    console.log('national dex has been cached');
   })
 
-  //save into the store
-  localStorage.setItem("nationalDex", JSON.stringify(nationalDexTmp));
-
+  localStorage.setItem(nationalDexKey, JSON.stringify(nationalDexTmp));
 }
 
-//not just grid data cause I want localstorage to store ALL pokemon data if needed
-//which will save load time on mount
-//nationalDexEntry
 interface nationalDexEntry {
   //tiny sprite url also?
   name: string,
@@ -121,12 +100,10 @@ interface nationalDexEntry {
   type2: string,
 }
 
-async function getPkmnEntriesForGrid(pokedexes: DefaultDTO[]){
+async function getGridData(pokedexes: DefaultDTO[]){
 
-  let tempGrid = [] as GridItem[]; //storing all griddaata in a single obj so it can all be returned at once instead of one at a time for the frontend 
+  let tempGrid = [] as GridItem[]; 
 
-  //all entry urls from provided pokedexes
-  const allEntries: PokemonEntry[] = [];
   let allUrls = [] as string[];
   await axios.all(
     pokedexes.map((p) => axios
@@ -136,16 +113,13 @@ async function getPkmnEntriesForGrid(pokedexes: DefaultDTO[]){
       })
     )
   )
-
-  //make sure the returned urls are uniqe
-  console.log('running getPkmnEntries')
   const uniqueUrls = [...new Set(allUrls)];
 
   uniqueUrls.forEach(url => {
     const nationalId = url.slice(0, -1).split("/").pop();
-    const match = nationalDex.value.filter(x => x.nationalID == Number(nationalId)); //should always return a match since we JUSt checked this. but localstorage could break or something, idk
+    const match = nationalDex.value.filter(x => x.nationalID == Number(nationalId)); 
     if (match.length == 0){
-      console.log(`something went wrong. no match found for ${nationalId}`);
+      console.log(`no match found for ${nationalId}`);
     }
     const griditem = buildGridItem(match[0]);
 
@@ -168,12 +142,12 @@ function buildGridItem(pkmn: nationalDexEntry){
 }
 
 onMounted(async () => {
-    await buildNationalDexStoreCache(false);
-    getPkmnEntriesForGrid(versionStore.data.version_group.pokedexes);
+  buildNationalDexStoreCache(false);
+  getGridData(versionStore.data.version_group.pokedexes);
 });
 
 watch(versionStore, (newValue, oldValue) => {
-    getPkmnEntriesForGrid(versionStore.data.version_group.pokedexes);
+  getGridData(versionStore.data.version_group.pokedexes);
 }); 
 
 </script>
