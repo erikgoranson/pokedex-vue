@@ -137,7 +137,7 @@ async function getPkmnEvolutionChain(){
 }
 
 watch(pokemonStore, (newValue, oldValue) => {
-  getPkmnDataInfo(pokemonStore.data["national ID"]);
+  getPkmnDataInfo(pokemonStore.data.id);
 });
 
 onMounted(() => {

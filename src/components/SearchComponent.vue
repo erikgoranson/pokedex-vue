@@ -8,13 +8,7 @@ import { usePokemonStore } from '@/stores/pokemon';
 import { computed } from 'vue';
 
 type Slots = 1 | 2;
-
-const props = defineProps({
-    gridColumns: { //headers
-      type: Array<string>, 
-      default: ['id', 'name', 'national ID', 'type1', 'type2']
-    }
-})
+const gridColumns: string[] = ['id', 'name', 'type1', 'type2'];
 
 const versionStore = useVersionStore();
 const pokemonStore = usePokemonStore();
@@ -136,12 +130,10 @@ async function getGridData(pokedexes: DefaultDTO[]){
 
 function buildGridItem(pkmn: nationalDexEntry){
   return <GridItem>{
-    id: pkmn.nationalID, //regional ID
+    id: pkmn.nationalID, 
     name: pkmn.name,
-    "national ID": pkmn.nationalID, //getting rid of this soon
     type1: pkmn.type1,
     type2: pkmn.type2,
-    payload: {entry_number: String(pkmn.nationalID)} as ExtendedPokemonData, //getting rid of this prop later
   }
 }
 
@@ -160,7 +152,6 @@ watch(cacheExists, (newValue, oldValue) => {
   }
 }); 
 
-
 </script>
 
 <template>
@@ -169,7 +160,7 @@ watch(cacheExists, (newValue, oldValue) => {
     <div>
       <Grid 
         :data="gridData"
-        :columns="props.gridColumns"
+        :columns="gridColumns"
         :filter-key="searchQuery">
       </Grid>
     </div>
