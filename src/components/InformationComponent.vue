@@ -153,7 +153,7 @@ let isLoaded = false;
 
 <template>
   <div v-if="!isLoaded">LOADING...</div>
-    <div class=" bg-neutral-900 p-6 text-neutral-700 shadow-lg dark:bg-white-600 dark:text-neutral-200 dark:shadow-black/30">
+    <div class=" bg-neutral-900 p-3 text-neutral-700 shadow-lg dark:bg-white-600 dark:text-neutral-200 dark:shadow-black/30">
       <Detail :data="selectedPokemonData" :species="selectedPokemonSpeciesData" />
       <BaseStatistics :stats="selectedPokemonData.stats"/>
       <hr />

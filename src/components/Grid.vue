@@ -53,7 +53,7 @@ function storeSelectedPokemon(entry: GridItem){
 </script>
 
 <template>
-  <section class="h-1/6 overflow-x-auto">
+  <section class="">
   <table v-if="filteredData?.length">
     <thead>
       <tr>

@@ -154,9 +154,11 @@ watch(cacheExists, (newValue, oldValue) => {
 </script>
 
 <template>
-  <div class=" bg-neutral-900 p-6 text-neutral-700 shadow-lg dark:bg-white-600 dark:text-neutral-200 dark:shadow-black/30">
-    <form id="search">Search <input name="query" v-model="searchQuery"></form>
-    <div>
+  <div>
+    <form id="search"><input class="w-full" name="query" placeholder="Type to search" v-model="searchQuery"></form>
+  </div>
+  <div class="">
+    <div class="flex h-screen justify-center overflow-y-auto overflow-x-hidden">
       <Grid 
         :data="gridData"
         :columns="gridColumns"
