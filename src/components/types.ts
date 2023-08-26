@@ -27,10 +27,6 @@ export interface VersionGroup {
     versions?: Array<DefaultDTO>,
 }
 
-export interface ExtendedPokemonData extends PokemonData {
-    entry_number: string, //what is this????
-  }
-
 export interface PokemonData {
     name: string,
     id: number,
@@ -113,7 +109,7 @@ export interface PokedexInfo {
 }
 
 export interface PokemonEntry {
-    entry_number: string, //may need to update types.ts
+    entry_number: number, //may need to update types.ts
     pokemon_species: DefaultDTO
 }
 
@@ -224,12 +220,10 @@ export interface Selection {
 }
 
 export interface GridItem { 
-    id: number, 
+    id: number,  //nationalID
     name: string,
-    "national ID": number,
     type1: string,
     type2: string,
-    payload: PokemonData,
 } 
 
 //functions

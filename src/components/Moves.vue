@@ -30,7 +30,7 @@ const filteredMoveData = computed(() => {
     //let generation = 'red-blue'; //need to set this reactively
     //let generation = JSON.parse(localStorage.getItem('selectedVersion') || '').version_group.name;//not sure if this works without being reactive
     let generation = store.data.version_group?.name;
-    console.log(store.data);
+    //console.log(store.data);
 
     data
         .filter((element: Move) => 

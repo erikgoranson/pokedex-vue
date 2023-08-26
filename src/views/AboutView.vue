@@ -1,18 +1,13 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from "vue";
-import type { Move, ExtendedPokemonData, DefaultDTO, PokemonTypes } from '@/components/types';
+import type { Move, PokemonData, DefaultDTO, PokemonTypes } from '@/components/types';
 import Pokedex from '@/components/Pokedex.vue';
 import search from '@/components/SearchComponent.vue'
 import DetailHeader from "@/components/DetailHeader.vue";
-import BaseStatistics from '@/BaseStatistics.vue';
-import SpeciesDetails from '@/SpeciesDetails.vue';
-import Evolutions from '@/Evolutions.vue';
-import Abilities from '@/Abilities.vue';
-import Moves from '@/Moves.vue';
-import Locations from '@/Locations.vue';
-import Links from '@/Links.vue';
+import defaultPokemonEntry from '../json/defaultPokemon.json';
+import defaultPokemonSpeciesEntry from '../json/defaultPokemonSpecies.json';
 
-const defaultPokemonEntry = <ExtendedPokemonData>{
+const defaultPokemonEntry2 = <PokemonData>{
   name: 'missingno.',
   types: [
     { slot: 1,
@@ -32,7 +27,7 @@ const defaultPokemonEntry = <ExtendedPokemonData>{
   sprites: {},
 }
 
-const selectedPokemonData = ref<ExtendedPokemonData>(defaultPokemonEntry); 
+//const selectedPokemonData = ref<PokemonData>(defaultPokemonEntry); 
 
 </script>
 
@@ -55,7 +50,7 @@ const selectedPokemonData = ref<ExtendedPokemonData>(defaultPokemonEntry);
             {{ t.type.name }}
           </span></div>
         </div>
-        <div> pokedex entry text goes here </div>
+        <div> {{ defaultPokemonSpeciesEntry.flavor_text_entries[0].flavor_text }} </div>
       </div>
 
             </div>

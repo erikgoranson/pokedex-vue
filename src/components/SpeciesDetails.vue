@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
-import type { Move, ExtendedPokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat } from '@/components/types';
+import type { Move, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat } from '@/components/types';
 import getStatLabel from '@/components/types'
 import { computed } from 'vue';
 
 const props = defineProps({
   data: {
-    type: Object as () => ExtendedPokemonData,
+    type: Object as () => PokemonData,
     required: true
   },
   species: {
