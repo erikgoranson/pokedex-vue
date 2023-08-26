@@ -2,7 +2,7 @@
 import { ref, watch, onMounted } from "vue";
 import axios from 'axios';
 import { usePokemonStore } from '@/stores/pokemon';
-import type { Move, ExtendedPokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat,PokemonAbility, Ability, EvolutionChain } from '@/components/types';
+import type { Move, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat,PokemonAbility, Ability, EvolutionChain } from '@/components/types';
 import Detail from './DetailHeader.vue';
 import BaseStatistics from './BaseStatistics.vue';
 import SpeciesDetails from './SpeciesDetails.vue';
@@ -12,7 +12,7 @@ import Moves from './Moves.vue';
 import Locations from './Locations.vue';
 import Links from './Links.vue';
 
-const defaultPokemonEntry = <ExtendedPokemonData>{
+const defaultPokemonEntry = <PokemonData>{
   name: 'missingno.',
   types: [
     { slot: 1,
@@ -82,7 +82,7 @@ const defaultPokemonSpecies = <PokemonSpecies>{
 }
 
 const pokemonStore = usePokemonStore();
-const selectedPokemonData = ref<ExtendedPokemonData>(defaultPokemonEntry); 
+const selectedPokemonData = ref<PokemonData>(defaultPokemonEntry); 
 
 const selectedPokemonSpeciesData = ref<PokemonSpecies>({} as PokemonSpecies); 
 
@@ -92,7 +92,7 @@ const selectedPokemonEvolutionChain = ref<EvolutionChain>({} as EvolutionChain);
 
 async function getPkmnDataInfo(id: number){
   const endpoint = `/src/assets/data/api/v2/pokemon/${id}/index.json`;
-  await axios.get<ExtendedPokemonData>(endpoint)
+  await axios.get<PokemonData>(endpoint)
   .then((result) => {
     selectedPokemonData.value = result.data;
     getPkmnSpeciesInfo();

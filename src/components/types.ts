@@ -27,10 +27,6 @@ export interface VersionGroup {
     versions?: Array<DefaultDTO>,
 }
 
-export interface ExtendedPokemonData extends PokemonData {
-    entry_number: string, //what is this????
-  }
-
 export interface PokemonData {
     name: string,
     id: number,
