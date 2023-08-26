@@ -1,0 +1,44 @@
+{
+    "base_happiness": 0,
+    "capture_rate": 29,
+    "color": {},
+    "egg_groups": {},
+    "evolution_chain": {
+        "url": "/api/v2/evolution-chain/1/"
+    },
+    "evolves_from_species": {},
+    "flavor_text_entries": [{
+            "flavor_text": "コメント さくせいちゅう",
+            "language": {
+                "name": "en",
+                "url": "???"
+            },
+            "version": {
+                "name": "???",
+                "url": "???"
+            }
+        }
+    ],
+    "forms_switchable": false,
+    "gender_rate": 0,
+    "genera": [{
+            "genus": "??? pokemon",
+            "language": {
+                "name": "en",
+                "url": "???"
+            }
+        }
+    ],
+    "generation": {},
+    "growth_rate": false,
+    "habitat": false,
+    "has_gender_differences": false,
+    "hatch_counter": 999,
+    "id": 0,
+    "is_baby": false,
+    "is_legendary": true,
+    "is_mythical": true,
+    "name": "missingno.",
+    "order": 0,
+    "shape": {}
+}

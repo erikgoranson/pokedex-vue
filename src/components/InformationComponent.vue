@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import axios from 'axios';
 import { usePokemonStore } from '@/stores/pokemon';
-import type { Move, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat,PokemonAbility, Ability, EvolutionChain } from '@/components/types';
+import type { Move, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat,PokemonAbility, Ability, EvolutionChain, Sprites } from '@/components/types';
 import Detail from './DetailHeader.vue';
 import BaseStatistics from './BaseStatistics.vue';
 import SpeciesDetails from './SpeciesDetails.vue';
@@ -11,6 +11,14 @@ import Abilities from './Abilities.vue';
 import Moves from './Moves.vue';
 import Locations from './Locations.vue';
 import Links from './Links.vue';
+import defaultImage from '../assets/images/defaultPokemon.png'
+import defaultData from '../json/defaultPokemon.json';
+
+const defaultDataTest = computed(() => {
+  //const test = JSON.parse(defaultData)
+  const test2 = defaultData.sprites;
+  return test2;
+})
 
 const defaultPokemonEntry = <PokemonData>{
   name: 'missingno.',
@@ -26,19 +34,19 @@ const defaultPokemonEntry = <PokemonData>{
       }
     },
   ] as PokemonTypes[], 
-  id: 18,
+  id: 0,
   height: 0,
   weight: 0,
   moves: [] as Move[],
   species: { name: '', url: '/src/assets/data/api/v2/pokemon-species/666/index.json' }, //default or random for missingno, whatever
-  sprites: {},
+  sprites: { front_default: defaultImage } as Sprites,
   stats: [] as PokemonStat[],
   abilities: [] as PokemonAbility[],
 }
 
 const defaultPokemonSpecies = <PokemonSpecies>{
   base_happiness: 0,
-  capture_rate: 0,
+  capture_rate: 29,
   color: {},
   egg_groups:{},
   evolution_chain: { url: '/api/v2/evolution-chain/1/',} as DefaultDTO,
@@ -60,7 +68,7 @@ const defaultPokemonSpecies = <PokemonSpecies>{
   gender_rate: 0,
   genera: [
     {
-      genus: 'birb "pokemon"',
+      genus: '??? pokemon',
       language: <DefaultDTO>{ 
         name: 'en',
         url: '???'
@@ -144,6 +152,8 @@ onMounted(() => {
 });
 
 //default value load-in
+console.log(defaultData.sprites);
+console.log(defaultImage);
 selectedPokemonData.value = defaultPokemonEntry; 
 selectedPokemonSpeciesData.value = defaultPokemonSpecies;
 
