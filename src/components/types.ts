@@ -219,14 +219,11 @@ export interface Selection {
     version_group: VersionGroup, 
 }
 
-//is this the same as the dexEntry class now? hmm...
 export interface GridItem { 
-    id: number, 
+    id: number,  //nationalID
     name: string,
-    //"national ID": number,
     type1: string,
     type2: string,
-    //payload: PokemonData,
 } 
 
 //functions

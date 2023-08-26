@@ -94,12 +94,12 @@ async function getGridData(pokedexes: DefaultDTO[]){
 
   let tempGrid = [] as GridItem[]; 
 
-  let allUrls = [] as string[];
+  let allUrls = [] as string[]; 
   await axios.all(
     pokedexes.map((p) => axios
       .get<PokedexInfo>(`/src/assets/data${p.url}index.json`)
       .then((results) => {
-        allUrls = results.data.pokemon_entries.map(x => x.pokemon_species.url);
+        allUrls.push(...results.data.pokemon_entries.map(x => x.pokemon_species.url))
       })
     )
   )
