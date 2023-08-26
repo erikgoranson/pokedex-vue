@@ -8,6 +8,15 @@ import { usePokemonStore } from '@/stores/pokemon';
 import { computed } from 'vue';
 
 type Slots = 1 | 2;
+
+interface NationalDexEntry {
+  //tiny sprite url also?
+  name: string,
+  nationalID: number,
+  type1: string,
+  type2: string,
+}
+
 const gridColumns: string[] = ['id', 'name', 'type1', 'type2'];
 
 const versionStore = useVersionStore();
@@ -19,12 +28,20 @@ const searchQuery = ref('');
 const nationalDexKey = "nationalDex";
 const cacheExists = ref(false);
 
-//doesnt need to be truly reactive since this data should not change except when new versions release
 const nationalDex = computed(() => {
   const cacheState = cacheExists.value;
-  const entries = retrieveLocalStorageData(nationalDexKey) as nationalDexEntry[];
+  const entries = retrieveLocalStorageData(nationalDexKey) as NationalDexEntry[];
   return entries;
 })
+
+function buildGridItem(pkmn: NationalDexEntry){
+  return <GridItem>{
+    id: pkmn.nationalID, 
+    name: pkmn.name,
+    type1: pkmn.type1,
+    type2: pkmn.type2,
+  }
+}
 
 function getPokemonType(types: PokemonTypes[], slot: Slots){ 
   let final: string = ''
@@ -49,7 +66,7 @@ function populateDefaultEntry() {
 }
 
 async function buildNationalDexStoreCache(resync: boolean){
-  const nationalDexTmp = [] as nationalDexEntry[];
+  const nationalDexTmp = [] as NationalDexEntry[];
 
   //check whether to proceed
   if(nationalDex.value.length !== 0){ //cache already exists
@@ -72,7 +89,7 @@ async function buildNationalDexStoreCache(resync: boolean){
     const endpoint = `/src/assets/data/api/v2/pokemon/${nationalId}/index.json`;
     return axios.get<PokemonData>(endpoint)
       .then((result) => {
-        const dexEntry = <nationalDexEntry>{
+        const dexEntry = <NationalDexEntry>{
           nationalID: nationalId,
           name: result.data.name,
           type1: getPokemonType(result.data.types, 1),
@@ -88,14 +105,6 @@ async function buildNationalDexStoreCache(resync: boolean){
 
   localStorage.setItem(nationalDexKey, JSON.stringify(nationalDexTmp));
   cacheExists.value = true;
-}
-
-interface nationalDexEntry {
-  //tiny sprite url also?
-  name: string,
-  nationalID: number,
-  type1: string,
-  type2: string,
 }
 
 async function getGridData(pokedexes: DefaultDTO[]){
@@ -128,15 +137,6 @@ async function getGridData(pokedexes: DefaultDTO[]){
   populateDefaultEntry();
 }
 
-function buildGridItem(pkmn: nationalDexEntry){
-  return <GridItem>{
-    id: pkmn.nationalID, 
-    name: pkmn.name,
-    type1: pkmn.type1,
-    type2: pkmn.type2,
-  }
-}
-
 onMounted(async () => {
   buildNationalDexStoreCache(false);
 });
@@ -144,7 +144,6 @@ onMounted(async () => {
 watch(versionStore, (newValue, oldValue) => {
   getGridData(versionStore.data.version_group.pokedexes);
 }); 
-
 
 watch(cacheExists, (newValue, oldValue) => {
   if(cacheExists.value){
