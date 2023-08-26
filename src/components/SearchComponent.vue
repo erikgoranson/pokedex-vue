@@ -2,20 +2,12 @@
 import { ref, onMounted, defineProps, watch } from 'vue';
 import axios, { all } from 'axios';
 import Grid from '@/components/Grid.vue';
-import type { GridItem, ExtendedPokemonData, DefaultDTO, PokemonEntry, PokemonTypes, PokemonData, PokedexInfo } from '@/components/types';
+import type { GridItem, DefaultDTO, PokemonEntry, PokemonTypes, PokemonData, PokedexInfo } from '@/components/types';
 import { useVersionStore } from '@/stores/version';
 import { usePokemonStore } from '@/stores/pokemon';
 import { computed } from 'vue';
 
 type Slots = 1 | 2;
-
-interface NationalDexEntry {
-  //tiny sprite url also?
-  name: string,
-  nationalID: number,
-  type1: string,
-  type2: string,
-}
 
 const gridColumns: string[] = ['id', 'name', 'type1', 'type2'];
 
@@ -30,18 +22,9 @@ const cacheExists = ref(false);
 
 const nationalDex = computed(() => {
   const cacheState = cacheExists.value;
-  const entries = retrieveLocalStorageData(nationalDexKey) as NationalDexEntry[];
+  const entries = retrieveLocalStorageData(nationalDexKey) as GridItem[];
   return entries;
 })
-
-function buildGridItem(pkmn: NationalDexEntry){
-  return <GridItem>{
-    id: pkmn.nationalID, 
-    name: pkmn.name,
-    type1: pkmn.type1,
-    type2: pkmn.type2,
-  }
-}
 
 function getPokemonType(types: PokemonTypes[], slot: Slots){ 
   let final: string = ''
@@ -66,7 +49,7 @@ function populateDefaultEntry() {
 }
 
 async function buildNationalDexStoreCache(resync: boolean){
-  const nationalDexTmp = [] as NationalDexEntry[];
+  const nationalDexTmp = [] as GridItem[];
 
   //check whether to proceed
   if(nationalDex.value.length !== 0){ //cache already exists
@@ -89,8 +72,8 @@ async function buildNationalDexStoreCache(resync: boolean){
     const endpoint = `/src/assets/data/api/v2/pokemon/${nationalId}/index.json`;
     return axios.get<PokemonData>(endpoint)
       .then((result) => {
-        const dexEntry = <NationalDexEntry>{
-          nationalID: nationalId,
+        const dexEntry = <GridItem>{
+          id: nationalId,
           name: result.data.name,
           type1: getPokemonType(result.data.types, 1),
           type2: getPokemonType(result.data.types, 2),
@@ -124,13 +107,11 @@ async function getGridData(pokedexes: DefaultDTO[]){
 
   uniqueUrls.forEach(url => {
     const nationalId = url.slice(0, -1).split("/").pop();
-    const match = nationalDex.value.filter(x => x.nationalID == Number(nationalId)); 
+    const match = nationalDex.value.filter(x => x.id == Number(nationalId)); 
     if (match.length == 0){
       console.log(`no match found for ${nationalId}`);
     }
-    const griditem = buildGridItem(match[0]);
-
-    tempGrid.push(griditem)
+    tempGrid.push(match[0])
   })
 
   gridData.value = tempGrid;
