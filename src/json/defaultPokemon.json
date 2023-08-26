@@ -3,19 +3,56 @@
     "types": [{
             "slot": 1,
             "type": {
-                "name": "bird"
+                "name": "bird",
+                "url": ""
             }
         }, {
             "slot": 2,
             "type": {
-                "name": "normal"
+                "name": "normal",
+                "url": ""
             }
         }
     ],
     "id": 0,
     "height": 0,
     "weight": 0,
-    "moves": {},
+    "moves": [{
+            "move": {
+                "name": "water-gun",
+                "url": "https://pokeapi.co/api/v2/move/55/"
+            },
+            "version_group_details": [{
+                    "level_learned_at": 0,
+                    "move_learn_method": {
+                        "name": "level-up",
+                        "url": "https://pokeapi.co/api/v2/move-learn-method/1/"
+                    },
+                    "version_group": {
+                        "name": "red-blue",
+                        "url": "https://pokeapi.co/api/v2/version-group/3/"
+                    }
+                }
+            ]
+        }, {
+            "move": {
+                "name": "sky-attack",
+                "url": "https://pokeapi.co/api/v2/move/143/"
+            },
+            "version_group_details": [{
+                    "level_learned_at": 0,
+                    "move_learn_method": {
+                        "name": "level-up",
+                        "url": "https://pokeapi.co/api/v2/move-learn-method/1/"
+                    },
+                    "version_group": {
+                        "name": "red-blue",
+                        "url": "https://pokeapi.co/api/v2/version-group/3/"
+                    }
+                }
+            ]
+        }
+    ],
     "species": {
         "name": "",
         "url": "/src/assets/data/api/v2/pokemon-species/666/index.json"
@@ -23,6 +60,49 @@
     "sprites": {
         "front_default": "/src/assets/images/defaultPokemon.png"
     },
-    "stats": {},
+    "stats": [{
+            "base_stat": 33,
+            "effort": 0,
+            "stat": {
+                "name": "hp",
+                "url": "https://pokeapi.co/api/v2/stat/1/"
+            }
+        }, {
+            "base_stat": 136,
+            "effort": 0,
+            "stat": {
+                "name": "attack",
+                "url": "https://pokeapi.co/api/v2/stat/2/"
+            }
+        }, {
+            "base_stat": 0,
+            "effort": 0,
+            "stat": {
+                "name": "defense",
+                "url": "https://pokeapi.co/api/v2/stat/3/"
+            }
+        }, {
+            "base_stat": 6,
+            "effort": 1,
+            "stat": {
+                "name": "special-attack",
+                "url": "https://pokeapi.co/api/v2/stat/4/"
+            }
+        }, {
+            "base_stat": 6,
+            "effort": 0,
+            "stat": {
+                "name": "special-defense",
+                "url": "https://pokeapi.co/api/v2/stat/5/"
+            }
+        }, {
+            "base_stat": 29,
+            "effort": 0,
+            "stat": {
+                "name": "speed",
+                "url": "https://pokeapi.co/api/v2/stat/6/"
+            }
+        }
+    ],
     "abilities": {}
 }
