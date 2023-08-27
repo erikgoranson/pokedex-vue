@@ -111,7 +111,7 @@ function changeStoredPokemon(url: string){
     //check if the current ID is already the same before doing  this
     const id = getNationalID(url);
     if (id) {
-        pokemonStore.setPokemonID(Number(id));
+        pokemonStore.changePokemon(Number(id));
     }
 }
 

@@ -10,17 +10,14 @@ export const usePokemonStore = defineStore('pokemon', {
         }
     }, 
     actions:{
-        changePokemon (payload: GridItem) {
-            this.changeDefaultPokemon(payload);
+        changePokemon(id: number) {
+            this.changeDefaultPokemon(id);
             this.isDefault = false;
         },
-        changeDefaultPokemon(payload: GridItem) {
-            this.data = payload;
-        },
-        setPokemonID(id: number ): void {
+        changeDefaultPokemon(id: number) {
             this.data = <GridItem>{
                 id: id,
             }
-        }
+        },
     }
 })
