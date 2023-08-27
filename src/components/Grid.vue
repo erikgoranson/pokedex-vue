@@ -94,7 +94,7 @@ function getTypeStyle(key: string){
       </tr>
     </thead>
     <tbody>
-      <tr v-for="entry in filteredData" class="nonHeaderRow">
+      <tr v-for="entry in filteredData" class="nonHeaderRow cursor-pointer">
         <td v-for="key in columns" @click="storeSelectedPokemon(entry)">
           <span :class="getTypeStyle(entry[key])">{{entry[key]}}</span>
           

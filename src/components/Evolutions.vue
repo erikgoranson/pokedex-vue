@@ -142,7 +142,7 @@ function changeStoredPokemon(url: string){
 
                             <div v-if="stage!=1" id="condition" class="h-full flex flex-col items-center justify-center rounded-lg my-1 mr-2 py-3 text-xs">lvl 1<br>⟶</div>
 
-                            <div id="pkmn" class="h-full flex flex-col items-center justify-center bg-gray-100 rounded-lg my-1 py-3" ><img class="" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getNationalID(e.species.url)}.png`" /></div>
+                            <div id="pkmn" class="h-full flex flex-col items-center justify-center bg-gray-100 rounded-lg my-1 py-3 cursor-pointer" ><img class="" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getNationalID(e.species.url)}.png`" /></div>
 
                         </div>
                     </div>
