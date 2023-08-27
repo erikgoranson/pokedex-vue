@@ -115,6 +115,16 @@ function changeStoredPokemon(url: string){
     }
 }
 
+function getCursorStyle(url: string){
+    const id = Number(getNationalID(url));
+    const currentID = pokemonStore.data.id;
+    let style = "";
+    if(id && currentID != id){
+        style = "cursor-pointer";
+    }
+    return style;
+}
+
 </script>
 
 <template>
@@ -127,7 +137,7 @@ function changeStoredPokemon(url: string){
                         <div class="flex items-center justify-center flex flex-col" v-for="e in evolutionChainList.filter(f => f.evolution_stage == stage)">
 
                             <span v-if="stage!=1">↓ </span>
-                            <img class="bg-gray-100 rounded-lg mr-1 mb-1 cursor-pointer" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getNationalID(e.species.url)}.png`" @click="changeStoredPokemon(e.species.url)"/>
+                            <img class="bg-gray-100 rounded-lg mr-1 mb-1" :class="getCursorStyle(e.species.url)" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getNationalID(e.species.url)}.png`" @click="changeStoredPokemon(e.species.url)"/>
 
                         </div>
                     </td>
@@ -142,7 +152,7 @@ function changeStoredPokemon(url: string){
 
                             <div v-if="stage!=1" id="condition" class="h-full flex flex-col items-center justify-center rounded-lg my-1 mr-2 py-3 text-xs">lvl 1<br>⟶</div>
 
-                            <div id="pkmn" class="h-full flex flex-col items-center justify-center bg-gray-100 rounded-lg my-1 py-3 cursor-pointer" ><img class="" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getNationalID(e.species.url)}.png`" /></div>
+                            <div id="pkmn" class="h-full flex flex-col items-center justify-center bg-gray-100 rounded-lg my-1 py-3" :class="getCursorStyle(e.species.url)"><img class="" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getNationalID(e.species.url)}.png`" /></div>
 
                         </div>
                     </div>

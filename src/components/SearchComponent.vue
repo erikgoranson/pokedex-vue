@@ -44,7 +44,7 @@ function retrieveLocalStorageData(key: string){
 function populateDefaultEntry() {
   if(pokemonStore.isDefault){ 
     const currentDexFirstEntry = gridData.value[0];
-    pokemonStore.changeDefaultPokemon(currentDexFirstEntry.id);
+    pokemonStore.setDefaultPokemon(currentDexFirstEntry.id);
   }
 }
 
