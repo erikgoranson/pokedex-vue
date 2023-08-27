@@ -47,7 +47,7 @@ function capitalize(str:string) {
 }
 
 function storeSelectedPokemon(entry: GridItem){ 
-  pokemonStore.changePokemon(entry);
+  pokemonStore.changePokemon(entry.id);
 }
 
 function getTypeStyle(key: string){
