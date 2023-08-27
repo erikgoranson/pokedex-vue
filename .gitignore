@@ -26,3 +26,6 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+# pokeApi static copy - https://github.com/PokeAPI/api-data
+src/assets/data

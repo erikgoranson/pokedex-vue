@@ -1,89 +1,148 @@
 <script setup lang="ts">
-import { ref, onMounted, defineProps } from 'vue';
-import axios from 'axios';
+import { ref, onMounted, defineProps, watch } from 'vue';
+import axios, { all } from 'axios';
 import Grid from '@/components/Grid.vue';
-import type { SearchItem } from '@/components/types';
+import type { GridItem, DefaultDTO, PokemonEntry, PokemonTypes, PokemonData, PokedexInfo } from '@/components/types';
+import { useVersionStore } from '@/stores/version';
+import { usePokemonStore } from '@/stores/pokemon';
+import { computed } from 'vue';
 
-interface PokedexInfo {
-    name: string,
-    pokemon_entries: PokemonEntry[]
-}
+type Slots = 1 | 2;
 
-interface PokemonEntry {
-    entry_number: string, //may need to update types.ts
-    pokemon_species: PokemonSpecies
-}
+const gridColumns: string[] = ['id', 'name', 'type1', 'type2'];
 
-interface PokemonSpecies {
-    name: string,
-    url: string
-}
+const versionStore = useVersionStore();
+const pokemonStore = usePokemonStore();
 
-const props = defineProps({
-    gridColumns: {
-      type: Array<string>,
-      default: ['id', 'name', 'national id', 'types']
-    },
-    localStorageKey: {
-      type: String,
-      default: 'selectedPokedex'
-    }
+const gridData = ref<GridItem[]>(<GridItem[]>[]);
+const searchQuery = ref('');
+
+const nationalDexKey = "nationalDex";
+const cacheExists = ref(false);
+
+const nationalDex = computed(() => {
+  const cacheState = cacheExists.value;
+  const entries = retrieveLocalStorageData(nationalDexKey) as GridItem[];
+  return entries;
 })
 
-const gridData = ref<SearchItem[]>(<SearchItem[]>[]);
-const searchQuery = ref('');
-const pokedex = ref<PokedexInfo>(<PokedexInfo>{});
-
-function getCachedPokedexData(){
-  const entries: PokemonEntry[] = localStorage.getItem(props.localStorageKey) ? JSON.parse(localStorage.getItem(props.localStorageKey) || '') : [];
-  return entries;
-}
-
-function populateSearchData() {
-  //retreive any pokedex previously cached to localStorage 
-  let pokedexData: PokemonEntry[] = pokedex.value.pokemon_entries;
-  if (pokedex.value.name == undefined){
-    pokedexData = getCachedPokedexData();
-  }
+function getPokemonType(types: PokemonTypes[], slot: Slots){ 
+  let final: string = ''
+  const theType: PokemonTypes = types.find((t) => t.slot === slot) || {} as PokemonTypes;
   
-  //transform the data to the search panel's layout and apply it
-  const searchData = pokedexData.map((p: PokemonEntry) => <SearchItem>{
-    id: String(p.entry_number).padStart(3, "0"),
-    name: p.pokemon_species.name,
-    "national id": p.pokemon_species.url.slice(0, -1).split("/").pop() || '',
-    types: 'type1/Type2',
-    url: p.pokemon_species.url,
-  })
-  gridData.value = searchData;
+  if ( theType.slot ) {
+    final = theType.type.name;
+  }
+  return final;
 }
 
-async function fetchPokedexInfo() {
-  //fetch selected pokedex's data unless already cached
-  if (gridData.value.length == 0){
-    const pokedexResponse = await axios.get<PokedexInfo>('https://pokeapi.co/api/v2/pokedex/3');
-    console.log('api call was run');
+function retrieveLocalStorageData(key: string){
+    const data = localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key) || '') : [];
+    return data;
+}
 
-    pokedex.value = pokedexResponse.data;
-    localStorage.setItem(props.localStorageKey, JSON.stringify(pokedexResponse.data.pokemon_entries));
-    console.log('cached results to the local storage');
-
-    populateSearchData(); 
+function populateDefaultEntry() {
+  if(pokemonStore.isDefault){ 
+    const currentDexFirstEntry = gridData.value[0];
+    pokemonStore.setDefaultPokemon(currentDexFirstEntry.id);
   }
+}
+
+async function buildNationalDexStoreCache(resync: boolean){
+  const nationalDexTmp = [] as GridItem[];
+
+  //check whether to proceed
+  if(nationalDex.value.length !== 0){ //cache already exists
+    cacheExists.value = true;
+    if(resync === false){ //resync was not requested
+      return;
+    }
+  }
+
+  //get national pokedex
+  const nationalDexResponse: PokedexInfo = await axios
+    .get('/src/assets/data/api/v2/pokedex/1/index.json')
+    .then((response) => {
+      return response.data;
+    })
+
+  //build promises for all entries
+  const promises = nationalDexResponse.pokemon_entries.map(m => {
+    const nationalId = m.entry_number;
+    const endpoint = `/src/assets/data/api/v2/pokemon/${nationalId}/index.json`;
+    return axios.get<PokemonData>(endpoint)
+      .then((result) => {
+        const dexEntry = <GridItem>{
+          id: nationalId,
+          name: result.data.name,
+          type1: getPokemonType(result.data.types, 1),
+          type2: getPokemonType(result.data.types, 2),
+        }
+        nationalDexTmp.push(dexEntry);
+    })
+  })
+
+  await Promise.all(promises).then(() => {
+    console.log('national dex has been cached');
+  })
+
+  localStorage.setItem(nationalDexKey, JSON.stringify(nationalDexTmp));
+  cacheExists.value = true;
+}
+
+async function getGridData(pokedexes: DefaultDTO[]){
+
+  let tempGrid = [] as GridItem[]; 
+
+  let allUrls = [] as string[]; 
+  await axios.all(
+    pokedexes.map((p) => axios
+      .get<PokedexInfo>(`/src/assets/data${p.url}index.json`)
+      .then((results) => {
+        allUrls.push(...results.data.pokemon_entries.map(x => x.pokemon_species.url))
+      })
+    )
+  )
+  const uniqueUrls = [...new Set(allUrls)];
+
+  uniqueUrls.forEach(url => {
+    const nationalId = url.slice(0, -1).split("/").pop();
+    const match = nationalDex.value.filter(x => x.id == Number(nationalId)); 
+    if (match.length == 0){
+      console.log(`no match found for ${nationalId}`);
+    }
+    tempGrid.push(match[0])
+  })
+
+  gridData.value = tempGrid;
+  populateDefaultEntry();
 }
 
 onMounted(async () => {
-    populateSearchData(),
-    await fetchPokedexInfo()
+  buildNationalDexStoreCache(false);
 });
+
+watch(versionStore, (newValue, oldValue) => {
+  getGridData(versionStore.data.version_group.pokedexes);
+}); 
+
+watch(cacheExists, (newValue, oldValue) => {
+  if(cacheExists.value){
+    getGridData(versionStore.data.version_group.pokedexes);
+  }
+}); 
+
 </script>
 
 <template>
-  <div class>
-    <form id="search">Search <input name="query" v-model="searchQuery"></form>
-    <div>
+  <div>
+    <form id="search"><input class="w-full" name="query" placeholder="Type to search" v-model="searchQuery"></form>
+  </div>
+  <div class="">
+    <div class="flex h-screen justify-center overflow-y-auto overflow-x-hidden">
       <Grid 
         :data="gridData"
-        :columns="props.gridColumns"
+        :columns="gridColumns"
         :filter-key="searchQuery">
       </Grid>
     </div>

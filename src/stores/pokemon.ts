@@ -1,22 +1,25 @@
-import {defineStore} from 'pinia'
+import {defineStore} from 'pinia';
+import type { GridItem } from '@/components/types';
 
-interface TableItem {
-    id: string, //then just set these as the custom headers I wanted?
-    name: string,
-    "national id": string,
-    types: string,
-    url: string,
-  } 
 
 export const usePokemonStore = defineStore('pokemon', {
     state: () => {
         return{
-            data: <TableItem>{}
+            data: <GridItem>{},
+            isDefault: true,
         }
     }, 
     actions:{
-        changePokemon (payload: TableItem) {
-            this.data = payload
-        }
+        changePokemon(id: number) {
+            this.setDefaultPokemon(id);
+            this.isDefault = false;
+        },
+        setDefaultPokemon(id: number) {
+            if(this.data.id != id){
+                this.data = <GridItem>{
+                    id: id,
+                };
+            }
+        },
     }
 })
