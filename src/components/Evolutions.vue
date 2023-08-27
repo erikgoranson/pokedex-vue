@@ -146,8 +146,8 @@ function getCursorStyle(url: string){
         </div>
         <div v-else-if="evolutionChainList.length > 0" class="overflow-x-auto">
             <div id="fullchain" class="flex place-content-center ">
-                <div id="stage"  class=" p-1 flex flex-col " v-for="stage in evolutionStages">
-                    <div id="condition and pkmn as a row CONTAINER" class="h-full flex flex-col items-center justify-center">
+                <div id="stage" class=" p-1 flex flex-col " v-for="stage in evolutionStages">
+                    <div class="h-full flex flex-col items-center justify-center">
                         <div id="condition+pkmn" class="h-full flex flex-row mb-1" v-for="e in evolutionChainList.filter(f => f.evolution_stage == stage)" @click="changeStoredPokemon(e.species.url)">
 
                             <div v-if="stage!=1" id="condition" class="h-full flex flex-col items-center justify-center rounded-lg my-1 mr-2 py-3 text-xs">lvl 1<br>⟶</div>
