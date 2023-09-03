@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
 import type { EvolutionChain, PokemonSpecies, ChainLink, DefaultDTO, EvolutionDetail } from './types';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { usePokemonStore } from '@/stores/pokemon';
 
 const pokemonStore = usePokemonStore();
@@ -33,10 +33,103 @@ class StagedChainLink implements ChainLink {
 
     is_baby!: boolean;
     species!: DefaultDTO;
-    evolution_details!: EvolutionDetail;
+    evolution_details!: Array<EvolutionDetail>;
     evolves_to!: Array<ChainLink>;
     evolution_stage: number; //indexed from 1 //max of 3
 }
+
+const evolutionDetails = ref<EvolutionDetail[]>([] as EvolutionDetail[]);
+
+function setEvolutionDetails(currentChain: StagedChainLink){
+    if(currentChain.species.name == pokemonStore.data.name){
+        evolutionDetails.value = currentChain.evolution_details;
+    } 
+
+    if(!previousEvolution.value){
+        evolutionDetails.value = [] as EvolutionDetail[];
+    }
+}
+
+interface TriggerDetail {
+    conditionLabel: string,
+    conditionValue: any,
+}
+
+const formattedEvolutionDetails = computed(() => {
+    const details = evolutionDetails.value;
+    let formattedDetails = [] as string[];
+
+    details.forEach(d => {
+
+        const trigger = d.trigger.name;
+        let detail = "";
+        switch (trigger) {
+            case "level-up":
+
+                if(d.min_level != null){
+                    detail = `Reach level ${d.min_level}`;
+                }
+                //this can sometimes be null
+                
+                const result2 = Object.entries(d).map(( [k, v] ) => (<TriggerDetail>{ conditionLabel: k, conditionValue: v})) as TriggerDetail[];
+                const filterAgain = result2.filter(r => r.conditionValue != null && r.conditionValue != false);
+
+                filterAgain.forEach(x => {
+                    if(detail != ""){
+                        detail += " and "
+                    }
+                    const value = x.conditionValue?.name ? x.conditionValue?.name : x.conditionValue;
+                    detail += `${x.conditionLabel} is ${value}`;
+                });
+
+                break;
+            case "trade":
+                detail = "Trade"; //doesn't handle combinations. see magmortar
+                break;
+            case "use-item":
+                detail = `Use ${d.item.name}`;
+                break;
+            case "shed":
+                detail = "explain shedninja";
+                break;
+            case "spin":
+                detail = "explain alcremie";
+                break;
+            case "tower-of-darkness":
+                detail = "explain urshifu"
+                break;
+            case "tower-of-waters":
+                detail = "explain urshifu";
+                break;
+            case "three-critical-hits":
+                detail = "explain sirfetchd";
+                break;
+            case "take-damage":
+                detail = "runerigus";
+                break;
+            case "other":
+                detail = `they stopped making new evolution types and grouped these together. plz look up ${d.trigger.url}`;
+                break;
+            case "agile-style-move":
+                detail = "wyrdeer";
+                break;
+            case "strong-style-move":
+                detail = "overqwil";
+                break;
+            case "recoil-damage":
+                detail = "basculegion";
+                break;
+            default:
+                detail = "no trigger found";
+                break;
+        }
+
+        formattedDetails.push(detail);
+
+    })
+
+    return formattedDetails;
+})
 
 //transform chain into a list for output
 const evolutionChainList = computed(() => {
@@ -63,6 +156,7 @@ const evolutionChainList = computed(() => {
             currentChain.evolves_to.forEach(x => {
                 let next = new StagedChainLink(x, currentChain.evolution_stage+1);
                 evoList.push(next);
+                setEvolutionDetails(next);
 
                 //only wurmple and goomy have branched evolutions that THEN evolve
                 //no (current) pokemon have branched evolutions which then branch again
@@ -70,15 +164,17 @@ const evolutionChainList = computed(() => {
                     x.evolves_to.forEach(y => {
                         next = new StagedChainLink(y, currentChain.evolution_stage+2)
                         evoList.push(next);
+                        setEvolutionDetails(next);
                     })
                 }
             })
             break;
         }
-
+        
         if (currentChain.evolves_to.length > 0){
             nextChain = new StagedChainLink(currentChain.evolves_to[0], currentChain.evolution_stage+1);
             evoList.push(nextChain);
+            setEvolutionDetails(nextChain);
             currentChain = nextChain;
         }
     }
@@ -130,6 +226,7 @@ function getCursorStyle(url: string){
 <template>
     <InformationSection>
         <div class="flex justify-center items-center">EVOLUTIONS</div>
+
         <div v-if="eeveeTest == true" class="overflow-x-auto">
             <table>
                 <tr class="flex flex-col items-center justify-center">
@@ -160,6 +257,14 @@ function getCursorStyle(url: string){
             </div>
         </div>
         <div v-else class="overflow-x-auto">No evolutions</div>
+
+        <div v-if="evolutionDetails.length > 0">
+            <p>Conditions for evolution:</p>
+            <span v-for="ex in formattedEvolutionDetails">
+                {{ ex }}<br>
+            </span>
+        </div>
+
     </InformationSection>
 </template>
 

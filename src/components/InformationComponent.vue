@@ -24,15 +24,19 @@ const selectedPokemonAbilities = ref<Ability[]>([] as Ability[]);
 const selectedPokemonEvolutionChain = ref<EvolutionChain>({} as EvolutionChain);
 
 async function getPkmnDataInfo(id: number){
-  const endpoint = `/src/assets/data/api/v2/pokemon/${id}/index.json`;
-  await axios.get<PokemonData>(endpoint)
-  .then((result) => {
-    selectedPokemonData.value = result.data;
-    getPkmnSpeciesInfo();
-    getPkmnAbilitiesInfo();
-
-    //isLoaded = true;
-  })
+  if(selectedPokemonData.value.id != id) {
+    const endpoint = `/src/assets/data/api/v2/pokemon/${id}/index.json`;
+    await axios.get<PokemonData>(endpoint)
+      .then((result) => {
+        selectedPokemonData.value = result.data;
+        pokemonStore.fillPokemonData(result.data);
+        
+        getPkmnSpeciesInfo();
+        getPkmnAbilitiesInfo();
+        
+        //isLoaded = true;
+    })
+  }
 }
 
 async function getPkmnSpeciesInfo() {

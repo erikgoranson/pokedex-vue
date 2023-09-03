@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia';
-import type { GridItem } from '@/components/types';
+import type { GridItem, PokemonData } from '@/components/types';
 
 
 export const usePokemonStore = defineStore('pokemon', {
@@ -21,5 +21,13 @@ export const usePokemonStore = defineStore('pokemon', {
                 };
             }
         },
+        fillPokemonData(pokemonDetail: PokemonData){
+            this.data = <GridItem>{
+                id: pokemonDetail.id,
+                name: pokemonDetail.name,
+                type1: pokemonDetail.types[0].type.name,
+                type2: pokemonDetail.types[0]?.type.name,
+            }
+        }
     }
 })
