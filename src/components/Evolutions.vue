@@ -50,7 +50,7 @@ function setEvolutionDetails(currentChain: StagedChainLink){
     }
 }
 
-interface TriggerDetail {
+interface EvoCondition {
     conditionLabel: string,
     conditionValue: any,
 }
@@ -63,61 +63,105 @@ const formattedEvolutionDetails = computed(() => {
 
         const trigger = d.trigger.name;
         let detail = "";
+
+        //cast all required evolution conditions into an array
+        const result2 = Object.entries(d).map(( [k, v]: any) => (<EvoCondition>{ conditionLabel: k, conditionValue: v})) as EvoCondition[];
+
+        //gender is a bit. needs to be also cleaned up
+
         switch (trigger) {
             case "level-up":
-
-                if(d.min_level != null){
-                    detail = `Reach level ${d.min_level}`;
+            
+                if(d.min_level){
+                    detail = `Level ${d.min_level}`;
+                } 
+                else {
+                    detail = "Level up";
                 }
-                //this can sometimes be null
-                
-                const result2 = Object.entries(d).map(( [k, v] ) => (<TriggerDetail>{ conditionLabel: k, conditionValue: v})) as TriggerDetail[];
-                const filterAgain = result2.filter(r => r.conditionValue != null && r.conditionValue != false);
 
+                const filterAgain = result2.filter(r => 
+                    r.conditionValue != null && 
+                    r.conditionValue != false && 
+                    r.conditionLabel != "trigger" &&
+                    r.conditionLabel != "min_level"
+                );
                 filterAgain.forEach(x => {
-                    if(detail != ""){
-                        detail += " and "
-                    }
+                    detail += " and "
+                    const value = x.conditionValue?.name ? x.conditionValue?.name : x.conditionValue;
+                    detail += `${x.conditionLabel} is ${value}`;
+                });
+                
+                break; //strange cases: magnezone, vikavolt
+            case "trade":
+                detail = "Trade"; //doesn't handle combinations. see magmortar
+
+                const filterAgain2 = result2.filter(r => 
+                    r.conditionValue != null && 
+                    r.conditionValue != false && 
+                    r.conditionLabel != "trigger" 
+                );
+                filterAgain2.forEach(x => {
+                    detail += " and "
                     const value = x.conditionValue?.name ? x.conditionValue?.name : x.conditionValue;
                     detail += `${x.conditionLabel} is ${value}`;
                 });
 
-                break;
-            case "trade":
-                detail = "Trade"; //doesn't handle combinations. see magmortar
+
                 break;
             case "use-item":
                 detail = `Use ${d.item.name}`;
+
+                //not sure if this applies to use item evos
+                const filterAgain3 = result2.filter(r => 
+                    r.conditionValue != null && 
+                    r.conditionValue != false && 
+                    r.conditionLabel != "trigger" &&
+                    r.conditionLabel != "item"
+                );
+                filterAgain3.forEach(x => {
+                    detail += " and "
+                    const value = x.conditionValue?.name ? x.conditionValue?.name : x.conditionValue;
+                    detail += `${x.conditionLabel} is ${value}`;
+                });
                 break;
+            //urshifu //not working
+            case "tower-of-darkness":
+            case "tower-of-waters":
+                detail = `Complete ${trigger}`;
+                break;
+            //BEGIN single pokemon evolutions
             case "shed":
-                detail = "explain shedninja";
+                detail = "Level 20, empty slot in party, and one empty pokeball"
                 break;
             case "spin":
-                detail = "explain alcremie";
-                break;
-            case "tower-of-darkness":
-                detail = "explain urshifu"
-                break;
-            case "tower-of-waters":
-                detail = "explain urshifu";
+                detail = "https://www.serebii.net/pokedex-swsh/alcremie/";
                 break;
             case "three-critical-hits":
                 detail = "explain sirfetchd";
                 break;
             case "take-damage":
-                detail = "runerigus";
-                break;
-            case "other":
-                detail = `they stopped making new evolution types and grouped these together. plz look up ${d.trigger.url}`;
+                detail = "explain runerigus";
                 break;
             case "agile-style-move":
-                detail = "wyrdeer";
+                detail = "explain wyrdeer";
                 break;
             case "strong-style-move":
-                detail = "overqwil";
+                detail = "explain overqwil";
                 break;
             case "recoil-damage":
-                detail = "basculegion";
+                detail = "explain basculegion";
+                break;
+            //END single pokemon evolutions 
+            case "other":
+                detail = `they stopped making new evolution types and grouped these together. plz look up ${d.trigger.url}`;
+                //kingambit
+                //pawmot
+                //maushold
+                //brambleghast
+                //rabsca
+                //palafin
+                //annihilape
+                //gholdengo
                 break;
             default:
                 detail = "no trigger found";
@@ -143,6 +187,7 @@ const evolutionChainList = computed(() => {
     let nextChain = {} as StagedChainLink;
     evoList.push(firstChain);
     let currentChain = firstChain; 
+    console.log(firstChain);
 
     if(currentChain.evolves_to.length == 0){
         //don't advance if zero evolutions
@@ -214,7 +259,7 @@ function changeStoredPokemon(url: string){
 function getCursorStyle(url: string){
     const id = Number(getNationalID(url));
     const currentID = pokemonStore.data.id;
-    let style = "";
+    let style = "bg-yellow-100"; //change pokemon style if not clickable
     if(id && currentID != id){
         style = "cursor-pointer";
     }
@@ -226,7 +271,6 @@ function getCursorStyle(url: string){
 <template>
     <InformationSection>
         <div class="flex justify-center items-center">EVOLUTIONS</div>
-
         <div v-if="eeveeTest == true" class="overflow-x-auto">
             <table>
                 <tr class="flex flex-col items-center justify-center">
@@ -247,7 +291,7 @@ function getCursorStyle(url: string){
                     <div class="h-full flex flex-col items-center justify-center">
                         <div id="condition+pkmn" class="h-full flex flex-row mb-1" v-for="e in evolutionChainList.filter(f => f.evolution_stage == stage)" @click="changeStoredPokemon(e.species.url)">
 
-                            <div v-if="stage!=1" id="condition" class="h-full flex flex-col items-center justify-center rounded-lg my-1 mr-2 py-3 text-xs">lvl 1<br>⟶</div>
+                            <div v-if="stage!=1" id="condition" class="h-full flex flex-col items-center justify-center rounded-lg w-12 my-1 mr-2 py-3 text-xs">lvl 1<br>⟶</div>
 
                             <div id="pkmn" class="h-full flex flex-col items-center justify-center bg-gray-100 rounded-lg my-1 py-3" :class="getCursorStyle(e.species.url)"><img class="" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getNationalID(e.species.url)}.png`" /></div>
 
