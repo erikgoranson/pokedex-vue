@@ -44,7 +44,7 @@ const filteredFlavorTextEntry = computed(() => {
     <div class="flex flex-wrap -mx-2 ">
       <div class="w-2/5 md:w-2/5 lg:w-1/5 px-1 mb-2">
         <div id="pkmn-image" class="relative border h-28 text-sm text-grey-dark flex items-center justify-center">
-          <img class="" :src="props.data.sprites.front_default" />
+          <img class="" src="@/assets/images/defaultPokemon.png" />
           <h1 class="absolute text-0xl bottom-0 left-1/2 -translate-x-1/2">No. {{props.data.id}}</h1>
         </div>
       </div>
