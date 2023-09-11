@@ -143,13 +143,13 @@ function getCursorStyle(url: string){
             <div id="fullchain" class="flex place-content-center ">
                 <div id="stage" class=" p-1 flex flex-col " v-for="stage in evolutionStages">
                     <div class="h-full flex flex-col items-center justify-center">
-                        <div id="condition+pkmn" class="h-full flex flex-row mb-1" v-for="e in evolutionChainList.filter(f => f.evolution_stage == stage)" @click="changeStoredPokemon(e.species.url)">
+                        <div id="condition+pkmn" class="h-full flex flex-row mb-1" v-for="e in evolutionChainList.filter(f => f.evolution_stage == stage)">
 
                             <span v-if="stage!=1" id="condition" >
                                 <EvolutionConditions :chain="e"/>
                             </span>
 
-                            <div id="pkmn" class="h-full flex flex-col items-center justify-center bg-gray-100 rounded-lg my-1 py-3 w-14" :class="getCursorStyle(e.species.url)"><img class="" src="@/assets/images/defaultPokemon.png" /></div>
+                            <div id="pkmn" class="h-full flex flex-col items-center justify-center bg-gray-100 rounded-lg my-1 py-3 w-14" :class="getCursorStyle(e.species.url)" @click="changeStoredPokemon(e.species.url)" ><img class="" src="@/assets/images/defaultPokemon.png" /></div>
 
                         </div>
                     </div>
