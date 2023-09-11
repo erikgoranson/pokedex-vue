@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import type { ChainLink } from './types';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
   chain: {
     type: Object as () => ChainLink,
     required: true
+  },
+  isVertical: {
+    type: Boolean,
+    required: false,
   }
 })
 
@@ -38,6 +42,19 @@ function formatGender(detail: EvoDetail){
     
     return detail;
 }
+
+const chainStyle = computed(() => {
+    let style = "h-full";
+    arrow.value = "⟶"
+
+    if( props.isVertical ){
+        style = "h-24";
+        arrow.value = "↓"
+    }
+    return style;
+})
+
+const arrow = ref<string>("⟶");
 
 const formattedEvolutionDetails = computed(() => {
     
@@ -138,9 +155,9 @@ const formattedEvolutionDetails = computed(() => {
 </script>
 
 <template>
-    <div class="h-full flex flex-col items-center justify-center rounded-lg w-20 my-1 mr-2 py-3 text-xs">
+    <div :class="chainStyle" class="flex flex-col items-center justify-center rounded-lg w-20 my-1 mr-2 py-3 text-xs">
         <div class="font-bold">{{ formattedEvolutionDetails?.trigger }}</div>
-        <div>⟶</div>
+        <div v-html="arrow"></div>
         <div class="flex items-center justify-center break-words w-20" v-for="c in formattedEvolutionDetails?.conditions">
             {{ c.conditionLabel }}:<br>{{ c.conditionValue }}
         </div>

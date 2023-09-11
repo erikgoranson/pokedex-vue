@@ -130,7 +130,9 @@ function getCursorStyle(url: string){
                     <td class="w-full flex flex-wrap  items-center justify-center" v-for="stage in evolutionStages">
                         <div class="flex items-center justify-center flex flex-col" v-for="e in evolutionChainList.filter(f => f.evolution_stage == stage)">
 
-                            <span v-if="stage!=1">↓ </span>
+                            <span v-if="stage!=1">
+                                <EvolutionConditions :chain="e" :isVertical="true"/>
+                            </span>
                             
                             <img class="bg-gray-100 rounded-lg mr-1 mb-1" :class="getCursorStyle(e.species.url)" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getNationalID(e.species.url)}.png`" @click="changeStoredPokemon(e.species.url)"/>
 
