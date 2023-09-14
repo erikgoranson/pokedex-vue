@@ -31,4 +31,4 @@ coverage
 src/assets/data
 
 #pokeAPI sprites
-src/assets/data/images/sprites/
+src/assets/images/sprites/
