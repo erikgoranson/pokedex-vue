@@ -29,3 +29,6 @@ coverage
 
 # pokeApi static copy - https://github.com/PokeAPI/api-data
 src/assets/data
+
+#pokeAPI sprites
+src/assets/data/images/sprites/
