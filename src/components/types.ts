@@ -261,5 +261,4 @@ export function getStatLabel(statName: string){
         break;
     }
     return output.toUpperCase();
-  }
-export default getStatLabel; //IDE demanded this
+}

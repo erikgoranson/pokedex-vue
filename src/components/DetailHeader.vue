@@ -21,6 +21,14 @@ function formatPokemonName(pokemonName: string) {
   return pokemonName.replace('-',' '); 
 }
 
+function getLocalSpritePath(url: string){
+  const apiSpritePath = "https://raw.githubusercontent.com/PokeAPI/sprites/master/";
+  const localSpritePath = "/src/assets/images/";
+  
+  const fullLocalPath = url.replace(apiSpritePath, localSpritePath);
+  return fullLocalPath;
+}
+
 const filteredGenus = computed(() => props.species.genera.filter(x => x.language.name == "en").map(obj => obj.genus).toString());
 
 const filteredFlavorTextEntry = computed(() => {
@@ -36,7 +44,7 @@ const filteredFlavorTextEntry = computed(() => {
   return flavortext;
 });
 
-const spriteUrl = computed(() => `/src/assets/images/sprites/pokemon/${props.data.id}.png`)
+const spriteUrl = computed(() => getLocalSpritePath(props.data.sprites.front_default));
 
 </script>
 

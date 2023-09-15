@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
 import type { PokemonStat } from '@/components/types';
-import getStatLabel from '@/components/types'
+import { getStatLabel } from '@/components/types'
 import { computed } from 'vue';
 
 const props = defineProps({
