@@ -2,7 +2,7 @@
 import { ref, watch, onMounted, computed } from "vue";
 import axios from 'axios';
 import { usePokemonStore } from '@/stores/pokemon';
-import type { PokemonData, PokemonSpecies, Ability, EvolutionChain } from '@/components/types';
+import type { PokemonData, PokemonSpecies, Ability, EvolutionChain, LocationAreaEncounter } from '@/components/types';
 import Detail from './DetailHeader.vue';
 import BaseStatistics from './BaseStatistics.vue';
 import SpeciesDetails from './SpeciesDetails.vue';
@@ -23,6 +23,8 @@ const selectedPokemonAbilities = ref<Ability[]>([] as Ability[]);
 
 const selectedPokemonEvolutionChain = ref<EvolutionChain>({} as EvolutionChain);
 
+const selectedPokemonEncounters = ref<LocationAreaEncounter[]>([] as LocationAreaEncounter[])
+
 async function getPkmnDataInfo(id: number){
   if(selectedPokemonData.value.id != id) {
     const endpoint = `/src/assets/data/api/v2/pokemon/${id}/index.json`;
@@ -33,6 +35,7 @@ async function getPkmnDataInfo(id: number){
         
         getPkmnSpeciesInfo();
         getPkmnAbilitiesInfo();
+        getPkmnEncounters();
         
         //isLoaded = true;
     })
@@ -73,6 +76,15 @@ async function getPkmnEvolutionChain(){
   })
 }
 
+async function getPkmnEncounters(){
+  const id = selectedPokemonData.value.id;
+  const fullEndpoint = `/src/assets/data/api/v2/pokemon/${id}/encounters/index.json`;
+  await axios.get<LocationAreaEncounter>(fullEndpoint)
+  .then((result) => {
+    selectedPokemonEncounters.value.push(result.data);
+  })
+}
+
 watch(pokemonStore, (newValue, oldValue) => {
   getPkmnDataInfo(pokemonStore.data.id);
 });
@@ -102,7 +114,7 @@ let isLoaded = false;
       <hr />
       <Moves :data="selectedPokemonData.moves" />
       <hr />
-      <Locations />
+      <Locations :data="selectedPokemonEncounters"/>
       <hr />
       <Links />
     </div>

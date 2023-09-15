@@ -197,7 +197,24 @@ export interface EvolutionTrigger    {
 
 //item
 
-//location
+export interface LocationAreaEncounter {
+    location_area: DefaultDTO,
+    version_details: Array<VersionEncounterDetail>,
+}
+
+export interface VersionEncounterDetail {
+    version: DefaultDTO,
+    max_chance: number,
+    encounter_details: Array<Encounter>,
+}
+
+export interface Encounter {
+    min_level: number,
+    max_level: number,
+    condition_values: Array<DefaultDTO>,
+    chance: number,
+    method: DefaultDTO,
+}
 
 export interface Genus {
     genus: string,
