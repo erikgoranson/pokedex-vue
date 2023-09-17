@@ -23,7 +23,7 @@ const selectedPokemonAbilities = ref<Ability[]>([] as Ability[]);
 
 const selectedPokemonEvolutionChain = ref<EvolutionChain>({} as EvolutionChain);
 
-const selectedPokemonEncounters = ref<LocationAreaEncounter[]>([] as LocationAreaEncounter[])
+const selectedPokemonEncounters = ref([] as LocationAreaEncounter[])
 
 async function getPkmnDataInfo(id: number){
   if(selectedPokemonData.value.id != id) {
@@ -60,6 +60,7 @@ async function getPkmnAbilitiesInfo() {
     const partialEndpoint = ability.ability.url;
     const fullEndpoint = `/src/assets/data${partialEndpoint}index.json`;
 
+    //need to fix this
     await axios.get<Ability>(fullEndpoint).then((result) => {
       selectedPokemonAbilities.value.push(result.data);
     })
@@ -77,11 +78,12 @@ async function getPkmnEvolutionChain(){
 }
 
 async function getPkmnEncounters(){
+  selectedPokemonEncounters.value = [];
   const id = selectedPokemonData.value.id;
   const fullEndpoint = `/src/assets/data/api/v2/pokemon/${id}/encounters/index.json`;
-  await axios.get<LocationAreaEncounter>(fullEndpoint)
+  await axios.get<LocationAreaEncounter[]>(fullEndpoint)
   .then((result) => {
-    selectedPokemonEncounters.value.push(result.data);
+    selectedPokemonEncounters.value = result.data;
   })
 }
 

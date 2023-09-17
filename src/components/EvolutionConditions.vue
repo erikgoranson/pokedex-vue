@@ -80,8 +80,6 @@ const formattedEvolutionDetails = computed(() => {
             && x.conditionLabel != "min_level"
             && x.conditionLabel != "item"
         );
-
-        console.log(conditions);
             
         switch(trigger) {
             case "level-up":
