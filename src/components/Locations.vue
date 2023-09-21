@@ -92,18 +92,18 @@ function printEncounterConditions(encounter: FlattenedEncounter){
   if(encounter.condition_values.length == 0){
     return "N/A";
   }
-  return encounter.condition_values; //fix this after we find one
+  return encounter.condition_values.map(x => x.name).join(", ");
 }
 
 </script>
 
 <template>
-    <InformationSection>
+    <InformationSection class="mx-6">
         
       <div class="flex flex-col mb-2 justify-center items-center">LOCATIONS</div>
-      <div class="relative overflow-x-auto">
-        <table class="table-auto w-full text-sm text-left text-gray-500 dark:text-gray-400">
-          <thead>
+      <div v-if="filteredLocationAreaEncounters.length != 0" class="relative overflow-x-auto overflow-y-auto mb-8 max-h-52">
+        <table class="table-auto w-full text-sm text-left text-center">
+          <thead class="border-b">
             <td>location</td>
             <td>version</td>
             <td>chance</td>
@@ -133,13 +133,7 @@ function printEncounterConditions(encounter: FlattenedEncounter){
           </tbody>
         </table>
       </div>
+      <div v-else class="flex items-center mb-6">Location data not found. Trading or evolution may be required</div>
       
     </InformationSection>
 </template>
-
-<style scoped>
-
-td .subtable {
-  /*@apply w-1/4 bg-blue-500;*/
-}
-</style>
