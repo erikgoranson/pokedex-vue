@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
-import type { PokemonData, PokemonSpecies, Ability, EvolutionChain, LocationAreaEncounter, VersionEncounterDetail } from '@/components/types';
+import type { PokemonData, PokemonSpecies, Ability, EvolutionChain, LocationAreaEncounter, VersionEncounterDetail, Encounter } from '@/components/types';
 import { computed, reactive, ref, type Ref, watch} from 'vue';
+import { useVersionStore } from '@/stores/version';
 
 const props = defineProps({
   data: {
@@ -10,116 +11,135 @@ const props = defineProps({
   }
 })
 
-const generations = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix'] as const;
-type FilterKey = typeof generations[number];
-
-const filterKey = ref<FilterKey>('i'); 
+const version = useVersionStore();
 
 const filteredLocationAreaEncounters = computed(() => {
-  let gen = filterKey.value; 
-
-  //console.log(filterKey.value);
-
-  let versions: string[] = [];
-  switch (gen){
-    case 'i':
-      versions = ['red','blue','yellow'];
-      return getFilteredLocations(versions);
-
-    case 'ii':
-      versions = ['gold','silver','crystal'];
-      return getFilteredLocations(versions);
-
-    case 'iii':
-      versions = ['firered', 'ruby','saphire','emerald',  'leafgreen'];
-      return getFilteredLocations(['ruby','saphire','emerald', 'firered', 'leafgreen']);
-
-    case 'iv':
-      versions = ['diamond','pearl','platinum', 'heartgold', 'soulsilver'];
-      return getFilteredLocations(versions);
-
-    case 'v':
-      versions = ['black','white','black-2', 'white-2'];
-      return getFilteredLocations(versions);
-
-    case 'vi':
-      versions = ['x','y','omega-ruby', 'alpha-sapphire'];
-      return getFilteredLocations(versions);
-
-    case 'vii':
-      versions = ['sun','moon','ultra-sun', 'ultra-moon', 'lets-go-pikachu', 'lets-go-eevee'];
-      return getFilteredLocations(versions);
-
-    case 'viii':
-      versions = ['sword','shield','legends-arceus'];
-      return getFilteredLocations(versions);
-
-    case 'ix':
-      versions = ['scarlet','violet'];
-      return getFilteredLocations(versions);
-  }
-})
-
-function getFilteredLocations(versions: string[]) {
   let data = props.data;
   let locationAreaEncounters = [] as LocationAreaEncounter[];
-  console.log(versions);
-
-  //filter down lae records by allowed versions
+  const versions = version.data.version_group.versions?.map(x => x.name);
+  
+  //filter down lae records by the current selected version(s)
   locationAreaEncounters = data.filter(l => 
-    l.version_details.some(vd => versions.includes(vd.version.name) )
+    l.version_details.some(vd => versions?.includes(vd.version.name) )
   );
 
-  //this filters down the locations that only include rby, but leaves other stuff that doesnt apply like ss, hg, x/y
-  //so now filter down the child arrays in each element to only include version matcheas
-
+  //this filters down the locations that only include said version, but can leave other stuff that doesnt apply
+  //so now filter down the child arrays in each element to only include version matches and return a rebuilt location array
   let filteredlocationAreaEncounters = [] as LocationAreaEncounter[];
   locationAreaEncounters.forEach(element => {
-    //console.log(element.location_area.name);
-    
-    let newarray = element.version_details.filter(e => versions.includes(e.version.name));
-
-    const testLae = <LocationAreaEncounter>{
+    let filteredVersionDetails = element.version_details.filter(e => versions?.includes(e.version.name));
+    const newLae = <LocationAreaEncounter>{
       location_area: element.location_area,
-      version_details: newarray,
+      version_details: filteredVersionDetails,
     }
-    filteredlocationAreaEncounters.push(testLae);
+    filteredlocationAreaEncounters.push(newLae);
   });
 
+  console.log(filteredlocationAreaEncounters);
   return filteredlocationAreaEncounters;
+})
+
+///method for returning all encounters in the provided version details as a single array
+function listLocationEncounters(arr: VersionEncounterDetail[]){
+  let allEncounterDetails = [] as FlattenedEncounter[];
+  console.log('wat');
+  arr.forEach(x => {
+    x.encounter_details.forEach(y => {
+      const n = <FlattenedEncounter>{
+        chance: y.chance,
+        condition_values: y.condition_values,
+        method: y.method,
+        min_level: y.min_level,
+        max_level: y.max_level,
+        versionName: x.version.name
+      }
+      allEncounterDetails.push(n);
+    })
+  })
+
+  return allEncounterDetails;
 }
 
-function filterBy(key: FilterKey){
-    filterKey.value = key;
+interface FlattenedEncounter extends Encounter{
+  versionName: string,
+}
+
+///method for making the printed location name prettier
+function formatLocationName(location: string){
+  let output = location.replace('-',' ');
+  output = output.replace('area','');
+
+  return location
+    //all of these are different versions of the dash. wow
+    .replace('-',' ') 
+    .replace('-',' ')
+    .replace('-',' ')
+    .replace('-',' ')
+    .replace('area','');
+}
+
+///method for making the printed min/max level prettier
+function printLevelRange(encounter: FlattenedEncounter){
+  if (encounter.min_level == encounter.max_level){
+    return encounter.min_level;
+  }
+
+  return `${encounter.min_level} - ${encounter.max_level}`;
+}
+
+///method for making the printed encounter conditions prettier
+function printEncounterConditions(encounter: FlattenedEncounter){
+  if(encounter.condition_values.length == 0){
+    return "N/A";
+  }
+  return encounter.condition_values; //fix this after we find one
 }
 
 </script>
 
 <template>
-    <InformationSection class="flex flex-col justify-center items-center">
+    <InformationSection>
         
-        <div class="inline-flex  rounded-md shadow-sm" role="group">
-          <button v-for="g in generations" type="button" @click="filterBy(g)">
-            Gen {{ g }}
-          </button>
-        </div>
-
-        <!--p>{{ props }}</p>-->
-        <p>----</p>
-        <p v-for="element in filteredLocationAreaEncounters">
-          {{ element.location_area.name }}<br>
-          {{ element.version_details }}
-        </p>
-        <!--
-        <p v-for="e in filteredVersionDetails">{{ e }}</p>-->
-        
+      <div class="flex flex-col mb-2 justify-center items-center">LOCATIONS</div>
+      <div class="relative overflow-x-auto">
+        <table class="table-auto w-full text-sm text-left text-gray-500 dark:text-gray-400">
+          <thead>
+            <td>location</td>
+            <td>version</td>
+            <td>chance</td>
+            <td>method</td>
+            <td>Level</td>
+            <td>Conditions</td>
+          </thead>
+          <tbody>
+            <tr v-for="(entry, index) in filteredLocationAreaEncounters" class="border-b">
+              <td class="pr-2">{{ formatLocationName(entry.location_area.name) }}</td>
+              <td><p v-for="e in listLocationEncounters(entry.version_details)">
+                {{ e.versionName }}
+              </p></td>
+              <td><p v-for="e in listLocationEncounters(entry.version_details)">
+                {{ e.chance }}%
+              </p></td>
+              <td><p v-for="e in listLocationEncounters(entry.version_details)">
+                {{ e.method.name }}
+              </p></td>
+              <td><p v-for="e in listLocationEncounters(entry.version_details)">
+                {{ printLevelRange(e) }}
+              </p></td>
+              <td><p v-for="e in listLocationEncounters(entry.version_details)">
+                {{ printEncounterConditions(e) }}
+              </p></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
     </InformationSection>
 </template>
 
 <style scoped>
 
-button {
-  @apply inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-transparent border border-gray-900 rounded-r-md hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 focus:bg-gray-900 focus:text-white dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700;
+td .subtable {
+  /*@apply w-1/4 bg-blue-500;*/
 }
-
 </style>
