@@ -184,28 +184,19 @@ function testPossibleSelection(key: string){
     //the actual names for 'other' learn methods in the API
     const other = ['light-ball-egg','form-change','zygarde-cube'];
 
-    //let test: boolean;
     switch (key) {
         case 'level-up':
         case 'egg':
         case 'tutor':
         case 'machine':
             return filteredMoveLearnMethods.includes(key);
-            //break;
         case 'transfer':
             return filteredMoveLearnMethods.some(r=> transfer.includes(r));
-            //break;
         case 'other':
             return filteredMoveLearnMethods.some(r=> other.includes(r));
-            //break;
         default:
-            //
     }
 }
-
-watch(version, (newValue, oldValue) => {
-    //localStorage.setItem(selectedVersionKey, JSON.stringify(selectedVersion.value));
-}); 
 
 </script>
 
@@ -221,9 +212,17 @@ watch(version, (newValue, oldValue) => {
             </div>
         </div>
 
-        <div v-if="!isLoaded">LOADING...</div>
-
-        <div class="mb-2 overflow-x-auto sm:rounded-lg ">
+        <div v-if="!isLoaded" role="status" class="w-full p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700">
+            <div v-for="i in learnMethods" class="flex items-center justify-between">
+                <div class="mt-1">
+                    <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                    <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                </div>
+                <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
+            </div>
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div v-else class="mb-2 overflow-x-auto sm:rounded-lg ">
             <table class="w-full text-sm text-left border">
                 <thead class="text-xs uppercase bg-gray-200">
                     <tr>
