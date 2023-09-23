@@ -35,7 +35,7 @@ const filteredLocationAreaEncounters = computed(() => {
     filteredlocationAreaEncounters.push(newLae);
   });
 
-  console.log(filteredlocationAreaEncounters);
+  //console.log(filteredlocationAreaEncounters);
   return filteredlocationAreaEncounters;
 })
 
@@ -104,7 +104,7 @@ function printEncounterConditions(encounter: FlattenedEncounter){
     <InformationSection>
         
       <div class="flex flex-col mb-2 justify-center items-center">LOCATIONS</div>
-      <div v-if="filteredLocationAreaEncounters.length != 0" class="relative overflow-x-auto overflow-y-auto mb-8 max-h-52">
+      <div v-if="filteredLocationAreaEncounters.length != 0" class="relative overflow-x-auto overflow-y-auto mb-8 max-h-52 rounded">
         <table class="table-auto w-full text-sm text-center">
           <thead class="bg-gray-200">
             <td>location</td>

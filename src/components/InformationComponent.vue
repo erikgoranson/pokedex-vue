@@ -118,7 +118,7 @@ let isLoaded = false;
       <hr />
       <Locations :data="selectedPokemonEncounters"/>
       <hr />
-      <Links />
+      <Links :data="selectedPokemonSpeciesData"/>
     </div>
 </template>
 
