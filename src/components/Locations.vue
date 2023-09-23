@@ -92,18 +92,21 @@ function printEncounterConditions(encounter: FlattenedEncounter){
   if(encounter.condition_values.length == 0){
     return "N/A";
   }
-  return encounter.condition_values.map(x => x.name).join(", ");
+  return encounter.condition_values
+    .map(x => x.name)
+    .join(", ")
+    .replace('-',' ');
 }
 
 </script>
 
 <template>
-    <InformationSection class="mx-6">
+    <InformationSection>
         
       <div class="flex flex-col mb-2 justify-center items-center">LOCATIONS</div>
       <div v-if="filteredLocationAreaEncounters.length != 0" class="relative overflow-x-auto overflow-y-auto mb-8 max-h-52">
         <table class="table-auto w-full text-sm text-center">
-          <thead class="border-b">
+          <thead class="bg-gray-200">
             <td>location</td>
             <td>version</td>
             <td>chance</td>
@@ -137,3 +140,15 @@ function printEncounterConditions(encounter: FlattenedEncounter){
       
     </InformationSection>
 </template>
+
+<style scoped>
+table {
+    @apply capitalize;
+}
+td {
+  @apply border;
+}
+p {
+  @apply border-b;
+}
+</style>

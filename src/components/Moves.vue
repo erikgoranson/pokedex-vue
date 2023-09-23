@@ -222,7 +222,7 @@ function testPossibleSelection(key: string){
             </div>
             <span class="sr-only">Loading...</span>
         </div>
-        <div v-else class="mb-2 overflow-x-auto sm:rounded-lg ">
+        <div v-else class="mb-8 overflow-x-auto sm:rounded-lg ">
             <table class="w-full text-sm text-left border">
                 <thead class="text-xs uppercase bg-gray-200">
                     <tr>
