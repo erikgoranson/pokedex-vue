@@ -102,7 +102,7 @@ function printEncounterConditions(encounter: FlattenedEncounter){
         
       <div class="flex flex-col mb-2 justify-center items-center">LOCATIONS</div>
       <div v-if="filteredLocationAreaEncounters.length != 0" class="relative overflow-x-auto overflow-y-auto mb-8 max-h-52">
-        <table class="table-auto w-full text-sm text-left text-center">
+        <table class="table-auto w-full text-sm text-center">
           <thead class="border-b">
             <td>location</td>
             <td>version</td>

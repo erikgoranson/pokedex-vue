@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
-import type { Move, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat } from '@/components/types';
+import type { PokemonMove, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat } from '@/components/types';
 import { getStatLabel } from '@/components/types'
 import { computed } from 'vue';
 

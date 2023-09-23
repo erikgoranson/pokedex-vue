@@ -5,14 +5,47 @@ export interface DefaultDTO {
     url: string,
 }
 
-export interface Move { 
+export interface Move {
+    id: number,
+    name: string,
+    accuracy: number,
+    effect_chance: number, 
+    pp: number,
+    priority: number,
+    power: number,
+    //contest_combos
+    //contest_type: DefaultDTO,
+    //contest_effect
+    damage_class: DefaultDTO,
+    //effect_entries
+    //effect_changes
+    //learned_by_pokemon
+    flavor_text_entries: Array<MoveFlavorText>,
+    //generation
+    //machines
+    //meta
+    //names
+    //past_values
+    //stat_changes
+    //super_contest_effect
+    //target
+    type: DefaultDTO,
+}
+
+export interface MoveFlavorText {
+    flavor_text: string,
+    language: DefaultDTO,
+    version_group: DefaultDTO,
+}
+
+export interface PokemonMove { 
     move: DefaultDTO,
     version_group_details: PokemonMoveVersion[],
 }
   
 export interface PokemonMoveVersion  {
     move_learn_method: DefaultDTO,
-    version_group: {},
+    version_group: DefaultDTO,
     level_learned_at: number,
 }
 
@@ -34,7 +67,7 @@ export interface PokemonData {
     weight: number,
     types: Array<PokemonTypes>,
     //temp
-    moves: Array<Move>, 
+    moves: Array<PokemonMove>, 
     order: number,
     species: DefaultDTO, //genus comes from this endpoint "genera"; flavor-text comes from flaror_text_entries. could also get the species name from here for ease of printing. seems to prefer a single name over 'mimikyu-disguised' and other shit
     sprites: Sprites,
