@@ -42,7 +42,6 @@ const filteredLocationAreaEncounters = computed(() => {
 ///method for returning all encounters in the provided version details as a single array
 function listLocationEncounters(arr: VersionEncounterDetail[]){
   let allEncounterDetails = [] as FlattenedEncounter[];
-  console.log('wat');
   arr.forEach(x => {
     x.encounter_details.forEach(y => {
       const n = <FlattenedEncounter>{

@@ -21,7 +21,6 @@ const nationalDexKey = "nationalDex";
 const cacheExists = ref(false);
 
 const nationalDex = computed(() => {
-  const cacheState = cacheExists.value;
   const entries = retrieveLocalStorageData(nationalDexKey) as GridItem[];
   return entries;
 })
@@ -42,9 +41,9 @@ function retrieveLocalStorageData(key: string){
 }
 
 function populateDefaultEntry() {
-  if(pokemonStore.isDefault){ 
-    const currentDexFirstEntry = gridData.value[0];
-    pokemonStore.setDefaultPokemon(currentDexFirstEntry.id);
+  if(pokemonStore.isDefaultSelection){ 
+    const currentDexFirstEntry = gridData.value[0]; 
+    pokemonStore.changePokemon(currentDexFirstEntry.id);
   }
 }
 
@@ -91,7 +90,7 @@ async function buildNationalDexStoreCache(resync: boolean){
 }
 
 async function getGridData(pokedexes: DefaultDTO[]){
-
+  
   let tempGrid = [] as GridItem[]; 
 
   let allUrls = [] as string[]; 
@@ -115,21 +114,17 @@ async function getGridData(pokedexes: DefaultDTO[]){
   })
 
   gridData.value = tempGrid;
-  populateDefaultEntry();
+  populateDefaultEntry(); 
 }
 
 onMounted(async () => {
   buildNationalDexStoreCache(false);
+  getGridData(versionStore.data.version_group.pokedexes);
 });
 
 watch(versionStore, (newValue, oldValue) => {
+  pokemonStore.isDefaultSelection = true; 
   getGridData(versionStore.data.version_group.pokedexes);
-}); 
-
-watch(cacheExists, (newValue, oldValue) => {
-  if(cacheExists.value){
-    getGridData(versionStore.data.version_group.pokedexes);
-  }
 }); 
 
 </script>
