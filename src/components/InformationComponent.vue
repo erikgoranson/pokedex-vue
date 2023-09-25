@@ -17,7 +17,7 @@ import defaultPokemonSpecies from '../json/defaultPokemonSpecies.json';
 let isLoaded = false;
 
 const pokemonStore = usePokemonStore();
-const selectedPokemonData = ref<PokemonData>(defaultPokemonEntry as PokemonData); 
+const selectedPokemonData = ref<PokemonData>(defaultPokemonEntry as unknown as PokemonData); 
 const selectedPokemonDataKey = "selectedPokemonData";
 
 const selectedPokemonSpeciesData = ref<PokemonSpecies>(defaultPokemonSpecies as PokemonSpecies); 
@@ -69,9 +69,9 @@ async function getPkmnAbilitiesInfo() {
     const partialEndpoint = ability.ability.url;
     const fullEndpoint = `/src/assets/data${partialEndpoint}index.json`;
 
-    //need to fix this to get<Ability[]>
     await axios.get<Ability>(fullEndpoint).then((result) => {
       selectedPokemonAbilities.value.push(result.data);
+      localStorage.setItem(selectedPokemonAbilitiesKey, JSON.stringify(selectedPokemonAbilities.value));
     })
   })
   isLoaded = true; //maybe here?
@@ -114,7 +114,7 @@ function getInitialPokemonData(){
   pokemonStore.changePokemon(retrievedPokemonData.id);
 
   selectedPokemonSpeciesData.value = retrieveLocalStorageData(selectedSpeciesDataKey);
-  //abilities stuff here after fixed
+  selectedPokemonAbilities.value = retrieveLocalStorageData(selectedPokemonAbilitiesKey);
   selectedPokemonEvolutionChain.value = retrieveLocalStorageData(selectedPokemonEvolutionChainKey);
   selectedPokemonEncounters.value = retrieveLocalStorageData(selectedPokemonEncountersKey);
 
