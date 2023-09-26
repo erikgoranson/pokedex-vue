@@ -5,27 +5,21 @@ import Grid from '@/components/Grid.vue';
 import type { GridItem, DefaultDTO, PokemonEntry, PokemonTypes, PokemonData, PokedexInfo } from '@/components/types';
 import { useVersionStore } from '@/stores/version';
 import { usePokemonStore } from '@/stores/pokemon';
-import { computed } from 'vue';
 
 type Slots = 1 | 2;
-
-const gridColumns: string[] = ['id', 'name', 'type1', 'type2'];
 
 const versionStore = useVersionStore();
 const pokemonStore = usePokemonStore();
 
+const gridColumns: string[] = ['id', 'name', 'type1', 'type2'];
 const gridData = ref<GridItem[]>(<GridItem[]>[]);
 const searchQuery = ref('');
 
+const nationalDex = ref<GridItem[]>([]);
 const nationalDexKey = "nationalDex";
-const cacheExists = ref(false);
+const cacheExists = ref(false); 
 
-const nationalDex = computed(() => {
-  const cacheState = cacheExists.value;
-  const entries = retrieveLocalStorageData(nationalDexKey) as GridItem[];
-  return entries;
-})
-
+///prints the provided pokemon type as a string at the given slot
 function getPokemonType(types: PokemonTypes[], slot: Slots){ 
   let final: string = ''
   const theType: PokemonTypes = types.find((t) => t.slot === slot) || {} as PokemonTypes;
@@ -41,20 +35,22 @@ function retrieveLocalStorageData(key: string){
     return data;
 }
 
+///overwrites the user's previous pokemon selection with the first entry of a recently loaded pokedex
 function populateDefaultEntry() {
-  if(pokemonStore.isDefault){ 
-    const currentDexFirstEntry = gridData.value[0];
-    pokemonStore.setDefaultPokemon(currentDexFirstEntry.id);
+  if(pokemonStore.isDefaultSelection){ 
+    const currentDexFirstEntry = gridData.value[0]; 
+    pokemonStore.changePokemon(currentDexFirstEntry.id);
   }
 }
 
+//returns a list of all possible pokemon via the national dex and also stores the data to localStorage for later use 
 async function buildNationalDexStoreCache(resync: boolean){
   const nationalDexTmp = [] as GridItem[];
 
-  //check whether to proceed
-  if(nationalDex.value.length !== 0){ //cache already exists
+  //exit if nationalDex already populated
+  if(nationalDex.value.length !== 0){
     cacheExists.value = true;
-    if(resync === false){ //resync was not requested
+    if(resync === false){ //resync was not requested 
       return;
     }
   }
@@ -88,48 +84,50 @@ async function buildNationalDexStoreCache(resync: boolean){
 
   localStorage.setItem(nationalDexKey, JSON.stringify(nationalDexTmp));
   cacheExists.value = true;
+  nationalDex.value = nationalDexTmp;
 }
 
+//populates the search grid with pokemon from the currently selected versiongroup's available pokedexes
 async function getGridData(pokedexes: DefaultDTO[]){
-
   let tempGrid = [] as GridItem[]; 
+  let allUrls = [] as string[];
 
-  let allUrls = [] as string[]; 
-  await axios.all(
-    pokedexes.map((p) => axios
-      .get<PokedexInfo>(`/src/assets/data${p.url}index.json`)
-      .then((results) => {
-        allUrls.push(...results.data.pokemon_entries.map(x => x.pokemon_species.url))
-      })
-    )
-  )
+  const promises = pokedexes.map((p) => {
+    return axios.get<PokedexInfo>(`/src/assets/data${p.url}index.json`)
+    .then((results) => {
+      allUrls.push(...results.data.pokemon_entries.map(x => x.pokemon_species.url))
+    })
+  })
+
+  await Promise.all(promises).then(() => {
+    console.log('allUrls has been filled');
+  })
+  
   const uniqueUrls = [...new Set(allUrls)];
 
+  //find matches from the nationalDex 
   uniqueUrls.forEach(url => {
     const nationalId = url.slice(0, -1).split("/").pop();
-    const match = nationalDex.value.filter(x => x.id == Number(nationalId)); 
-    if (match.length == 0){
-      console.log(`no match found for ${nationalId}`);
+    const match = nationalDex.value.find(x => x.id == Number(nationalId)); 
+    if (match){
+      console.log(`match found for ${nationalId}`); 
+      tempGrid.push(match);
     }
-    tempGrid.push(match[0])
   })
 
   gridData.value = tempGrid;
-  populateDefaultEntry();
+  populateDefaultEntry(); 
 }
 
 onMounted(async () => {
-  buildNationalDexStoreCache(false);
+  nationalDex.value = retrieveLocalStorageData(nationalDexKey) as GridItem[];
+  await buildNationalDexStoreCache(false);
+  getGridData(versionStore.data.version_group.pokedexes);
 });
 
 watch(versionStore, (newValue, oldValue) => {
+  pokemonStore.isDefaultSelection = true; 
   getGridData(versionStore.data.version_group.pokedexes);
-}); 
-
-watch(cacheExists, (newValue, oldValue) => {
-  if(cacheExists.value){
-    getGridData(versionStore.data.version_group.pokedexes);
-  }
 }); 
 
 </script>

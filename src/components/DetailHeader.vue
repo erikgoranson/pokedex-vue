@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
-import type { Move, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText } from '@/components/types';
+import type { PokemonMove, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText } from '@/components/types';
 import { computed,reactive } from 'vue';
 import { useVersionStore } from '@/stores/version';
 
@@ -21,6 +21,14 @@ function formatPokemonName(pokemonName: string) {
   return pokemonName.replace('-',' '); 
 }
 
+function getLocalSpritePath(url: string){
+  const apiSpritePath = "https://raw.githubusercontent.com/PokeAPI/sprites/master/";
+  const localSpritePath = "/src/assets/images/";
+  
+  const fullLocalPath = url.replace(apiSpritePath, localSpritePath);
+  return fullLocalPath;
+}
+
 const filteredGenus = computed(() => props.species.genera.filter(x => x.language.name == "en").map(obj => obj.genus).toString());
 
 const filteredFlavorTextEntry = computed(() => {
@@ -36,6 +44,8 @@ const filteredFlavorTextEntry = computed(() => {
   return flavortext;
 });
 
+const spriteUrl = computed(() => getLocalSpritePath(props.data.sprites.front_default));
+
 </script>
 
 <template>
@@ -44,7 +54,7 @@ const filteredFlavorTextEntry = computed(() => {
     <div class="flex flex-wrap -mx-2 ">
       <div class="w-2/5 md:w-2/5 lg:w-1/5 px-1 mb-2">
         <div id="pkmn-image" class="relative border h-28 text-sm text-grey-dark flex items-center justify-center">
-          <img class="" :src="props.data.sprites.front_default" />
+          <img class="" :src="spriteUrl" />
           <h1 class="absolute text-0xl bottom-0 left-1/2 -translate-x-1/2">No. {{props.data.id}}</h1>
         </div>
       </div>

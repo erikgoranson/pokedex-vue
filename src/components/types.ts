@@ -5,14 +5,47 @@ export interface DefaultDTO {
     url: string,
 }
 
-export interface Move { 
+export interface Move {
+    id: number,
+    name: string,
+    accuracy: number,
+    effect_chance: number, 
+    pp: number,
+    priority: number,
+    power: number,
+    //contest_combos
+    //contest_type: DefaultDTO,
+    //contest_effect
+    damage_class: DefaultDTO,
+    //effect_entries
+    //effect_changes
+    //learned_by_pokemon
+    flavor_text_entries: Array<MoveFlavorText>,
+    //generation
+    //machines
+    //meta
+    //names
+    //past_values
+    //stat_changes
+    //super_contest_effect
+    //target
+    type: DefaultDTO,
+}
+
+export interface MoveFlavorText {
+    flavor_text: string,
+    language: DefaultDTO,
+    version_group: DefaultDTO,
+}
+
+export interface PokemonMove { 
     move: DefaultDTO,
     version_group_details: PokemonMoveVersion[],
 }
   
 export interface PokemonMoveVersion  {
     move_learn_method: DefaultDTO,
-    version_group: {},
+    version_group: DefaultDTO,
     level_learned_at: number,
 }
 
@@ -34,7 +67,7 @@ export interface PokemonData {
     weight: number,
     types: Array<PokemonTypes>,
     //temp
-    moves: Array<Move>, 
+    moves: Array<PokemonMove>, 
     order: number,
     species: DefaultDTO, //genus comes from this endpoint "genera"; flavor-text comes from flaror_text_entries. could also get the species name from here for ease of printing. seems to prefer a single name over 'mimikyu-disguised' and other shit
     sprites: Sprites,
@@ -152,19 +185,29 @@ export interface EvolutionChain {
 export interface ChainLink  {
     is_baby: boolean,
     species: DefaultDTO,
-    evolution_details: EvolutionDetail,
+    evolution_details: Array<EvolutionDetail>,
     evolves_to: Array<ChainLink>
 }
 
-export interface EvolutionDetail   {
-    //item
-    trigger: EvolutionTrigger,
+export interface EvolutionDetail {
+    item: DefaultDTO,
+    trigger: DefaultDTO,
     gender: number,
-    //held_item: 
-    known_move: Move,
-    known_move_type: PokemonType,
-    //location
-
+    held_item: DefaultDTO,
+    known_move: DefaultDTO,
+    known_move_type: DefaultDTO,
+    location: DefaultDTO,
+    min_level: number,
+    min_happiness: number,
+    min_beauty: number,
+    min_affection: number,
+    needs_overworld_rain: boolean,
+    party_species: DefaultDTO,
+    party_type: DefaultDTO,
+    relative_physical_stats: number,
+    time_of_day: string,
+    trade_species: DefaultDTO,
+    turn_upside_down: boolean,
 }
 
 export interface EvolutionTrigger    {
@@ -187,7 +230,24 @@ export interface EvolutionTrigger    {
 
 //item
 
-//location
+export interface LocationAreaEncounter {
+    location_area: DefaultDTO,
+    version_details: Array<VersionEncounterDetail>,
+}
+
+export interface VersionEncounterDetail {
+    version: DefaultDTO,
+    max_chance: number,
+    encounter_details: Array<Encounter>,
+}
+
+export interface Encounter {
+    min_level: number,
+    max_level: number,
+    condition_values: Array<DefaultDTO>,
+    chance: number,
+    method: DefaultDTO,
+}
 
 export interface Genus {
     genus: string,
@@ -251,5 +311,4 @@ export function getStatLabel(statName: string){
         break;
     }
     return output.toUpperCase();
-  }
-export default getStatLabel; //IDE demanded this
+}

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
-import type { EvolutionChain, PokemonSpecies, ChainLink, DefaultDTO, EvolutionDetail } from './types';
+import type { EvolutionChain, ChainLink, DefaultDTO, EvolutionDetail } from './types';
 import { computed } from 'vue';
 import { usePokemonStore } from '@/stores/pokemon';
+import EvolutionConditions from './EvolutionConditions.vue';
 
 const pokemonStore = usePokemonStore();
 
@@ -17,12 +18,6 @@ const props = defineProps({
   },
 })
 
-const previousEvolution = computed(() => {
-    if(props.previous){
-        return props.previous;
-    }
-})
-
 //custom obj for sorting evolutions after transforming into a list
 class StagedChainLink implements ChainLink {
 
@@ -33,14 +28,13 @@ class StagedChainLink implements ChainLink {
 
     is_baby!: boolean;
     species!: DefaultDTO;
-    evolution_details!: EvolutionDetail;
+    evolution_details!: Array<EvolutionDetail>;
     evolves_to!: Array<ChainLink>;
     evolution_stage: number; //indexed from 1 //max of 3
 }
 
 //transform chain into a list for output
 const evolutionChainList = computed(() => {
-    //console.log('recomputing evochain')
     if(props.chain.chain == undefined){
         return [];
     }
@@ -75,7 +69,7 @@ const evolutionChainList = computed(() => {
             })
             break;
         }
-
+        
         if (currentChain.evolves_to.length > 0){
             nextChain = new StagedChainLink(currentChain.evolves_to[0], currentChain.evolution_stage+1);
             evoList.push(nextChain);
@@ -118,7 +112,7 @@ function changeStoredPokemon(url: string){
 function getCursorStyle(url: string){
     const id = Number(getNationalID(url));
     const currentID = pokemonStore.data.id;
-    let style = "";
+    let style = "bg-yellow-100"; //change pokemon style if not clickable
     if(id && currentID != id){
         style = "cursor-pointer";
     }
@@ -136,23 +130,28 @@ function getCursorStyle(url: string){
                     <td class="w-full flex flex-wrap  items-center justify-center" v-for="stage in evolutionStages">
                         <div class="flex items-center justify-center flex flex-col" v-for="e in evolutionChainList.filter(f => f.evolution_stage == stage)">
 
-                            <span v-if="stage!=1">↓ </span>
-                            <img class="bg-gray-100 rounded-lg mr-1 mb-1" :class="getCursorStyle(e.species.url)" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getNationalID(e.species.url)}.png`" @click="changeStoredPokemon(e.species.url)"/>
+                            <span v-if="stage!=1">
+                                <EvolutionConditions :chain="e" :isVertical="true"/>
+                            </span>
+                            
+                            <img class="bg-gray-100 rounded-lg mr-1 mb-1" :class="getCursorStyle(e.species.url)" :src="`/src/assets/images/sprites/pokemon/${getNationalID(e.species.url)}.png`" @click="changeStoredPokemon(e.species.url)"/>
 
                         </div>
                     </td>
                 </tr>
             </table>
         </div>
-        <div v-else-if="evolutionChainList.length > 0" class="overflow-x-auto">
+        <div v-else-if="evolutionChainList.length > 0" class="overflow-x-auto w-auto">
             <div id="fullchain" class="flex place-content-center ">
                 <div id="stage" class=" p-1 flex flex-col " v-for="stage in evolutionStages">
                     <div class="h-full flex flex-col items-center justify-center">
-                        <div id="condition+pkmn" class="h-full flex flex-row mb-1" v-for="e in evolutionChainList.filter(f => f.evolution_stage == stage)" @click="changeStoredPokemon(e.species.url)">
+                        <div id="condition+pkmn" class="h-full flex flex-row mb-1" v-for="e in evolutionChainList.filter(f => f.evolution_stage == stage)">
 
-                            <div v-if="stage!=1" id="condition" class="h-full flex flex-col items-center justify-center rounded-lg my-1 mr-2 py-3 text-xs">lvl 1<br>⟶</div>
+                            <span v-if="stage!=1" id="condition" >
+                                <EvolutionConditions :chain="e"/>
+                            </span>
 
-                            <div id="pkmn" class="h-full flex flex-col items-center justify-center bg-gray-100 rounded-lg my-1 py-3" :class="getCursorStyle(e.species.url)"><img class="" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getNationalID(e.species.url)}.png`" /></div>
+                            <div id="pkmn" class="h-full flex flex-col items-center justify-center bg-gray-100 rounded-lg my-1 py-3 w-14" :class="getCursorStyle(e.species.url)" @click="changeStoredPokemon(e.species.url)" ><img class="" :src="`/src/assets/images/sprites/pokemon/${getNationalID(e.species.url)}.png`" /></div>
 
                         </div>
                     </div>
@@ -160,6 +159,8 @@ function getCursorStyle(url: string){
             </div>
         </div>
         <div v-else class="overflow-x-auto">No evolutions</div>
+
+
     </InformationSection>
 </template>
 
