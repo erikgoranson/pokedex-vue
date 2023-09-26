@@ -20,7 +20,7 @@
     "moves": [{
             "move": {
                 "name": "water-gun",
-                "url": "https://pokeapi.co/api/v2/move/55/"
+                "url": "/api/v2/move/55/"
             },
             "version_group_details": [{
                     "level_learned_at": 0,
@@ -37,7 +37,7 @@
         }, {
             "move": {
                 "name": "sky-attack",
-                "url": "https://pokeapi.co/api/v2/move/143/"
+                "url": "/api/v2/move/143/"
             },
             "version_group_details": [{
                     "level_learned_at": 0,
