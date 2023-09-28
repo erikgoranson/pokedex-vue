@@ -3,7 +3,7 @@ import InformationSection from './InformationSection.vue';
 import { computed, reactive, ref, watch } from 'vue';
 import type { PokemonMove, Move, DefaultDTO, MoveFlavorText } from '@/components/types';
 import { useVersionStore } from '@/stores/version';
-import axios from 'axios';
+import pokeAPI from '@/services/pokeAPI';
 
 const props = defineProps({
   data: {
@@ -49,22 +49,11 @@ async function populateMoveData(pokemonMoves: PokemonMove[]){
     moveData.value = [];
     isLoaded.value = false;
     
-    const promises = pokemonMoves.map(x => {
-        const urlFragment = x.move.url;
-
-        ///api/v2/move/141/
-        //https://pokeapi.co/api/v2/move/144/
-        const endpoint = `/src/assets/data${urlFragment}/index.json`;
-        return axios.get<Move>(endpoint).then((result) => {
-            const what = result.data;
-            moveData.value.push(what);
-        })
-    })
-
-    await Promise.all(promises).then(() => {
-        console.log('show me your moves');
+    const moves = await pokeAPI.getMoves(pokemonMoves);
+    if (moves.length > 0 ){
+        moveData.value = moves;
         isLoaded.value = true;
-    });
+    }
 }
 
 function getMoveData(name: string){

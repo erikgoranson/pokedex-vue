@@ -5,6 +5,13 @@ export interface DefaultDTO {
     url: string,
 }
 
+export interface NamedAPIResourceList {
+    count: number,
+    next: string,
+    previous: string,
+    results: Array<DefaultDTO>;
+}
+
 export interface Move {
     id: number,
     name: string,

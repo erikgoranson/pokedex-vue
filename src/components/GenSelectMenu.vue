@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, reactive } from 'vue';
-import axios, { all } from 'axios';
 import type { DefaultDTO, VersionGroup, SelectionGroup, Selection } from '@/components/types';
 import { useVersionStore } from '@/stores/version';
+import pokeAPI from '@/services/pokeAPI';
 
 ///version groups to be excluded for the marked reasons
 const excludedVersionGroups: string[] = [
@@ -29,41 +29,12 @@ const selectedVersionKey: string = 'selectedVersion';
 async function populateGenerationData() {
 
     console.log('retreiving generation and version group data...')
-
-    //all generations
-    const generations: DefaultDTO[] = await axios
-        .get('/src/assets/data/api/v2/generation/index.json')
-        .then((response) => {
-            return response.data.results
-        })
-        .catch( async (error) => {
-            console.log(JSON.parse(await error.response.data.text()));
-        });
-    
-    //all versiongroups
-    const versionGroups: DefaultDTO[] = await axios
-        .get('/src/assets/data/api/v2/version-group/index.json')
-        .then((response) => {
-            return response.data.results;
-        })
-        .catch( async (error) => {
-            console.log(JSON.parse(await error.response.data.text()));
-        });
-    
-    //versiongroup details using the count of provided all versiongroups earlier
-    const generationData: VersionGroup[] = await axios
-        .all(
-            versionGroups.map((vg, index) => axios
-                .get<VersionGroup>(`/src/assets/data/api/v2/version-group/${index+1}/index.json`)
-                .then((response) => {
-                    return response.data;
-                })
-            )
-        );
+    const generations = await pokeAPI.getGenerations();
+    const versionGroups = await pokeAPI.getVersionGroups();
             
     //grouping the versiongroups by generation for the dropdown selection
     const selectionData = generations.map((g) => {
-        const filter = generationData.filter(f => 
+        const filter = versionGroups.filter(f => 
             f.generation?.name === g.name &&
             !excludedVersionGroups.includes(f.name)
         )
