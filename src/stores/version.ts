@@ -2,9 +2,10 @@ import {defineStore} from 'pinia'
 import type { DefaultDTO, Selection } from '@/components/types';
 import type { VersionGroup } from '@/components/types';
 import helpers from '@/helpers';
+import { ref } from 'vue';
 
 const selectedVersionKey: string = 'selectedVersion';
-const selectedVersion = helpers.retrieveLocalStorageData(selectedVersionKey);
+const selectedVersion: Selection = helpers.retrieveLocalStorageData(selectedVersionKey);
 
 const rbVersion = <Selection>{
     name: 'red / blue',
@@ -23,18 +24,13 @@ const rbVersion = <Selection>{
     }
 }
 
-const defaultSelection = (selectedVersion) ? selectedVersion : rbVersion;
+const defaultSelection: Selection = (selectedVersion) ? selectedVersion : rbVersion;
 
-//rerwrite this as setup store
-export const useVersionStore = defineStore('version', {
-    state: () => {
-        return{
-            data: defaultSelection
-        }
-    }, 
-    actions:{
-        changeVersion (payload: Selection) {
-            this.data = payload
-        }
+export const useVersionStore = defineStore('version', () => {
+    const data = ref(defaultSelection);
+    function changeVersion (payload: Selection) {
+        data.value = payload;
     }
-})
+
+    return { data, changeVersion }
+});
