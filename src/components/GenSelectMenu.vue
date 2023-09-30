@@ -3,6 +3,7 @@ import { ref, onMounted, watch, reactive, computed } from 'vue';
 import type { DefaultDTO, VersionGroup, SelectionGroup, Selection } from '@/components/types';
 import { useVersionStore } from '@/stores/version';
 import pokeAPI from '@/services/pokeAPI';
+import helpers from '@/helpers';
 
 ///version groups to be excluded for the marked reasons
 const excludedVersionGroups: string[] = [
@@ -49,13 +50,8 @@ async function populateGenerationData() {
     localStorage.setItem(selectDataKey, JSON.stringify(selectionData));
 }
 
-function retrieveLocalStorageData(key: string){
-    const data = localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key) || '') : null; 
-    return data;
-}
-
 function getSelectData(){
-    selectData.value = retrieveLocalStorageData(selectDataKey); 
+    selectData.value = helpers.retrieveLocalStorageData(selectDataKey); 
 }
 
 function buildPrettyVersionName(versions: DefaultDTO[]){

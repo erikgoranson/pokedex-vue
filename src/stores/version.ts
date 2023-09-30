@@ -1,14 +1,10 @@
 import {defineStore} from 'pinia'
 import type { DefaultDTO, Selection } from '@/components/types';
 import type { VersionGroup } from '@/components/types';
+import helpers from '@/helpers';
 
 const selectedVersionKey: string = 'selectedVersion';
-function retrieveLocalStorageData(key: string){
-    const data = localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key) || '') : null; 
-    return data;
-}
-
-const selectedVersion = retrieveLocalStorageData(selectedVersionKey);
+const selectedVersion = helpers.retrieveLocalStorageData(selectedVersionKey);
 
 const rbVersion = <Selection>{
     name: 'red / blue',

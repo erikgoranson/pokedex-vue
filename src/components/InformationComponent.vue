@@ -14,6 +14,7 @@ import defaultPokemonEntry from '../json/defaultPokemon.json';
 import defaultPokemonSpecies from '../json/defaultPokemonSpecies.json';
 import pokeAPI from "@/services/pokeAPI";
 import Skeleton from "./Skeleton.vue";
+import helpers from '@/helpers';
 
 const isLoaded = ref(false);
 
@@ -67,11 +68,6 @@ async function getPkmnEncounters(){
   localStorage.setItem(selectedPokemonEncountersKey, JSON.stringify(encounters));
 }
 
-function retrieveLocalStorageData(key: string){
-    const data = localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key) || '') : null; 
-    return data;
-}
-
 async function updatePokemonData(id: number){
   if(selectedPokemonData.value.id != id){
     isLoaded.value = false;
@@ -85,7 +81,7 @@ async function updatePokemonData(id: number){
 }
 
 function getInitialPokemonData(){ 
-  const retrievedPokemonData = retrieveLocalStorageData(selectedPokemonDataKey) as PokemonData;
+  const retrievedPokemonData = helpers.retrieveLocalStorageData(selectedPokemonDataKey) as PokemonData;
 
   if(!retrievedPokemonData){
     return;
@@ -94,10 +90,10 @@ function getInitialPokemonData(){
   selectedPokemonData.value = retrievedPokemonData;
   pokemonStore.changePokemon(retrievedPokemonData.id);
 
-  selectedPokemonSpeciesData.value = retrieveLocalStorageData(selectedSpeciesDataKey);
-  selectedPokemonAbilities.value = retrieveLocalStorageData(selectedPokemonAbilitiesKey);
-  selectedPokemonEvolutionChain.value = retrieveLocalStorageData(selectedPokemonEvolutionChainKey);
-  selectedPokemonEncounters.value = retrieveLocalStorageData(selectedPokemonEncountersKey);
+  selectedPokemonSpeciesData.value = helpers.retrieveLocalStorageData(selectedSpeciesDataKey);
+  selectedPokemonAbilities.value = helpers.retrieveLocalStorageData(selectedPokemonAbilitiesKey);
+  selectedPokemonEvolutionChain.value = helpers.retrieveLocalStorageData(selectedPokemonEvolutionChainKey);
+  selectedPokemonEncounters.value = helpers.retrieveLocalStorageData(selectedPokemonEncountersKey);
 
   isLoaded.value = true; 
 }

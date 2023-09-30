@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
 import type { PokemonMove, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat } from '@/components/types';
-import { getStatLabel } from '@/components/types'
+import helpers from '@/helpers';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -83,7 +83,7 @@ const baseEggSteps = computed(() => {
                     </td>
                     <td><span>effort values</span><br>
                         <p class="text-xs" v-for="e in effortValues">
-                        {{ e.effort }} x {{ getStatLabel(e.stat.name) }}
+                        {{ e.effort }} x {{ helpers.getStatLabel(e.stat.name) }}
                         </p>
                     </td>
                     <td><span>capture rate</span><br>{{ species.capture_rate }}</td>
