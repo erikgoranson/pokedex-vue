@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
 import { computed, reactive, ref, watch } from 'vue';
-import type { PokemonMove, Move, DefaultDTO, MoveFlavorText } from '@/components/types';
+import type { PokemonMove, Move, DefaultDTO, MoveFlavorText } from '@/types';
 import { useVersionStore } from '@/stores/version';
 import pokeAPI from '@/services/pokeAPI';
 

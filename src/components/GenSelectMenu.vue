@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, reactive, computed } from 'vue';
-import type { DefaultDTO, VersionGroup, SelectionGroup, Selection } from '@/components/types';
+import type { DefaultDTO, VersionGroup, SelectionGroup, Selection } from '@/types';
 import { useVersionStore } from '@/stores/version';
 import pokeAPI from '@/services/pokeAPI';
 import helpers from '@/helpers';

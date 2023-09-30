@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { PokemonData, PokemonSpecies, Ability, EvolutionChain, LocationAreaEncounter, PokemonAbility, VersionGroup, Move, PokedexInfo, GridItem, PokemonTypes, DefaultDTO, NamedAPIResourceList, PokemonMove } from '@/components/types';
+import type { PokemonData, PokemonSpecies, Ability, EvolutionChain, LocationAreaEncounter, PokemonAbility, VersionGroup, Move, PokedexInfo, GridItem, PokemonTypes, DefaultDTO, NamedAPIResourceList, PokemonMove } from '@/types';
 
 //base url for fragments only
 const PARTIAL_URL = '/src/assets/data';

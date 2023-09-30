@@ -1,6 +1,5 @@
 import {defineStore} from 'pinia'
-import type { DefaultDTO, Selection } from '@/components/types';
-import type { VersionGroup } from '@/components/types';
+import type { DefaultDTO, Selection, VersionGroup  } from '@/types';
 import helpers from '@/helpers';
 import { ref } from 'vue';
 

@@ -1,31 +1,11 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from "vue";
-import type { Move, PokemonData, DefaultDTO, PokemonTypes } from '@/components/types';
+import type { Move, PokemonData, DefaultDTO, PokemonTypes } from '@/types';
 import Pokedex from '@/components/Pokedex.vue';
 import search from '@/components/SearchComponent.vue'
 import DetailHeader from "@/components/DetailHeader.vue";
 import defaultPokemonEntry from '../json/defaultPokemon.json';
 import defaultPokemonSpeciesEntry from '../json/defaultPokemonSpecies.json';
-
-const defaultPokemonEntry2 = <PokemonData>{
-  name: 'missingno.',
-  types: [
-    { slot: 1,
-      type: <DefaultDTO>{ 
-        name: 'bird',
-      }
-    },
-    { slot: 2,
-      type: <DefaultDTO>{ 
-        name: 'normal',
-      }
-    },
-  ] as PokemonTypes[], 
-  id: 0,
-  moves: [] as Move[],
-  species: {},
-  sprites: {},
-}
 
 //const selectedPokemonData = ref<PokemonData>(defaultPokemonEntry); 
 

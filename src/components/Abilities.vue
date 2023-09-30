@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PokemonAbility, Ability } from '@/components/types';
+import type { PokemonAbility, Ability } from '@/types';
 import InformationSection from './InformationSection.vue';
 import { computed} from "vue";
 import { useVersionStore } from '@/stores/version';

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
 import { useVersionStore } from '@/stores/version';
-import type { PokemonSpecies } from '@/components/types';
+import type { PokemonSpecies } from '@/types';
 import { computed } from 'vue';
 
 const props = defineProps({

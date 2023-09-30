@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia';
-import type { GridItem, PokemonData } from '@/components/types';
+import type { GridItem, PokemonData } from '@/types';
 import { ref } from 'vue';
 
 

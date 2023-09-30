@@ -2,7 +2,7 @@
 //based on https://vuejs.org/examples/#grid
 import { computed, ref, watch } from 'vue';
 import { usePokemonStore } from '@/stores/pokemon';
-import type { GridItem } from '@/components/types';
+import type { GridItem } from '@/types';
 
 const props = defineProps({
   data: Array,

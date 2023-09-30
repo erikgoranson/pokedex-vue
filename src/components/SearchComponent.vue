@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, defineProps, watch } from 'vue';
 import Grid from '@/components/Grid.vue';
-import type { GridItem, DefaultDTO } from '@/components/types';
+import type { GridItem, DefaultDTO } from '@/types';
 import { useVersionStore } from '@/stores/version';
 import { usePokemonStore } from '@/stores/pokemon';
 import pokeAPI from '@/services/pokeAPI';

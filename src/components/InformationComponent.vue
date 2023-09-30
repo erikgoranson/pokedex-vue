@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from "vue";
 import { usePokemonStore } from '@/stores/pokemon';
-import type { PokemonData, PokemonSpecies, Ability, EvolutionChain, LocationAreaEncounter } from '@/components/types';
+import type { PokemonData, PokemonSpecies, Ability, EvolutionChain, LocationAreaEncounter } from '@/types';
 import Detail from './DetailHeader.vue';
 import BaseStatistics from './BaseStatistics.vue';
 import SpeciesDetails from './SpeciesDetails.vue';
@@ -127,4 +127,3 @@ onMounted(() => {
     <Links :data="selectedPokemonSpeciesData"/>
     </div>
 </template>
-
