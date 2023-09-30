@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, reactive } from 'vue';
+import { ref, onMounted, watch, reactive, computed } from 'vue';
 import type { DefaultDTO, VersionGroup, SelectionGroup, Selection } from '@/components/types';
 import { useVersionStore } from '@/stores/version';
 import pokeAPI from '@/services/pokeAPI';
@@ -45,41 +45,17 @@ async function populateGenerationData() {
         };
     });
     
-    selectData.value = selectionData;
+    selectData.value = selectionData; 
     localStorage.setItem(selectDataKey, JSON.stringify(selectionData));
 }
 
 function retrieveLocalStorageData(key: string){
-    const data = localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key) || '') : [];
+    const data = localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key) || '') : null; 
     return data;
 }
 
-//for mount only
-function getSelectedVersion(){
-    const retrievedSelection = retrieveLocalStorageData(selectedVersionKey);
-
-    const defaultSelection = <Selection>{
-        name: 'red / blue',
-        generationName: 'generation-i',
-        version_group: <VersionGroup>{
-            id:1,
-            name:'red-blue',
-            generation: <DefaultDTO>{
-                name: 'generation-i',
-            },
-            pokedexes: <DefaultDTO[]>[
-                <DefaultDTO>{
-                    url: '/api/v2/pokedex/2/'
-                }
-            ]
-        }
-    }
-
-    versionStore.changeVersion(retrievedSelection.length === 0 ? defaultSelection : retrievedSelection);
-}
-
 function getSelectData(){
-    selectData.value = retrieveLocalStorageData(selectDataKey);
+    selectData.value = retrieveLocalStorageData(selectDataKey); 
 }
 
 function buildPrettyVersionName(versions: DefaultDTO[]){
@@ -102,8 +78,7 @@ function constructSelection( selectedGroup: VersionGroup ){
 
 onMounted(async () => {
     getSelectData();
-    getSelectedVersion();
-    if (selectData.value.length === 0){
+    if (!selectData.value){
         await populateGenerationData();
     }
 });

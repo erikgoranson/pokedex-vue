@@ -1,27 +1,39 @@
 import {defineStore} from 'pinia'
-import type { DefaultDTO } from '@/components/types';
+import type { DefaultDTO, Selection } from '@/components/types';
+import type { VersionGroup } from '@/components/types';
 
-interface Selection {
-    name: string, 
-    generationName: string,
-    version_group: VersionGroup, 
+const selectedVersionKey: string = 'selectedVersion';
+function retrieveLocalStorageData(key: string){
+    const data = localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key) || '') : null; 
+    return data;
 }
 
-interface VersionGroup {
-    id: number,
-    generation?: DefaultDTO,
-    move_learn_methods?: Array<DefaultDTO>,
-    name: string,
-    order?: number,
-    pokedexes: Array<DefaultDTO>,
-    regions: Array<DefaultDTO>,
-    versions?: Array<DefaultDTO>,
+const selectedVersion = retrieveLocalStorageData(selectedVersionKey);
+
+const rbVersion = <Selection>{
+    name: 'red / blue',
+    generationName: 'generation-i',
+    version_group: <VersionGroup>{
+        id:1,
+        name:'red-blue',
+        generation: <DefaultDTO>{
+            name: 'generation-i',
+        },
+        pokedexes: <DefaultDTO[]>[
+            <DefaultDTO>{
+                url: '/api/v2/pokedex/2/'
+            }
+        ]
+    }
 }
 
+const defaultSelection = (selectedVersion) ? selectedVersion : rbVersion;
+
+//rerwrite this as setup store
 export const useVersionStore = defineStore('version', {
     state: () => {
         return{
-            data: <Selection>{}
+            data: defaultSelection
         }
     }, 
     actions:{

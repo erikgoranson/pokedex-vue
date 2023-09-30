@@ -13,6 +13,7 @@ import Links from './Links.vue';
 import defaultPokemonEntry from '../json/defaultPokemon.json';
 import defaultPokemonSpecies from '../json/defaultPokemonSpecies.json';
 import pokeAPI from "@/services/pokeAPI";
+import Skeleton from "./Skeleton.vue";
 
 const isLoaded = ref(false);
 
@@ -33,12 +34,10 @@ const selectedPokemonEncounters = ref([] as LocationAreaEncounter[])
 const selectedPokemonEncountersKey = "selectedPokemonEncounters";
 
 async function getPkmnDataInfo(id: number){
-  if(selectedPokemonData.value.id != id){
-    const pokemon = await pokeAPI.getPokemon(id);
-    selectedPokemonData.value = pokemon;
-    pokemonStore.fillPokemonData(pokemon);
-    localStorage.setItem(selectedPokemonDataKey, JSON.stringify(pokemon));
-  }
+  const pokemon = await pokeAPI.getPokemon(id);
+  selectedPokemonData.value = pokemon;
+  pokemonStore.fillPokemonData(pokemon);
+  localStorage.setItem(selectedPokemonDataKey, JSON.stringify(pokemon));
 }
 
 async function getPkmnSpeciesInfo() {
@@ -73,14 +72,16 @@ function retrieveLocalStorageData(key: string){
     return data;
 }
 
-async function updatePokemonData(){
-  isLoaded.value = false;
-  await getPkmnDataInfo(pokemonStore.data.id);
-  await getPkmnSpeciesInfo();
-  await getPkmnEvolutionChain();
-  await getPkmnEncounters();
-  await getPkmnAbilitiesInfo();
-  isLoaded.value = true; 
+async function updatePokemonData(id: number){
+  if(selectedPokemonData.value.id != id){
+    isLoaded.value = false;
+    await getPkmnDataInfo(id);
+    await getPkmnSpeciesInfo();
+    await getPkmnEvolutionChain();
+    await getPkmnEncounters();
+    await getPkmnAbilitiesInfo();
+    isLoaded.value = true; 
+  }
 }
 
 function getInitialPokemonData(){ 
@@ -102,7 +103,7 @@ function getInitialPokemonData(){
 }
 
 watch(pokemonStore, (newValue, oldValue) => {
-  updatePokemonData();
+  updatePokemonData(pokemonStore.data.id);
 });
 
 onMounted(() => {
@@ -112,22 +113,22 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="!isLoaded">LOADING...</div>
-    <div class=" bg-neutral-900 p-3 text-neutral-700 shadow-lg dark:bg-white-600 dark:text-neutral-200 dark:shadow-black/30">
-      <Detail :data="selectedPokemonData" :species="selectedPokemonSpeciesData" />
-      <BaseStatistics :stats="selectedPokemonData.stats"/>
-      <hr />
-      <SpeciesDetails :data="selectedPokemonData" :species="selectedPokemonSpeciesData"/>
-      <hr />
-      <Evolutions :chain="selectedPokemonEvolutionChain" :previous="selectedPokemonSpeciesData.evolves_from_species"/>
-      <hr />
-      <Abilities :abilities="selectedPokemonData.abilities" :abilitiesInfo="selectedPokemonAbilities"/>
-      <hr />
-      <Moves :data="selectedPokemonData.moves" />
-      <hr />
-      <Locations :data="selectedPokemonEncounters"/>
-      <hr />
-      <Links :data="selectedPokemonSpeciesData"/>
+  <div v-if="!isLoaded && pokemonStore.isDefaultSelection"><Skeleton/></div>
+  <div v-else class=" bg-neutral-900 p-3 text-neutral-700 shadow-lg dark:bg-white-600 dark:text-neutral-200 dark:shadow-black/30">
+    <Detail :data="selectedPokemonData" :species="selectedPokemonSpeciesData" />
+    <BaseStatistics :stats="selectedPokemonData.stats"/>
+    <hr />
+    <SpeciesDetails :data="selectedPokemonData" :species="selectedPokemonSpeciesData"/>
+    <hr />
+    <Evolutions :chain="selectedPokemonEvolutionChain" :previous="selectedPokemonSpeciesData.evolves_from_species"/>
+    <hr />
+    <Abilities :abilities="selectedPokemonData.abilities" :abilitiesInfo="selectedPokemonAbilities"/>
+    <hr />
+    <Moves :data="selectedPokemonData.moves" />
+    <hr />
+    <Locations :data="selectedPokemonEncounters"/>
+    <hr />
+    <Links :data="selectedPokemonSpeciesData"/>
     </div>
 </template>
 
