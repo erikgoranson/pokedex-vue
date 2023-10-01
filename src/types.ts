@@ -5,6 +5,13 @@ export interface DefaultDTO {
     url: string,
 }
 
+export interface NamedAPIResourceList {
+    count: number,
+    next: string,
+    previous: string,
+    results: Array<DefaultDTO>;
+}
+
 export interface Move {
     id: number,
     name: string,
@@ -285,30 +292,3 @@ export interface GridItem {
     type1: string,
     type2: string,
 } 
-
-//functions
-
-export function getStatLabel(statName: string){
-    let output = '';
-    switch (statName) {
-      case 'hp':
-        output = statName; 
-        break;
-      case 'attack':
-        output = 'atk';
-        break;
-      case 'defense':
-        output = 'def';
-        break;
-      case 'special-attack':
-        output = 'spa';
-        break;
-      case 'special-defense':
-        output = 'spd';
-        break;
-      case 'speed':
-        output = 'spe';
-        break;
-    }
-    return output.toUpperCase();
-}

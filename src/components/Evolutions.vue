@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
-import type { EvolutionChain, ChainLink, DefaultDTO, EvolutionDetail } from './types';
+import type { EvolutionChain, ChainLink, DefaultDTO, EvolutionDetail } from '@/types';
 import { computed } from 'vue';
 import { usePokemonStore } from '@/stores/pokemon';
 import EvolutionConditions from './EvolutionConditions.vue';

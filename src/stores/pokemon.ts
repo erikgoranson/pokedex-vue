@@ -1,30 +1,28 @@
 import {defineStore} from 'pinia';
-import type { GridItem, PokemonData } from '@/components/types';
+import type { GridItem, PokemonData } from '@/types';
+import { ref } from 'vue';
 
-export const usePokemonStore = defineStore('pokemon', {
-    state: () => {
-        return{
-            data: <GridItem>{},
-            //indicates the currently stored pokemon data should overwrite the user's selection
-            isDefaultSelection: true, 
+
+export const usePokemonStore = defineStore('pokemon', () => {
+    const data = ref<GridItem>({} as GridItem);
+    const isDefaultSelection = ref(true); //indicates the currently stored pokemon data should overwrite the user's selection
+
+    function changePokemon(id: number) {
+        if(data.value.id != id){
+            data.value = <GridItem>{
+                id: id,
+            };
         }
-    }, 
-    actions:{
-        changePokemon(id: number) {
-            if(this.data.id != id){
-                this.data = <GridItem>{
-                    id: id,
-                };
-            }
-            this.isDefaultSelection = false;
-        },
-        fillPokemonData(pokemonDetail: PokemonData){
-            this.data = <GridItem>{
-                id: pokemonDetail.id,
-                name: pokemonDetail.name,
-                type1: pokemonDetail.types[0].type.name,
-                type2: pokemonDetail.types[0]?.type.name,
-            }
+        isDefaultSelection.value = false;
+    };
+    function fillPokemonData(pokemonDetail: PokemonData){
+        data.value = <GridItem>{
+            id: pokemonDetail.id,
+            name: pokemonDetail.name,
+            type1: pokemonDetail.types[0].type.name,
+            type2: pokemonDetail.types[0]?.type.name,
         }
     }
-})
+
+    return { data, isDefaultSelection, changePokemon, fillPokemonData };
+});

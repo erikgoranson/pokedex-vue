@@ -1,87 +1,101 @@
 <script setup lang="ts">
-import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue' 
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { computed, onMounted } from 'vue';
 import GenSelectMenu from './GenSelectMenu.vue';
+import { useVersionStore } from '@/stores/version';
+import { initTE, Collapse, Dropdown } from "tw-elements"
 
 const navigation = [
-  { name: 'Home', href: '/', current: false },
-  { name: 'About', href: '/about', current: false },
-]
+  { name: 'Home', href: '/' },
+];
+
+const versionStore = useVersionStore();
+
+onMounted(() => {
+  initTE({ Collapse, Dropdown })
+});
+
+const transformedGenerationName = computed(() => {
+  const generationName = versionStore.data.generationName;
+  const romanNumeral = generationName.replace('generation-','').toUpperCase();
+
+  return `Generation ${romanNumeral}`;
+})
+
 </script>
 
 <template>
-    <Disclosure as="div" class="bg-red-800" v-slot="{ open }">
-      <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-        <div class="relative flex h-16 items-center justify-between">
 
-          <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            <!-- Mobile menu button-->
-            <DisclosureButton class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-              <span class="sr-only">Open main menu</span>
-              <Bars3Icon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
-              <XMarkIcon v-else class="block h-6 w-6" aria-hidden="true" />
-            </DisclosureButton>
-          </div>
+  <nav class="flex-no-wrap relative flex w-full items-center justify-between bg-red-700 py-2 text-white shadow-md shadow-black/5 dark:bg-neutral-600 dark:shadow-black/10 lg:flex-wrap lg:justify-start lg:py-4"
+  data-te-navbar-ref>
+  <div class="flex w-full flex-wrap items-center justify-between px-3">
 
-          <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-            <!-- Brand Images here-->
-            <div class="flex flex-shrink-0 items-center">
-              <img class="block h-8 w-auto lg:hidden" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
-              <img class="hidden h-8 w-auto lg:block" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
-            </div>
+    <button
+      class="border-0 bg-transparent py-3 text-xl leading-none transition-shadow duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 dark:hover:text-white dark:focus:text-white lg:hidden"
+      type="button"
+      data-te-collapse-init
+      data-te-target="#navbarSupportedContentX"
+      aria-controls="navbarSupportedContentX"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="[&>svg]:w-8">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="h-8 w-8">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </span>
+    </button>
 
-            <!-- main menu (left) -->
-            <div class="hidden sm:ml-6 sm:block">
-              <div class="flex space-x-4">
-                <RouterLink v-for="item in navigation" :key="item.name" :to="item.href" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{ item.name }}</RouterLink>
-                <GenSelectMenu />
-              </div>
-            </div>
-          </div>
+    <!-- collapsible menu container-->
+    <div class="!visible hidden flex-grow basis-[100%] items-center lg:!flex lg:basis-auto" id="navbarSupportedContentX" data-te-collapse-item>
+      <ul class="mr-auto flex flex-col pl-0 lg:flex-row" data-te-navbar-nav-ref>
 
-          <!-- weird profile login menu I copypasta'd-->
-          <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+        <li v-for="item in navigation" data-te-nav-item-ref>
+          <RouterLink :key="item.name" :to="item.href" class="block py-2 pr-2  transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 dark:hover:text-white dark:focus:text-white lg:px-2" data-te-ripple-init data-te-ripple-color="light">
+            {{ item.name }}
+          </RouterLink>
+        </li>
 
-            
-  
-            <!-- Profile dropdown -->
-            <Menu as="div" class="relative ml-3">
-              <div>
-                <MenuButton class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                  <span class="sr-only">Open user menu</span>
-                  <img class="h-8 w-8 rounded-full" src="@/assets/images/defaultPokemon.png" alt="" />
-                </MenuButton>
-              </div>
-              <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-                <MenuItems class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <MenuItem v-slot="{ active }">
-                    <a href="#" :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">Your Profile</a>
-                  </MenuItem>
-                  <MenuItem v-slot="{ active }">
-                    <a href="#" :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">Settings</a>
-                  </MenuItem>
-                  <MenuItem v-slot="{ active }">
-                    <a href="#" :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">Sign out</a>
-                  </MenuItem>
-                </MenuItems>
-              </transition>
-            </Menu>
-          </div>
+      </ul>
+    </div>
 
+    <div class="flex  items-center lg:!flex lg:basis-auto">
+      <!-- generation name -->
+      <span class="mr-2 text-gray-300">{{ transformedGenerationName }}</span>
+      
+      <!-- gen menu -->
+      <ul class="mr-2 flex flex-row" data-te-navbar-nav-ref>
+        <li class="static" data-te-nav-item-ref data-te-dropdown-ref>
+          <a class="flex items-center whitespace-nowrap py-2 pr-2  transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 dark:hover:text-white dark:focus:text-white lg:px-2" href="#" data-te-ripple-init data-te-ripple-color="light" type="button" id="dropdownMenuButtonX" data-te-dropdown-toggle-ref aria-expanded="false" data-te-nav-link-ref>
+            {{ versionStore.data.name }} Version
+            <span class=" w-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
+          </a>
+          <GenSelectMenu/>
+        </li>
+      </ul>
 
-        </div>
+      <!-- pokemon/logo container -->
+      <div class="relative">
+        <span class="hidden-arrow flex items-center whitespace-nowrap transition duration-150 ease-in-out motion-reduce:transition-none">
+          <img class="h-8 w-8 rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" src="@/assets/images/defaultPokemon.png" alt="" loading="lazy" />
+        </span>
       </div>
 
-      <!-- menu that appears when smol -->
-      <DisclosurePanel class="sm:hidden">
-        <div class="space-y-1 px-2 pb-3 pt-2">
-          <DisclosureButton v-for="item in navigation" :key="item.name" as="a" :href="item.href" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">{{ item.name }}</DisclosureButton>
-          <DisclosureButton :disabled="true" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"><GenSelectMenu /></DisclosureButton>
-          
-        </div>
-        
-      </DisclosurePanel>
-    </Disclosure>
-  </template>
-  
-<style scoped></style>
+    </div>
+
+  </div>
+  </nav>
+</template>
+
+<style scoped>
+a {
+  @apply capitalize;
+}
+</style>

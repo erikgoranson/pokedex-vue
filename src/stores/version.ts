@@ -1,32 +1,35 @@
 import {defineStore} from 'pinia'
-import type { DefaultDTO } from '@/components/types';
+import type { DefaultDTO, Selection, VersionGroup  } from '@/types';
+import helpers from '@/helpers';
+import { ref } from 'vue';
 
-interface Selection {
-    name: string, 
-    generationName: string,
-    version_group: VersionGroup, 
-}
+const selectedVersionKey: string = 'selectedVersion';
+const selectedVersion: Selection = helpers.retrieveLocalStorageData(selectedVersionKey);
 
-interface VersionGroup {
-    id: number,
-    generation?: DefaultDTO,
-    move_learn_methods?: Array<DefaultDTO>,
-    name: string,
-    order?: number,
-    pokedexes: Array<DefaultDTO>,
-    regions: Array<DefaultDTO>,
-    versions?: Array<DefaultDTO>,
-}
-
-export const useVersionStore = defineStore('version', {
-    state: () => {
-        return{
-            data: <Selection>{}
-        }
-    }, 
-    actions:{
-        changeVersion (payload: Selection) {
-            this.data = payload
-        }
+const rbVersion = <Selection>{
+    name: 'red / blue',
+    generationName: 'generation-i',
+    version_group: <VersionGroup>{
+        id:1,
+        name:'red-blue',
+        generation: <DefaultDTO>{
+            name: 'generation-i',
+        },
+        pokedexes: <DefaultDTO[]>[
+            <DefaultDTO>{
+                url: '/api/v2/pokedex/2/'
+            }
+        ]
     }
-})
+}
+
+const defaultSelection: Selection = (selectedVersion) ? selectedVersion : rbVersion;
+
+export const useVersionStore = defineStore('version', () => {
+    const data = ref(defaultSelection);
+    function changeVersion (payload: Selection) {
+        data.value = payload;
+    }
+
+    return { data, changeVersion }
+});

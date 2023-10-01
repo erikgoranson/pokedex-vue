@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ChainLink } from './types';
+import type { ChainLink } from '@/types';
 import { computed, ref } from 'vue';
 
 const props = defineProps({

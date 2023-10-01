@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, reactive } from 'vue';
-import axios, { all } from 'axios';
-import type { DefaultDTO, VersionGroup, SelectionGroup, Selection } from '@/components/types';
+import { ref, onMounted, watch, reactive, computed } from 'vue';
+import type { DefaultDTO, VersionGroup, SelectionGroup, Selection } from '@/types';
 import { useVersionStore } from '@/stores/version';
+import pokeAPI from '@/services/pokeAPI';
+import helpers from '@/helpers';
 
 ///version groups to be excluded for the marked reasons
 const excludedVersionGroups: string[] = [
@@ -29,41 +30,12 @@ const selectedVersionKey: string = 'selectedVersion';
 async function populateGenerationData() {
 
     console.log('retreiving generation and version group data...')
-
-    //all generations
-    const generations: DefaultDTO[] = await axios
-        .get('/src/assets/data/api/v2/generation/index.json')
-        .then((response) => {
-            return response.data.results
-        })
-        .catch( async (error) => {
-            console.log(JSON.parse(await error.response.data.text()));
-        });
-    
-    //all versiongroups
-    const versionGroups: DefaultDTO[] = await axios
-        .get('/src/assets/data/api/v2/version-group/index.json')
-        .then((response) => {
-            return response.data.results;
-        })
-        .catch( async (error) => {
-            console.log(JSON.parse(await error.response.data.text()));
-        });
-    
-    //versiongroup details using the count of provided all versiongroups earlier
-    const generationData: VersionGroup[] = await axios
-        .all(
-            versionGroups.map((vg, index) => axios
-                .get<VersionGroup>(`/src/assets/data/api/v2/version-group/${index+1}/index.json`)
-                .then((response) => {
-                    return response.data;
-                })
-            )
-        );
+    const generations = await pokeAPI.getGenerations();
+    const versionGroups = await pokeAPI.getVersionGroups();
             
     //grouping the versiongroups by generation for the dropdown selection
     const selectionData = generations.map((g) => {
-        const filter = generationData.filter(f => 
+        const filter = versionGroups.filter(f => 
             f.generation?.name === g.name &&
             !excludedVersionGroups.includes(f.name)
         )
@@ -74,41 +46,12 @@ async function populateGenerationData() {
         };
     });
     
-    selectData.value = selectionData;
+    selectData.value = selectionData; 
     localStorage.setItem(selectDataKey, JSON.stringify(selectionData));
 }
 
-function retrieveLocalStorageData(key: string){
-    const data = localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key) || '') : [];
-    return data;
-}
-
-//for mount only
-function getSelectedVersion(){
-    const retrievedSelection = retrieveLocalStorageData(selectedVersionKey);
-
-    const defaultSelection = <Selection>{
-        name: 'red / blue',
-        generationName: 'generation-i',
-        version_group: <VersionGroup>{
-            id:1,
-            name:'red-blue',
-            generation: <DefaultDTO>{
-                name: 'generation-i',
-            },
-            pokedexes: <DefaultDTO[]>[
-                <DefaultDTO>{
-                    url: '/api/v2/pokedex/2/'
-                }
-            ]
-        }
-    }
-
-    versionStore.changeVersion(retrievedSelection.length === 0 ? defaultSelection : retrievedSelection);
-}
-
 function getSelectData(){
-    selectData.value = retrieveLocalStorageData(selectDataKey);
+    selectData.value = helpers.retrieveLocalStorageData(selectDataKey); 
 }
 
 function buildPrettyVersionName(versions: DefaultDTO[]){
@@ -121,18 +64,17 @@ function buildPrettyVersionName(versions: DefaultDTO[]){
     return output;
 }
 
-function constructSelection( selectedGroup: VersionGroup ){
+function changeVersion( selectedGroup: VersionGroup ){
     const output = <Selection>{ 
         name:buildPrettyVersionName(selectedGroup.versions as DefaultDTO[]), generationName: selectedGroup.generation?.name, 
         version_group: selectedGroup
     }
-    return output;
+    versionStore.changeVersion(output);
 }
 
 onMounted(async () => {
     getSelectData();
-    getSelectedVersion();
-    if (selectData.value.length === 0){
+    if (!selectData.value){
         await populateGenerationData();
     }
 });
@@ -144,46 +86,33 @@ watch(versionStore, (newValue, oldValue) => {
 </script>
 
 <template>
-    <div class="grid grid-cols-1 gap-0 text-sm overflow-x-auto">
-        <div>
-            <select v-model="versionStore.data">
-                <option selected disabled :value="versionStore.data">{{ versionStore.data.name }} version</option><!--default selection text-->
-                <optgroup 
-                    v-for="(sd, index) in selectData" 
-                    :key="sd.generationName" 
-                    :label="sd.generationName.toUpperCase().replace('-',' ')">
-                    <option 
-                        v-for="vg in (sd.version_groups as VersionGroup[])" 
-                        :value="constructSelection(vg)" 
-                        :key="vg.id">
-                            {{ buildPrettyVersionName(vg.versions as DefaultDTO[]) }}
-                    </option>
-                </optgroup>
-            </select>
-        </div>
-        <div class="capitalize">
-            Generation {{ versionStore.data.version_group?.generation?.name.split('-')[1].toUpperCase() }}
+    <div class="absolute left-0 right-0 top-full z-[1000] mt-0 hidden w-full border-none bg-white bg-clip-padding text-neutral-600 shadow-lg dark:bg-neutral-700 dark:text-neutral-200 [&[data-te-dropdown-show]]:block" aria-labelledby="dropdownMenuButtonX" data-te-dropdown-menu-ref>
+        <div class="flex justify-center mt-1">Select a version group</div>
+        <div class="px-6 py-5 lg:px-8">
+            <div class="grid gap-6 grid-cols-2 lg:grid-cols-4">
+                <div v-for="(sd, index) in selectData" >
+                    <h1>{{ sd.generationName }}</h1>
+                    <a v-for="vg in (sd.version_groups as VersionGroup[])" class="" @click="changeVersion(vg)">
+                        {{ buildPrettyVersionName(vg.versions as DefaultDTO[]) }}
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <style scoped>
 
-optgroup {
-    @apply text-slate-800/50;
-    @apply bg-neutral-800;
+a {
+    @apply capitalize truncate;
 }
 
-option {
-    text-transform: capitalize;
-    @apply text-slate-800;
-    @apply bg-neutral-800;
-    @apply capitalize;
+h1 {
+    @apply capitalize border-b;
 }
 
-select {
-    text-transform: capitalize;
-    @apply bg-red-800;
+a {
+@apply block w-full whitespace-nowrap bg-transparent px-2 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30;
 }
 
 </style>

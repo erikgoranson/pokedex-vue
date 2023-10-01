@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
-import type { PokemonStat } from '@/components/types';
-import { getStatLabel } from '@/components/types'
+import type { PokemonStat } from '@/types';
+import helpers from '@/helpers';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -56,7 +56,7 @@ function getStatColorStyle(base_stat:number){
         <div class="flex flex-col mb-2 justify-center items-center">BASE STATS</div>
 
         <div class="flex" v-for="stat in stats">
-          <div class="flex-none w-8 ">{{ getStatLabel(stat.stat.name) }}</div>
+          <div class="flex-none w-8 ">{{ helpers.getStatLabel(stat.stat.name) }}</div>
           <div class="flex-none w-8 font-semibold">{{ stat.base_stat }}</div>
           <div class="flex-auto w-64 mt-2">
             <div class="w-full bg-gray-200 h-2.5 mb-4 dark:bg-gray-700">

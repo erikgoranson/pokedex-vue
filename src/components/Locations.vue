@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
-import type { PokemonData, PokemonSpecies, Ability, EvolutionChain, LocationAreaEncounter, VersionEncounterDetail, Encounter } from '@/components/types';
+import type { PokemonData, PokemonSpecies, Ability, EvolutionChain, LocationAreaEncounter, VersionEncounterDetail, Encounter } from '@/types';
 import { computed, reactive, ref, type Ref, watch} from 'vue';
 import { useVersionStore } from '@/stores/version';
 
