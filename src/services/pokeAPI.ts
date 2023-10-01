@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { PokemonData, PokemonSpecies, Ability, EvolutionChain, LocationAreaEncounter, PokemonAbility, VersionGroup, Move, PokedexInfo, GridItem, PokemonTypes, DefaultDTO, NamedAPIResourceList, PokemonMove } from '@/types';
 
 //base url for fragments only
-const PARTIAL_URL = '/src/assets/data';
+const PARTIAL_URL = 'https://pokeapi.co';
 
 //base url for all normal calls
 const BASE_URL = `${PARTIAL_URL}/api/v2`;
@@ -21,17 +21,17 @@ function getPokemonType(types: PokemonTypes[], slot: Slots){
 }
 
 function getEndpointFromFragment(urlFragment: string){
-    return PARTIAL_URL + urlFragment + 'index.json';
+    return urlFragment;
 }
 
 async function getPokemon(id: number){
-    const endpoint = `${BASE_URL}/pokemon/${id}/index.json`;
+    const endpoint = `${BASE_URL}/pokemon/${id}/`;
     const response = await axios.get<PokemonData>(endpoint);
     return response.data;
 }
 
 async function getPokemonSpecies(id: number){
-    const endpoint = `${BASE_URL}/pokemon-species/${id}/index.json`;
+    const endpoint = `${BASE_URL}/pokemon-species/${id}/`;
     const response = await axios.get<PokemonSpecies>(endpoint);
     return response.data;
 }
@@ -58,19 +58,19 @@ async function getEvolutionChain(partialPath: string){
 }
 
 async function getPokemonLocationAreas(id: number){
-    const endpoint = `${BASE_URL}/pokemon/${id}/encounters/index.json`;
+    const endpoint = `${BASE_URL}/pokemon/${id}/encounters/`;
     const response = await axios.get<LocationAreaEncounter[]>(endpoint);
     return response.data;
 }
 
 async function getGenerations() {
-    const endpoint = `${BASE_URL}/generation/index.json`;
+    const endpoint = `${BASE_URL}/generation/`;
     const response = await axios.get<NamedAPIResourceList>(endpoint);
     return response.data.results;
 }
 
 async function getVersionGroups(){
-    const endpoint = `${BASE_URL}/version-group/index.json`;
+    const endpoint = `${BASE_URL}/version-group/`;
 
     const versionGroupUrls = await axios.get<NamedAPIResourceList>(endpoint);
     const versionGroups = await axios.all(
@@ -82,13 +82,14 @@ async function getVersionGroups(){
 }
 
 async function getVersionGroup(id: number){
-    const endpoint = `${BASE_URL}/version-group/${id}/index.json`;
+    const endpoint = `${BASE_URL}/version-group/${id}/`;
     const response = await axios.get<VersionGroup>(endpoint);
     return response.data;
 }
 
 async function getMove(partialPath: string){
     const endpoint = getEndpointFromFragment(partialPath);
+    console.log(endpoint)
     const response = await axios.get<Move>(endpoint); 
     return response.data;
 }
@@ -105,7 +106,7 @@ async function getMoves(pokemonMoves: PokemonMove[]) {
 }
 
 async function getPokedex(id: number){
-    const endpoint = `${BASE_URL}/pokedex/${id}/index.json`;
+    const endpoint = `${BASE_URL}/pokedex/${id}/`;
     const response = await axios.get<PokedexInfo>(endpoint);
     return response.data;
 }
