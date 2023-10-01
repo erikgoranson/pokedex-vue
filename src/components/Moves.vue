@@ -251,7 +251,7 @@ function testPossibleSelection(key: string){
 
 <style scoped>
 button {
-    @apply px-4 py-2 rounded border enabled:hover:bg-red-900 focus:z-10 focus:ring-2 focus:ring-red-500 focus:bg-red-900 focus:text-white capitalize;
+    @apply px-4 py-2 rounded border enabled:hover:bg-red-500 focus:z-10 focus:ring-2 focus:ring-red-500 focus:bg-red-900 focus:text-white capitalize;
 }
 
 table {
