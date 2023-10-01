@@ -267,7 +267,7 @@ table {
 }
 
 .type-container {
-  @apply px-1 py-1 bg-red-300 text-xs rounded-sm font-bold align-middle whitespace-nowrap text-center inline-block min-w-[60px]; 
+  @apply px-1 py-1 bg-red-300 text-xs rounded-sm font-bold align-middle whitespace-nowrap text-center inline-block min-w-[60px] text-white; 
   text-transform: uppercase; 
 }
 

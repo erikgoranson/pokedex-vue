@@ -85,7 +85,7 @@ watch(versionStore, (newValue, oldValue) => {
 
 <template>
   <div>
-    <form id="search"><input class="w-full" name="query" placeholder="Type to search" v-model="searchQuery"></form>
+    <form id="search"><input class="w-full bg-gray-100 border" name="query" placeholder="Type to search" v-model="searchQuery"></form>
   </div>
   <div class="">
     <div class="flex h-screen justify-center overflow-y-auto overflow-x-hidden">

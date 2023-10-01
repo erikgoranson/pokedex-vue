@@ -135,7 +135,7 @@ thead {
 }
 
 .type-container {
-  @apply px-1 py-1 mr-1 bg-red-300 text-xs rounded-sm font-bold align-middle whitespace-nowrap text-center inline-block min-w-[70px]; 
+  @apply px-1 py-1 mr-1 bg-red-300 text-xs rounded-sm font-bold align-middle whitespace-nowrap text-center inline-block min-w-[70px] text-white; 
   text-transform: uppercase; 
 }
 

@@ -26,7 +26,7 @@ const transformedGenerationName = computed(() => {
 
 <template>
 
-  <nav class="flex-no-wrap relative flex w-full items-center justify-between bg-red-800 py-2 shadow-md shadow-black/5 dark:bg-neutral-600 dark:shadow-black/10 lg:flex-wrap lg:justify-start lg:py-4"
+  <nav class="flex-no-wrap relative flex w-full items-center justify-between bg-red-700 py-2 text-white shadow-md shadow-black/5 dark:bg-neutral-600 dark:shadow-black/10 lg:flex-wrap lg:justify-start lg:py-4"
   data-te-navbar-ref>
   <div class="flex w-full flex-wrap items-center justify-between px-3">
 
@@ -69,7 +69,7 @@ const transformedGenerationName = computed(() => {
 
     <div class="flex  items-center lg:!flex lg:basis-auto">
       <!-- generation name -->
-      <span class="mr-2 text-slate-800">{{ transformedGenerationName }}</span>
+      <span class="mr-2 text-gray-300">{{ transformedGenerationName }}</span>
       
       <!-- gen menu -->
       <ul class="mr-2 flex flex-row" data-te-navbar-nav-ref>

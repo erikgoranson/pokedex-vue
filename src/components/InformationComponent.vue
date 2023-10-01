@@ -110,7 +110,7 @@ onMounted(() => {
 
 <template>
   <div v-if="!isLoaded && pokemonStore.isDefaultSelection"><Skeleton/></div>
-  <div v-else class=" bg-neutral-900 p-3 text-neutral-700 shadow-lg dark:bg-white-600 dark:text-neutral-200 dark:shadow-black/30">
+  <div v-else class="p-3 shadow-lg">
     <Detail :data="selectedPokemonData" :species="selectedPokemonSpeciesData" />
     <BaseStatistics :stats="selectedPokemonData.stats"/>
     <hr />
