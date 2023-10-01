@@ -6,7 +6,6 @@ import { initTE, Collapse, Dropdown } from "tw-elements"
 
 const navigation = [
   { name: 'Home', href: '/' },
-  { name: 'About', href: '/about' },
 ];
 
 const versionStore = useVersionStore();
