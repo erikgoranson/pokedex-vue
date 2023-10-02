@@ -89,7 +89,6 @@ async function getVersionGroup(id: number){
 
 async function getMove(partialPath: string){
     const endpoint = getEndpointFromFragment(partialPath);
-    console.log(endpoint)
     const response = await axios.get<Move>(endpoint); 
     return response.data;
 }

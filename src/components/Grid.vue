@@ -1,53 +1,75 @@
 <script setup lang="ts">
-//based on https://vuejs.org/examples/#grid
-import { computed, ref, watch } from 'vue';
+import { computed, onRenderTracked, ref, watch } from 'vue';
 import { usePokemonStore } from '@/stores/pokemon';
 import type { GridItem } from '@/types';
 
 const props = defineProps({
-  data: Array,
-  columns: Array<string>,
-  filterKey: String
+    data: {
+        type: Array as () => GridItem[],
+        required: true,
+    },
+    filterKey: {
+        type: String,
+        required: false,
+    }
 });
-const pokemonStore = usePokemonStore();
-const sortKey = ref('');
-const sortOrders = ref<[]>(
-  props.columns?.reduce((o: any, key: any) => ((o[key] = 1), o), {}) as []
-);
 
-const filteredData = computed(() => {
-  let { data, filterKey } = props;
-  if (filterKey) {
-    filterKey = filterKey.toLowerCase();
-    data = data?.filter((row: any) => {
-      return Object.keys(row).some((key) => {
-        return String(row[key]).toLowerCase().indexOf(filterKey ?? '') > -1
-      })
-    })
-  }
-  const key: any = sortKey.value
-  if (key) {
-    const order = sortOrders.value[key]
-    data = data?.slice().sort((a: any, b: any) => {
-      a = a[key]
-      b = b[key]
-      return (a === b ? 0 : a > b ? 1 : -1) * order
-    })
-  }
-  return data as [];
+//not sure how to accomplish this without manualy entering the keys from GridItem
+//type SortableKey = 'id' | 'name' | 'type1' | 'type2';
+const gridItemKeys = ['id','name','type1','type2'] as const;
+
+type SortableKey = typeof gridItemKeys[number];
+const sortKey = ref<SortableKey>('name');
+
+const pokemonStore = usePokemonStore();
+
+const sortOrder = ref<number>(1); //asc default
+
+const sortedData = computed(() => {
+
+    //dynamically sort through every property and key for filter match
+    let { data, filterKey } = props; 
+    if (filterKey) {
+        filterKey = filterKey.toLowerCase();
+        data = data?.filter((row: any) => {
+            return Object.keys(row).some((key) => {
+                return String(row[key]).toLowerCase().indexOf(filterKey ?? '') > -1
+            })
+        })
+    }
+
+    switch (sortKey.value) {
+        case 'name':
+            return [...data].sort((a: GridItem, b: GridItem) => {
+                return a.name.localeCompare(b.name) * sortOrder.value;
+            })
+        case 'id':
+            return [...data].sort((a: GridItem, b: GridItem) => {
+                return a.id - b.id * sortOrder.value;
+            })
+        case 'type1':
+            return [...data].sort((a: GridItem, b: GridItem) => {
+                return a.type1.localeCompare(b.type1) * sortOrder.value;
+            })
+        case 'type2':
+            return [...data].sort((a: GridItem, b: GridItem) => {
+                return a.type2.localeCompare(b.type2) * sortOrder.value;
+            })
+    }
 })
 
-function sortBy(key: string) {
-  sortKey.value = key;
-  sortOrders.value[key] *= -1; 
-}
+function sortOnClick(key: string){
+   const testplz: SortableKey = key as SortableKey;
 
-function capitalize(str:string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+   if(sortKey.value === testplz){
+    sortOrder.value *= -1;
+   }
+
+   sortKey.value = testplz;
 }
 
 function storeSelectedPokemon(entry: GridItem){ 
-  pokemonStore.changePokemon(entry.id);
+    pokemonStore.changePokemon(entry.id);
 }
 
 function getTypeStyle(key: string){
@@ -80,39 +102,28 @@ function getTypeStyle(key: string){
 </script>
 
 <template>
-  <section class="">
-  <table v-if="filteredData?.length">
+
+  <table >
     <thead>
-      <tr>
-        <th scope="col" v-for="key in columns"
-          @click="sortBy(key)"
-          :class="{ active: sortKey == key }">
-          {{ capitalize(key) }}
-          <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
-          </span>
-        </th>
-      </tr>
+        <tr>
+            <th scope="col" v-for="key in gridItemKeys" @click="sortOnClick(key)">
+                {{ key }}
+            </th>
+        </tr>
     </thead>
-    <tbody>
-      <tr v-for="entry in filteredData" class="nonHeaderRow cursor-pointer">
-        <td v-for="key in columns" @click="storeSelectedPokemon(entry)">
-          <span :class="getTypeStyle(entry[key])">{{entry[key]}}</span>
-          
-        </td>
-      </tr>
+    <tbody v-if="sortedData?.length">
+        <tr v-for="entry in sortedData" class="nonHeaderRow cursor-pointer" @click="storeSelectedPokemon(entry)">
+            <td>{{ entry.id }}</td>
+            <td>{{ entry.name }}</td>
+            <td><span :class="getTypeStyle(entry.type1)">{{ entry.type1 }}</span></td>
+            <td><span :class="getTypeStyle(entry.type2)">{{ entry.type2 }}</span></td>
+        </tr>
+    </tbody>
+    <tbody v-else>
+        <tr class="nonHeaderRow">No matches found</tr>
     </tbody>
   </table>
-  <table v-else>
-    <thead>
-      <th scope="col" v-for="key in columns">
-          {{ capitalize(key) }}
-          <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
-          </span>
-        </th>
-    </thead>
-    <tr class="nonHeaderRow">No matches found</tr>
-    </table>
-  </section>
+
 </template>
 
 <style scoped>
