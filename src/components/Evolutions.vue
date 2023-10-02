@@ -134,7 +134,7 @@ function getCursorStyle(url: string){
                                 <EvolutionConditions :chain="e" :isVertical="true"/>
                             </span>
                             
-                            <img class="bg-gray-100 rounded-lg mr-1 mb-1" :class="getCursorStyle(e.species.url)" :src="`/src/assets/images/sprites/pokemon/${getNationalID(e.species.url)}.png`" @click="changeStoredPokemon(e.species.url)"/>
+                            <img class="bg-gray-100 rounded-lg mr-1 mb-1" :class="getCursorStyle(e.species.url)" :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getNationalID(e.species.url)}.png`" @click="changeStoredPokemon(e.species.url)"/>
 
                         </div>
                     </td>

@@ -44,7 +44,7 @@ const filteredFlavorTextEntry = computed(() => {
   return flavortext;
 });
 
-const spriteUrl = computed(() => getLocalSpritePath(props.data.sprites.front_default));
+const spriteUrl = computed(() => props.data.sprites.front_default);
 
 </script>
 
