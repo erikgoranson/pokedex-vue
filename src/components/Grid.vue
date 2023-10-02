@@ -18,8 +18,10 @@ const props = defineProps({
 //type SortableKey = 'id' | 'name' | 'type1' | 'type2';
 const gridItemKeys = ['id','name','type1','type2'] as const;
 
-type SortableKey = typeof gridItemKeys[number];
-const sortKey = ref<SortableKey>('name');
+
+
+type SortableKey = typeof gridItemKeys[number] | null;
+const sortKey = ref<SortableKey>(null);
 
 const pokemonStore = usePokemonStore();
 
@@ -55,6 +57,8 @@ const sortedData = computed(() => {
             return [...data].sort((a: GridItem, b: GridItem) => {
                 return a.type2.localeCompare(b.type2) * sortOrder.value;
             })
+        default: 
+            return data; //initial sort 
     }
 })
 
