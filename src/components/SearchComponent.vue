@@ -9,7 +9,6 @@ import pokeAPI from '@/services/pokeAPI';
 const versionStore = useVersionStore();
 const pokemonStore = usePokemonStore();
 
-const gridColumns: string[] = ['id', 'name', 'type1', 'type2'];
 const gridData = ref<GridItem[]>(<GridItem[]>[]);
 const searchQuery = ref('');
 
@@ -89,11 +88,7 @@ watch(versionStore, (newValue, oldValue) => {
   </div>
   <div class="">
     <div class="flex h-screen justify-center overflow-y-auto overflow-x-hidden">
-      <Grid 
-        :data="gridData"
-        :columns="gridColumns"
-        :filter-key="searchQuery">
-      </Grid>
+      <Grid :data="gridData" :filterKey="searchQuery" />
     </div>
   </div>
 </template>
