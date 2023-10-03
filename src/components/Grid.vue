@@ -133,14 +133,14 @@ function getTypeStyle(key: string){
 <style scoped>
 th {
   text-transform: capitalize;
-  @apply px-6 py-4;
+  @apply px-2 py-4;
 } 
 td {
   text-transform: capitalize;
-  @apply whitespace-nowrap px-6 py-4 font-medium;
+  @apply whitespace-nowrap px-2 py-4 font-medium;
 }
 table {
-  @apply min-w-full text-left text-sm font-light h-fit;
+  @apply w-full text-left text-sm font-light h-fit;
 }
 thead {
   @apply border-b font-medium dark:border-neutral-500
