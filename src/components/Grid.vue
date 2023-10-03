@@ -18,8 +18,10 @@ const props = defineProps({
 //type SortableKey = 'id' | 'name' | 'type1' | 'type2';
 const gridItemKeys = ['id','name','type1','type2'] as const;
 
-type SortableKey = typeof gridItemKeys[number];
-const sortKey = ref<SortableKey>('name');
+
+
+type SortableKey = typeof gridItemKeys[number] | null;
+const sortKey = ref<SortableKey>(null);
 
 const pokemonStore = usePokemonStore();
 
@@ -55,6 +57,8 @@ const sortedData = computed(() => {
             return [...data].sort((a: GridItem, b: GridItem) => {
                 return a.type2.localeCompare(b.type2) * sortOrder.value;
             })
+        default: 
+            return data; //initial sort 
     }
 })
 
@@ -129,14 +133,14 @@ function getTypeStyle(key: string){
 <style scoped>
 th {
   text-transform: capitalize;
-  @apply px-6 py-4;
+  @apply px-2 py-4;
 } 
 td {
   text-transform: capitalize;
-  @apply whitespace-nowrap px-6 py-4 font-medium;
+  @apply whitespace-nowrap px-2 py-4 font-medium;
 }
 table {
-  @apply min-w-full text-left text-sm font-light h-fit;
+  @apply w-full text-left text-sm font-light h-fit;
 }
 thead {
   @apply border-b font-medium dark:border-neutral-500

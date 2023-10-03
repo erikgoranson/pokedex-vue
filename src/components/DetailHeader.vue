@@ -29,7 +29,15 @@ function getLocalSpritePath(url: string){
   return fullLocalPath;
 }
 
-const filteredGenus = computed(() => props.species.genera.filter(x => x.language.name == "en").map(obj => obj.genus).toString());
+const filteredGenus = computed(() => {
+  const genus = props.species.genera.filter(x => x.language.name == "en").map(obj => obj.genus).toString();
+
+  if(genus === ''){
+    return '-----';
+  }
+
+  return `The ${genus}`; //"pokemon" is already appended in the value;
+});
 
 const filteredFlavorTextEntry = computed(() => {
   const generation = store.data.version_group?.name; 
@@ -44,7 +52,12 @@ const filteredFlavorTextEntry = computed(() => {
   return flavortext;
 });
 
-const spriteUrl = computed(() => props.data.sprites.front_default);
+const spriteUrl = computed(() => {
+  const spriteURL = props.data.sprites.front_default;
+  const defaultSpriteUrl = '/src/assets/images/defaultPokemon.png';
+
+  return (spriteURL) ? spriteURL : defaultSpriteUrl;
+});
 
 </script>
 
@@ -61,7 +74,7 @@ const spriteUrl = computed(() => props.data.sprites.front_default);
     <div class="w-3/5 md:w-3/5 lg:w-2/5 px-1 mb-2">
       <div  class="border h-28 text-sm text-grey-dark flex flex-col justify-center items-center">
         <h5 class="text-2xl font-semibold truncate md:text-4xl leading-normal lg:leading-normal">{{formatPokemonName(props.data.name)}}</h5>
-          <p class="text-0xl">The {{ filteredGenus }}</p>
+          <p class="text-0xl">{{ filteredGenus }}</p>
         <div class="mt-2">
             <span class="type-container" v-for="t in props.data.types" :class="t.type.name">
               {{ t.type.name }}
