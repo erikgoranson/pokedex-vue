@@ -1,25 +1,35 @@
-# pokedex-vue
+## pokedex-vue
 
-This template should help get you started developing with Vue 3 in Vite.
+A pokedex made with Vue+TypeScript as a fun, personal project. This was largely meant for a good challenge (see: the PokeAPI) and for practice with Vue and TS. Will continue to make additions to this over time as my kids are a very particular audience. Next addition planned is to see all possible variants of the selected pokemon, including shinies. Open to feedback and suggestions
 
-## Recommended IDE Setup
+Viewable live at https://erikgoranson-pokedex-vue.vercel.app/
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+This pokedex draws from the PokeAPI and has data for all 1008 pokemon in all of the core games from generation 1 through 9. It includes:
 
-## Type Support for `.vue` Imports in TS
+- pokedex entries
+- base stats  
+- species details
+- evolution tree(s)
+- abilities
+- moves (with a buttongroup for filtering by learn method)
+- locations
+- selection menu to choose between different game version groups
+- searchable table that displays all pokemon from the currently selected version group
+- links to external pokemon databases (in case you require additional exhaustive information provided by those sites)
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+## Screenshots 
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+![[pokedex-desktop](https://user-images.githubusercontent.com/54157038/205478600-09fc26b0-a816-40db-9a7e-8b30c9913bac.PNG)](https://raw.githubusercontent.com/erikgoranson/pokedex-vue/master/screenshot_v1.PNG)
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+![[pokedex-mobile](https://user-images.githubusercontent.com/54157038/205478600-09fc26b0-a816-40db-9a7e-8b30c9913bac.PNG)](https://raw.githubusercontent.com/erikgoranson/pokedex-vue/master/screenshot_v1-mobile.PNG)
 
-## Customize configuration
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+
+https://raw.githubusercontent.com/erikgoranson/pokedex-vue/master/screenshot_v1-mobile.PNG
+
+## Acknowledgments
+ 
+[PokeAPI](https://github.com/PokeAPI/api-data) - all data
 
 ## Project Setup
 
@@ -50,3 +60,6 @@ npm run test:unit
 ```sh
 npm run lint
 ```
+ 
+
+ 
