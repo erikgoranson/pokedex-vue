@@ -72,7 +72,10 @@ async function getGenerations() {
 async function getVersionGroups(){
     const endpoint = `${BASE_URL}/version-group/`;
 
-    const versionGroupUrls = await axios.get<NamedAPIResourceList>(endpoint);
+    const versionGroupUrls = await axios
+        .get<NamedAPIResourceList>(endpoint, { 
+            params: { limit: '50'}
+        });
     const versionGroups = await axios.all(
         versionGroupUrls.data.results.map((vg, index) => {
             return getVersionGroup(index+1);
