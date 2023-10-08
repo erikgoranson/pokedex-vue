@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
-import type { PokemonMove, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText } from '@/types';
-import { computed,reactive } from 'vue';
+import type { PokemonData, PokemonSpecies } from '@/types';
+import { computed } from 'vue';
 import { useVersionStore } from '@/stores/version';
 
 const props = defineProps({
@@ -17,22 +17,17 @@ const props = defineProps({
 
 const store = useVersionStore();
 
-function formatPokemonName(pokemonName: string) {
-  return pokemonName.replace('-',' '); 
-}
-
-function getLocalSpritePath(url: string){
-  const apiSpritePath = "https://raw.githubusercontent.com/PokeAPI/sprites/master/";
-  const localSpritePath = "/src/assets/images/";
-  
-  const fullLocalPath = url.replace(apiSpritePath, localSpritePath);
-  return fullLocalPath;
+// function formatPokemonName(pokemonName: string) {
+const formatPokemonName = (pokemonName: string) => {
+  return pokemonName.replace('-', ' ');
 }
 
 const filteredGenus = computed(() => {
-  const genus = props.species.genera.filter(x => x.language.name == "en").map(obj => obj.genus).toString();
+  const genus = props.species.genera.filter(x => x.language.name == "en")
+    .map(obj => obj.genus)
+    .toString();
 
-  if(genus === ''){
+  if (genus === '') {
     return '-----';
   }
 
@@ -40,16 +35,14 @@ const filteredGenus = computed(() => {
 });
 
 const filteredFlavorTextEntry = computed(() => {
-  const generation = store.data.version_group?.name; 
-
+  const generation = store.data.version_group?.name;
   const filteredEntries = props.species.flavor_text_entries.filter(x => x.language.name == "en" && generation.startsWith(x.version.name));
 
-  if(filteredEntries.length == 0 || filteredEntries.length == undefined){
+  if (filteredEntries.length == 0 || filteredEntries.length == undefined) {
     return "No flavortext entries found";
-  } 
-  let flavortext = filteredEntries[0].flavor_text.replace('\f'," ");
-  
-  return flavortext;
+  }
+
+  return filteredEntries[0].flavor_text.replace('\f', " ");
 });
 
 const spriteUrl = computed(() => {
@@ -62,38 +55,47 @@ const spriteUrl = computed(() => {
 </script>
 
 <template>
-
-  <InformationSection>
+  <information-section>
     <div class="flex flex-wrap -mx-2 ">
       <div class="w-2/5 md:w-2/5 lg:w-1/5 px-1 mb-2">
         <div id="pkmn-image" class="relative border h-28 text-sm text-grey-dark flex items-center justify-center">
           <img class="" :src="spriteUrl" />
-          <h1 class="absolute text-0xl bottom-0 left-1/2 -translate-x-1/2">No. {{props.data.id}}</h1>
+          <h1 class="absolute text-0xl bottom-0 left-1/2 -translate-x-1/2">
+            No. {{ props.data.id }}
+          </h1>
         </div>
       </div>
-    <div class="w-3/5 md:w-3/5 lg:w-2/5 px-1 mb-2">
-      <div  class="border h-28 text-sm text-grey-dark flex flex-col justify-center items-center">
-        <h5 class="text-2xl font-semibold truncate md:text-4xl leading-normal lg:leading-normal">{{formatPokemonName(props.data.name)}}</h5>
-          <p class="text-0xl">{{ filteredGenus }}</p>
-        <div class="mt-2">
-            <span class="type-container" v-for="t in props.data.types" :class="t.type.name">
+      <div class="w-3/5 md:w-3/5 lg:w-2/5 px-1 mb-2">
+        <div class="border h-28 text-sm text-grey-dark flex flex-col justify-center items-center">
+          <h5 class="text-2xl font-semibold truncate md:text-4xl leading-normal lg:leading-normal">
+            {{ formatPokemonName(props.data.name) }}
+          </h5>
+          <p class="text-0xl">
+            {{ filteredGenus }}
+          </p>
+          <div class="mt-2">
+            <span
+              v-for="t in props.data.types"
+              class="type-container"
+              :class="t.type.name"
+            >
               {{ t.type.name }}
             </span>
           </div>
+        </div>
+      </div>
+      <div class="w-full lg:w-2/5 px-1 ">
+        <div id="pkmn-flavortext" class="border h-28  text-grey-dark flex  items-center justify-center">
+          <p class="mx-1">
+            {{ filteredFlavorTextEntry }}
+          </p>
+        </div>
       </div>
     </div>
-    <div class="w-full lg:w-2/5 px-1 ">
-      <div id="pkmn-flavortext" class="border h-28  text-grey-dark flex  items-center justify-center">
-        <p class="mx-1">{{ filteredFlavorTextEntry }}</p>
-      </div>
-    </div>
-   </div>
-  </InformationSection>
-
+  </information-section>
 </template>
 
 <style scoped>
-
 h5 {
   text-transform: capitalize;
 }
@@ -103,7 +105,7 @@ span {
 }
 
 .type-container {
-  @apply px-1 py-1 mr-1 bg-red-300 text-xs rounded-sm font-bold align-middle whitespace-nowrap text-center inline-block min-w-[70px] text-white; 
+  @apply px-1 py-1 mr-1 bg-red-300 text-xs rounded-sm font-bold align-middle whitespace-nowrap text-center inline-block min-w-[70px] text-white;
 }
 
 .bird {
@@ -181,6 +183,4 @@ span {
 .water {
   background-color: #6890F0;
 }
-
-
 </style>
