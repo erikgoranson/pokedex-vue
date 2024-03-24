@@ -29,13 +29,13 @@ const selectedVersionKey: string = 'selectedVersion';
 
 function getNationalSelectionGroup() {
     const nationalData = <SelectionGroup>{
-        name:'natianal-dex',
+        name:'national-dex',
         generationName: 'national',
         version_groups: [
             <VersionGroup>{
-                name: 'natianal',
+                name: 'national',
                 pokedexes: [<DefaultDTO>{
-                    name: 'nat',
+                    name: 'national',
                     url: 'https://pokeapi.co/api/v2/pokedex/1/'
                 }],
                 versions: [<DefaultDTO>{
