@@ -121,7 +121,7 @@ onMounted(() => {
     <hr />
     <Evolutions :chain="selectedPokemonEvolutionChain" :previous="selectedPokemonSpeciesData.evolves_from_species"/>
     <hr />
-    <div v-if="versionStore.data.generationName != 'National Dex'">
+    <div v-if="versionStore.data.version_group?.name != 'national'">
       <Abilities :abilities="selectedPokemonData.abilities" :abilitiesInfo="selectedPokemonAbilities"/>
       <hr />
       <Moves :data="selectedPokemonData.moves" />
