@@ -32,7 +32,10 @@ const filteredPokemonMoveData = computed(() => {
     let results: PokemonMove[] = [] as PokemonMove[];
     let generation = store.data.version_group?.name;
 
-    //tealmask or indigodisk exceptions here
+    //movesets for SV match the ones from SV DLCs, but they're missing from the specific versiongroups in the API
+    if (generation == 'the-indigo-disk' || generation == 'the-teal-mask'){
+        generation = 'scarlet-violet';
+    }
 
     data
         .filter((element: PokemonMove) => 
