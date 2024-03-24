@@ -27,6 +27,29 @@ const selectDataKey: string = 'versionSelectData';
 const versionStore = useVersionStore();
 const selectedVersionKey: string = 'selectedVersion';
 
+function getNationalSelectionGroup() {
+    const nationalData = <SelectionGroup>{
+        name:'natianal-dex',
+        generationName: 'national',
+        version_groups: [
+            <VersionGroup>{
+                name: 'natianal',
+                pokedexes: [<DefaultDTO>{
+                    name: 'nat',
+                    url: 'https://pokeapi.co/api/v2/pokedex/1/'
+                }],
+                versions: [<DefaultDTO>{
+                    name: 'every',
+                }],
+                generation: <DefaultDTO>{
+                    name: 'national',
+                }
+            }
+        ]
+    };
+    return nationalData;
+}
+
 async function populateGenerationData() {
 
     console.log('retreiving generation and version group data...')
@@ -46,6 +69,9 @@ async function populateGenerationData() {
         };
     });
     
+    const nationalData = getNationalSelectionGroup();
+    selectionData.push(nationalData);
+
     selectData.value = selectionData; 
     localStorage.setItem(selectDataKey, JSON.stringify(selectionData));
 }
