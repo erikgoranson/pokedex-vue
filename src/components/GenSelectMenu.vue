@@ -42,7 +42,7 @@ function getNationalSelectionGroup() {
                     name: 'all versions',
                 }],
                 generation: <DefaultDTO>{
-                    name: 'national',
+                    name: 'National Dex',
                 }
             }
         ]

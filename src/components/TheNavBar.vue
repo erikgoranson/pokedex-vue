@@ -18,6 +18,10 @@ const transformedGenerationName = computed(() => {
   const generationName = versionStore.data.generationName;
   const romanNumeral = generationName.replace('generation-','').toUpperCase();
 
+  //do not add 'generation' label if not applicable
+  if (!generationName.includes('generation')){
+    return generationName;
+  }
   return `Generation ${romanNumeral}`;
 })
 

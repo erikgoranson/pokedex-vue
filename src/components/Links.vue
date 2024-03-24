@@ -65,7 +65,7 @@ const links = computed(() => {
             output.serebii = `https://www.serebii.net/pokedex-sv/${props.data.name}`;
             output.smogon = `https://www.smogon.com/dex/sv/pokemon/${props.data.name}/`;
             break;
-        case 'national':
+        case 'National Dex':
             output.serebii = `https://www.serebii.net/pokemon/${props.data.name}`;
     }
 
