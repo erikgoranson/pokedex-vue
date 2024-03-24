@@ -17,7 +17,6 @@ const version = reactive(store);
 
 const moveData = ref<Move[]>([] as Move[]);
 const isLoaded = ref(false);
-const versionGroupMoveDataExists = ref(false);
 
 //categories for all possible move learn methods
 const learnMethods = ['level-up' , 'machine', 'egg' , 'tutor' , 'transfer' , 'other'] as const; 
@@ -44,15 +43,7 @@ const filteredPokemonMoveData = computed(() => {
             results.push(newElement);
     })
 
-    console.log('what is results', results)
-    console.log(generation, 'this is the generation were filtering with')
-    console.log(data, 'this is the data')
-
-    if(results.length > 0){
-        versionGroupMoveDataExists.value = true; //move data is missing for some versions: i.e.,legends-arceus 
-        populateMoveData(results); 
-    }
-    
+    populateMoveData(results); 
     return results
 })
 
@@ -204,7 +195,7 @@ function testPossibleSelection(key: string){
     <InformationSection>
         <div class="flex flex-col mb-2 justify-center items-center">MOVES</div>
 
-        <div class="text-center text-grey-dark flex items-center justify-center" v-if="!versionGroupMoveDataExists">
+        <div class="text-center text-grey-dark flex items-center justify-center" v-if="filteredPokemonMoveData.length == 0">
             Move data for the selected version was not found. <br>Please reference the links section instead.
         </div>
         <div v-else>
