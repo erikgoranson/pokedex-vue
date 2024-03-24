@@ -7,10 +7,6 @@ import helpers from '@/helpers';
 
 ///version groups to be excluded for the marked reasons
 const excludedVersionGroups: string[] = [
-    //unreleased yet so pokedexes are empty; but will also require some additional handling when they go live
-    'the-teal-mask',
-    'the-indigo-disk',
-    
     //galar DLC (and their pokedexes are already part of the main VG entry for sword/shield)
     'the-isle-of-armor',
     'the-crown-tundra',
@@ -107,6 +103,11 @@ onMounted(async () => {
 
 watch(versionStore, (newValue, oldValue) => {
     localStorage.setItem(selectedVersionKey, JSON.stringify(versionStore.data));
+
+    //get new data for the menu if version.reset()
+    if(versionStore.data.version_group.id == 0){
+        populateGenerationData();
+    }
 });
 
 </script>

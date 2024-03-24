@@ -5,6 +5,10 @@ export default {
         return data;
     },
 
+    emptyLocalStorageData(){
+      localStorage.clear();
+    },
+
     getStatLabel(statName: string){
         let output = '';
         switch (statName) {
