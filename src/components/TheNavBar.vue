@@ -58,7 +58,7 @@ const transformedVersionName = computed(() => {
       </span>
     </button>
 
-    <!-- collapsible menu container-->
+    <!-- left side -->
     <div class="!visible hidden flex-grow basis-[100%] items-center lg:!flex lg:basis-auto" id="navbarSupportedContentX" data-te-collapse-item>
       <ul class="mr-auto flex flex-col pl-0 lg:flex-row" data-te-navbar-nav-ref>
 
@@ -71,6 +71,7 @@ const transformedVersionName = computed(() => {
       </ul>
     </div>
 
+    <!--right side-->
     <div class="flex  items-center lg:!flex lg:basis-auto">
       <!-- generation name -->
       <span class="mr-2 text-gray-300">{{ helpers.transformGenerationName(versionStore.data.generationName) }}</span>
@@ -87,11 +88,38 @@ const transformedVersionName = computed(() => {
       </ul>
 
       <!-- pokemon/logo container -->
-      <div class="relative">
-        <span class="hidden-arrow flex items-center whitespace-nowrap transition duration-150 ease-in-out motion-reduce:transition-none">
+      <!-- test 2-->
+      <!-- First dropdown container -->
+      <div
+        class="relative"
+        data-te-dropdown-ref
+        data-te-dropdown-alignment="end">
+        <!-- First dropdown trigger -->
+        <a
+          class=" flex items-center text-neutral-600 dark:text-white"
+          href="#"
+          id="dropdownMenuButton111"
+          role="button"
+          data-te-dropdown-toggle-ref
+          aria-expanded="false">
+          <!-- Dropdown trigger icon -->
+          <!-- Notification counter -->
           <img class="h-8 w-8 rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" src="@/assets/images/defaultPokemon.png" alt="" loading="lazy" />
-        </span>
+        </a>
+        <!-- First dropdown menu -->
+        <ul
+          class="absolute z-[1000] right-0 float-right m-0 hidden min-w-max list-none overflow-hidden rounded-lg border-none bg-white bg-clip-padding text-left text-base shadow-lg data-[te-dropdown-show]:block dark:bg-surface-dark"
+          aria-labelledby="dropdownMenuButton111"
+          data-te-dropdown-menu-ref>
+          <!-- First dropdown menu items -->
+          <li>
+            <a class="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25" href="#" data-te-dropdown-item-ref>
+              Reload API Data
+            </a>
+          </li>
+        </ul>
       </div>
+      <!-- end test 2-->
 
     </div>
 
