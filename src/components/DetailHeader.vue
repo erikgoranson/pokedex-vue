@@ -3,6 +3,7 @@ import InformationSection from './InformationSection.vue';
 import type { PokemonMove, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText } from '@/types';
 import { computed,reactive } from 'vue';
 import { useVersionStore } from '@/stores/version';
+import GenSelectMenu from './GenSelectMenu.vue';
 
 const props = defineProps({
   data: {
@@ -41,6 +42,11 @@ const filteredGenus = computed(() => {
 
 const filteredFlavorTextEntry = computed(() => {
   const generation = store.data.version_group?.name; 
+
+  if(generation == 'national'){
+    //return "Select a version for more information"
+    return generation;
+  }
 
   const filteredEntries = props.species.flavor_text_entries.filter(x => x.language.name == "en" && generation.startsWith(x.version.name));
 
@@ -84,7 +90,19 @@ const spriteUrl = computed(() => {
     </div>
     <div class="w-full lg:w-2/5 px-1 ">
       <div id="pkmn-flavortext" class="border h-28  text-grey-dark flex  items-center justify-center">
-        <p class="mx-1">{{ filteredFlavorTextEntry }}</p>
+        <p v-if="filteredFlavorTextEntry != 'national'" class="mx-1">
+          {{ filteredFlavorTextEntry }}
+        </p>
+        <p v-else data-te-navbar-nav-ref>
+          <ul class="mr-2 flex flex-row" data-te-navbar-nav-ref>
+            <li class="static" data-te-nav-item-ref data-te-dropdown-ref>
+              <button href="#" data-te-ripple-init data-te-ripple-color="light" type="button" id="dropdownMenuButtonX" data-te-dropdown-toggle-ref aria-expanded="false" data-te-nav-link-ref>
+                select a version
+              </button>
+              <GenSelectMenu/>
+            </li>
+          </ul>
+        </p>
       </div>
     </div>
    </div>
@@ -93,6 +111,10 @@ const spriteUrl = computed(() => {
 </template>
 
 <style scoped>
+
+button {
+  @apply rounded bg-success px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 dark:hover:text-white dark:focus:text-white lg:px-2;
+}
 
 h5 {
   text-transform: capitalize;
