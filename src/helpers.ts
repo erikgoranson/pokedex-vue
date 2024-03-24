@@ -29,4 +29,14 @@ export default {
         }
         return output.toUpperCase();
     },
+
+    transformGenerationName(generationName: string){
+      //do not add 'generation' label if not applicable
+      if (!generationName.includes('generation')){
+        return generationName;
+      }
+
+      const romanNumerals = generationName.replace('generation-','').toUpperCase();
+      return `Generation ${romanNumerals}`;
+    },
 }

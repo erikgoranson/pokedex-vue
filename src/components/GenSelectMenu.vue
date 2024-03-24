@@ -117,7 +117,7 @@ watch(versionStore, (newValue, oldValue) => {
         <div class="px-6 py-5 lg:px-8">
             <div class="grid gap-6 grid-cols-2 lg:grid-cols-4">
                 <div v-for="(sd, index) in selectData" >
-                    <h1>{{ sd.generationName }}</h1>
+                    <h1>{{ helpers.transformGenerationName(sd.generationName) }}</h1>
                     <a v-for="vg in (sd.version_groups as VersionGroup[])" class="" @click="changeVersion(vg)">
                         {{ buildPrettyVersionName(vg.versions as DefaultDTO[]) }}
                     </a>

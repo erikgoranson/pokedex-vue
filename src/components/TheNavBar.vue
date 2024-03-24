@@ -3,6 +3,7 @@ import { computed, onMounted } from 'vue';
 import GenSelectMenu from './GenSelectMenu.vue';
 import { useVersionStore } from '@/stores/version';
 import { initTE, Collapse, Dropdown } from "tw-elements"
+import helpers from '@/helpers';
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -14,16 +15,6 @@ onMounted(() => {
   initTE({ Collapse, Dropdown })
 });
 
-const transformedGenerationName = computed(() => {
-  const generationName = versionStore.data.generationName;
-  const romanNumeral = generationName.replace('generation-','').toUpperCase();
-
-  //do not add 'generation' label if not applicable
-  if (!generationName.includes('generation')){
-    return generationName;
-  }
-  return `Generation ${romanNumeral}`;
-})
 
 const transformedVersionName = computed(() => {
   const versionName = versionStore.data.name;
@@ -82,7 +73,7 @@ const transformedVersionName = computed(() => {
 
     <div class="flex  items-center lg:!flex lg:basis-auto">
       <!-- generation name -->
-      <span class="mr-2 text-gray-300">{{ transformedGenerationName }}</span>
+      <span class="mr-2 text-gray-300">{{ helpers.transformGenerationName(versionStore.data.generationName) }}</span>
       
       <!-- gen menu -->
       <ul class="mr-2 flex flex-row" data-te-navbar-nav-ref>
