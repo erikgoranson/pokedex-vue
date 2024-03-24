@@ -39,7 +39,7 @@ function getNationalSelectionGroup() {
                     url: 'https://pokeapi.co/api/v2/pokedex/1/'
                 }],
                 versions: [<DefaultDTO>{
-                    name: 'every',
+                    name: 'all versions',
                 }],
                 generation: <DefaultDTO>{
                     name: 'national',

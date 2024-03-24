@@ -21,6 +21,16 @@ const transformedGenerationName = computed(() => {
   return `Generation ${romanNumeral}`;
 })
 
+const transformedVersionName = computed(() => {
+  const versionName = versionStore.data.name;
+
+  //do not add 'version' label if already exists
+  if (versionName.includes('version')){
+    return versionName;
+  }
+  return `${versionName} Version`;
+})
+
 </script>
 
 <template>
@@ -74,7 +84,7 @@ const transformedGenerationName = computed(() => {
       <ul class="mr-2 flex flex-row" data-te-navbar-nav-ref>
         <li class="static" data-te-nav-item-ref data-te-dropdown-ref>
           <a class="flex items-center whitespace-nowrap py-2 pr-2  transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 dark:hover:text-white dark:focus:text-white lg:px-2" href="#" data-te-ripple-init data-te-ripple-color="light" type="button" id="dropdownMenuButtonX" data-te-dropdown-toggle-ref aria-expanded="false" data-te-nav-link-ref>
-            {{ versionStore.data.name }} Version
+            {{ transformedVersionName }}
             <span class=" w-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
           </a>
           <GenSelectMenu/>
