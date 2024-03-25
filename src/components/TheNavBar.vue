@@ -7,6 +7,7 @@ import helpers from '@/helpers';
 
 const navigation = [
   { name: 'Home', href: '/' },
+  { name: 'Test', href: 'About/' },
 ];
 
 const versionStore = useVersionStore();
