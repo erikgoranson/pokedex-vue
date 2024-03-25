@@ -135,7 +135,7 @@ function printEncounterConditions(encounter: FlattenedEncounter){
           </tbody>
         </table>
       </div>
-      <div v-else class="flex items-center mb-6">Location data not found. Trading or evolution may be required</div>
+      <div v-else class="flex items-center mb-6 justify-center text-center text-grey-dark">Location data not found. Trading or evolution may be required</div>
       
     </InformationSection>
 </template>

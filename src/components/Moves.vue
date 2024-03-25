@@ -32,6 +32,11 @@ const filteredPokemonMoveData = computed(() => {
     let results: PokemonMove[] = [] as PokemonMove[];
     let generation = store.data.version_group?.name;
 
+    //movesets for SV match the ones from SV DLCs, but they're missing from the specific versiongroups in the API
+    if (generation == 'the-indigo-disk' || generation == 'the-teal-mask'){
+        generation = 'scarlet-violet';
+    }
+
     data
         .filter((element: PokemonMove) => 
             element.version_group_details.some((subElement: any) => subElement.version_group.name === generation)) 
@@ -41,14 +46,14 @@ const filteredPokemonMoveData = computed(() => {
             results.push(newElement);
     })
 
-    populateMoveData(results);
+    populateMoveData(results); 
     return results
 })
 
 async function populateMoveData(pokemonMoves: PokemonMove[]){
     moveData.value = [];
     isLoaded.value = false;
-    
+
     const moves = await pokeAPI.getMoves(pokemonMoves);
     if (moves.length > 0 ){
         moveData.value = moves;
@@ -193,58 +198,64 @@ function testPossibleSelection(key: string){
     <InformationSection>
         <div class="flex flex-col mb-2 justify-center items-center">MOVES</div>
 
-        <div class="flex flex-col">
-            <div class="mb-2 grid grid-cols-3 content-center" role="group">
-                <button v-for="(method, index) in learnMethods" :key="index" @click="filterBy(method)" :class="{ 'bg-red-300': method === filterKey, 'border-red-300': testPossibleSelection(method), 'text-slate-800/50': !testPossibleSelection(method) }" :disabled="!testPossibleSelection(method)">
-                    {{ method.replace('-',' ') }}
-                </button>
-            </div>
+        <div class="text-center text-grey-dark flex items-center justify-center" v-if="filteredPokemonMoveData.length == 0">
+            Move data for the selected version was not found. <br>Please reference the links section instead.
         </div>
+        <div v-else>
 
-        <div v-if="!isLoaded" role="status" class="w-full p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700">
-            <div v-for="i in learnMethods" class="flex items-center justify-between">
-                <div class="mt-1">
-                    <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-                    <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+            <div class="flex flex-col">
+                <div class="mb-2 grid grid-cols-3 content-center" role="group">
+                    <button v-for="(method, index) in learnMethods" :key="index" @click="filterBy(method)" :class="{ 'bg-red-300': method === filterKey, 'border-red-300': testPossibleSelection(method), 'text-slate-800/50': !testPossibleSelection(method) }" :disabled="!testPossibleSelection(method)">
+                        {{ method.replace('-',' ') }}
+                    </button>
                 </div>
-                <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
             </div>
-            <span class="sr-only">Loading...</span>
-        </div>
-        <div v-else class="mb-8 overflow-x-auto sm:rounded-lg ">
-            <table class="w-full text-sm text-left border">
-                <thead class="text-xs uppercase bg-gray-200">
-                    <tr>
-                        <th class="px-1 py-1">Name</th>
-                        <th class="px-1 py-1 text-center">PWR</th>
-                        <th class="px-1 py-1 text-center">PP</th>
-                        <th class="px-1 py-1 text-center">acc.</th>
-                        <th class="px-1 py-1 overflow-clip text-center">Effect %</th>
-                        <th class="px-1 py-1 text-center">Category</th>
-                        <th class="px-1 py-1 text-center">Type</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="m in (filteredPokemonMoveDataByMethod as any)" :key="m" class="border">
-                        <td class="px-1 py-1">
-                            <span class="font-semibold">{{m.move.name.replace('-',' ')}}</span>
-                            <p v-if="m.version_group_details[0].level_learned_at">
-                                Level {{ m.version_group_details[0].level_learned_at }}
-                            </p>
-                        </td>
-                        <td class="statCell">{{ getMovePower(m.move.name) }}</td>
-                        <td class="statCell">{{ getMoveData(m.move.name).pp }}</td>
-                        <td class="statCell">{{ getMoveAccuracy(m.move.name) }}</td>
-                        <td class="statCell">{{ getMoveEffectChance(m.move.name) }}</td>
-                        <td class="typeCell">
-                            <span class="type-container" :class="getMoveData(m.move.name).damage_class.name">{{ getMoveData(m.move.name).damage_class.name }}</span>
-                        </td>
-                        <td class="typeCell">
-                            <span class="type-container" :class="getMoveData(m.move.name).type.name">{{ getMoveData(m.move.name).type.name }}</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            
+            <div v-if="!isLoaded" role="status" class="w-full p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700">
+                <div v-for="i in learnMethods" class="flex items-center justify-between">
+                    <div class="mt-1">
+                        <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                        <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                    </div>
+                    <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
+                </div>
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div v-else class="mb-8 overflow-x-auto sm:rounded-lg ">
+                <table class="w-full text-sm text-left border">
+                    <thead class="text-xs uppercase bg-gray-200">
+                        <tr>
+                            <th class="px-1 py-1">Name</th>
+                            <th class="px-1 py-1 text-center">PWR</th>
+                            <th class="px-1 py-1 text-center">PP</th>
+                            <th class="px-1 py-1 text-center">acc.</th>
+                            <th class="px-1 py-1 overflow-clip text-center">Effect %</th>
+                            <th class="px-1 py-1 text-center">Category</th>
+                            <th class="px-1 py-1 text-center">Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="m in (filteredPokemonMoveDataByMethod as any)" :key="m" class="border">
+                            <td class="px-1 py-1">
+                                <span class="font-semibold">{{m.move.name.replace('-',' ')}}</span>
+                                <p v-if="m.version_group_details[0].level_learned_at">
+                                    Level {{ m.version_group_details[0].level_learned_at }}
+                                </p>
+                            </td>
+                            <td class="statCell">{{ getMovePower(m.move.name) }}</td>
+                            <td class="statCell">{{ getMoveData(m.move.name).pp }}</td>
+                            <td class="statCell">{{ getMoveAccuracy(m.move.name) }}</td>
+                            <td class="statCell">{{ getMoveEffectChance(m.move.name) }}</td>
+                            <td class="typeCell">
+                                <span class="type-container" :class="getMoveData(m.move.name).damage_class.name">{{ getMoveData(m.move.name).damage_class.name }}</span>
+                            </td>
+                            <td class="typeCell">
+                                <span class="type-container" :class="getMoveData(m.move.name).type.name">{{ getMoveData(m.move.name).type.name }}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </InformationSection>
 </template>

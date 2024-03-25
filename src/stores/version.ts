@@ -30,6 +30,10 @@ export const useVersionStore = defineStore('version', () => {
     function changeVersion (payload: Selection) {
         data.value = payload;
     }
+    function reset(){
+        helpers.emptyLocalStorageData();
+        data.value.version_group.id = 0;
+    }
 
-    return { data, changeVersion }
+    return { data, changeVersion, reset }
 });

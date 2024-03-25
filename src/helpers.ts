@@ -5,6 +5,10 @@ export default {
         return data;
     },
 
+    emptyLocalStorageData(){
+      localStorage.clear();
+    },
+
     getStatLabel(statName: string){
         let output = '';
         switch (statName) {
@@ -28,5 +32,15 @@ export default {
             break;
         }
         return output.toUpperCase();
+    },
+
+    transformGenerationName(generationName: string){
+      //do not add 'generation' label if not applicable
+      if (!generationName.includes('generation')){
+        return generationName;
+      }
+
+      const romanNumerals = generationName.replace('generation-','').toUpperCase();
+      return `Generation ${romanNumerals}`;
     },
 }

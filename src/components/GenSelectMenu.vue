@@ -7,10 +7,6 @@ import helpers from '@/helpers';
 
 ///version groups to be excluded for the marked reasons
 const excludedVersionGroups: string[] = [
-    //unreleased yet so pokedexes are empty; but will also require some additional handling when they go live
-    'the-teal-mask',
-    'the-indigo-disk',
-    
     //galar DLC (and their pokedexes are already part of the main VG entry for sword/shield)
     'the-isle-of-armor',
     'the-crown-tundra',
@@ -26,6 +22,29 @@ const selectDataKey: string = 'versionSelectData';
 
 const versionStore = useVersionStore();
 const selectedVersionKey: string = 'selectedVersion';
+
+function getNationalSelectionGroup() {
+    const nationalData = <SelectionGroup>{
+        name:'national-dex',
+        generationName: 'national',
+        version_groups: [
+            <VersionGroup>{
+                name: 'national',
+                pokedexes: [<DefaultDTO>{
+                    name: 'national',
+                    url: 'https://pokeapi.co/api/v2/pokedex/1/'
+                }],
+                versions: [<DefaultDTO>{
+                    name: 'all versions',
+                }],
+                generation: <DefaultDTO>{
+                    name: 'National Dex',
+                }
+            }
+        ]
+    };
+    return nationalData;
+}
 
 async function populateGenerationData() {
 
@@ -46,6 +65,9 @@ async function populateGenerationData() {
         };
     });
     
+    const nationalData = getNationalSelectionGroup();
+    selectionData.push(nationalData);
+
     selectData.value = selectionData; 
     localStorage.setItem(selectDataKey, JSON.stringify(selectionData));
 }
@@ -81,6 +103,11 @@ onMounted(async () => {
 
 watch(versionStore, (newValue, oldValue) => {
     localStorage.setItem(selectedVersionKey, JSON.stringify(versionStore.data));
+
+    //get new data for the menu if version.reset()
+    if(versionStore.data.version_group.id == 0){
+        populateGenerationData();
+    }
 });
 
 </script>
@@ -91,7 +118,7 @@ watch(versionStore, (newValue, oldValue) => {
         <div class="px-6 py-5 lg:px-8">
             <div class="grid gap-6 grid-cols-2 lg:grid-cols-4">
                 <div v-for="(sd, index) in selectData" >
-                    <h1>{{ sd.generationName }}</h1>
+                    <h1>{{ helpers.transformGenerationName(sd.generationName) }}</h1>
                     <a v-for="vg in (sd.version_groups as VersionGroup[])" class="" @click="changeVersion(vg)">
                         {{ buildPrettyVersionName(vg.versions as DefaultDTO[]) }}
                     </a>
