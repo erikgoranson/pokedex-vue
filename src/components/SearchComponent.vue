@@ -87,7 +87,7 @@ watch(versionStore, (newValue, oldValue) => {
     <form id="search"><input class="w-full bg-gray-100 border" name="query" placeholder="Type to search" v-model="searchQuery"></form>
   </div>
   <div class="">
-    <div class="flex h-screen justify-center overflow-y-auto overflow-x-hidden">
+    <div class="flex h-[calc(100vh-150px)] justify-center overflow-auto overflow-x-hidden">
       <Grid :data="gridData" :filterKey="searchQuery" />
     </div>
   </div>

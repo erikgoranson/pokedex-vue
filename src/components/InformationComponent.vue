@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from "vue";
 import { usePokemonStore } from '@/stores/pokemon';
+import { useVersionStore } from '@/stores/version';
 import type { PokemonData, PokemonSpecies, Ability, EvolutionChain, LocationAreaEncounter } from '@/types';
 import Detail from './DetailHeader.vue';
 import BaseStatistics from './BaseStatistics.vue';
@@ -21,6 +22,8 @@ const isLoaded = ref(false);
 const pokemonStore = usePokemonStore();
 const selectedPokemonData = ref<PokemonData>(defaultPokemonEntry as unknown as PokemonData); 
 const selectedPokemonDataKey = "selectedPokemonData";
+
+const versionStore = useVersionStore();
 
 const selectedPokemonSpeciesData = ref<PokemonSpecies>(defaultPokemonSpecies as PokemonSpecies); 
 const selectedSpeciesDataKey = "selectedPokemonSpeciesData";
@@ -118,12 +121,14 @@ onMounted(() => {
     <hr />
     <Evolutions :chain="selectedPokemonEvolutionChain" :previous="selectedPokemonSpeciesData.evolves_from_species"/>
     <hr />
-    <Abilities :abilities="selectedPokemonData.abilities" :abilitiesInfo="selectedPokemonAbilities"/>
-    <hr />
-    <Moves :data="selectedPokemonData.moves" />
-    <hr />
-    <Locations :data="selectedPokemonEncounters"/>
-    <hr />
-    <Links :data="selectedPokemonSpeciesData"/>
+    <div v-if="versionStore.data.version_group?.name != 'national'">
+      <Abilities :abilities="selectedPokemonData.abilities" :abilitiesInfo="selectedPokemonAbilities"/>
+      <hr />
+      <Moves :data="selectedPokemonData.moves" />
+      <hr />
+      <Locations :data="selectedPokemonEncounters"/>
+      <hr />
     </div>
+    <Links :data="selectedPokemonSpeciesData"/>
+  </div>
 </template>

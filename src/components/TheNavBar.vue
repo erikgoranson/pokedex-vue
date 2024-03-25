@@ -2,7 +2,9 @@
 import { computed, onMounted } from 'vue';
 import GenSelectMenu from './GenSelectMenu.vue';
 import { useVersionStore } from '@/stores/version';
-import { initTE, Collapse, Dropdown } from "tw-elements"
+import { initTE, Collapse, Dropdown, Offcanvas } from "tw-elements"
+import RightSideBar from './RightSideBar.vue';
+import helpers from '@/helpers';
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -11,14 +13,18 @@ const navigation = [
 const versionStore = useVersionStore();
 
 onMounted(() => {
-  initTE({ Collapse, Dropdown })
+  initTE({ Collapse, Dropdown, Offcanvas })
 });
 
-const transformedGenerationName = computed(() => {
-  const generationName = versionStore.data.generationName;
-  const romanNumeral = generationName.replace('generation-','').toUpperCase();
 
-  return `Generation ${romanNumeral}`;
+const transformedVersionName = computed(() => {
+  const versionName = versionStore.data.name;
+
+  //do not add 'version' label if already exists
+  if (versionName.includes('version')){
+    return versionName;
+  }
+  return `${versionName} Version`;
 })
 
 </script>
@@ -53,7 +59,7 @@ const transformedGenerationName = computed(() => {
       </span>
     </button>
 
-    <!-- collapsible menu container-->
+    <!-- left side -->
     <div class="!visible hidden flex-grow basis-[100%] items-center lg:!flex lg:basis-auto" id="navbarSupportedContentX" data-te-collapse-item>
       <ul class="mr-auto flex flex-col pl-0 lg:flex-row" data-te-navbar-nav-ref>
 
@@ -66,26 +72,65 @@ const transformedGenerationName = computed(() => {
       </ul>
     </div>
 
-    <div class="flex  items-center lg:!flex lg:basis-auto">
-      <!-- generation name -->
-      <span class="mr-2 text-gray-300">{{ transformedGenerationName }}</span>
-      
+    <div class="mr-2">
+      <button
+          class="me-1.5 inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
+          type="button"
+          data-te-offcanvas-toggle
+          data-te-target="#offcanvasRight"
+          aria-controls="offcanvasRight"
+          data-te-ripple-init
+          data-te-ripple-color="light">
+            Pokemon
+          </button>
+          <RightSideBar/>
+        </div>
+
+    <!--right side-->
+    <div class="flex justify-end items-center lg:!flex lg:basis-auto">
       <!-- gen menu -->
+      <div>
       <ul class="mr-2 flex flex-row" data-te-navbar-nav-ref>
         <li class="static" data-te-nav-item-ref data-te-dropdown-ref>
-          <a class="flex items-center whitespace-nowrap py-2 pr-2  transition duration-150 ease-in-out hover:text-neutral-700 focus:text-neutral-700 dark:hover:text-white dark:focus:text-white lg:px-2" href="#" data-te-ripple-init data-te-ripple-color="light" type="button" id="dropdownMenuButtonX" data-te-dropdown-toggle-ref aria-expanded="false" data-te-nav-link-ref>
-            {{ versionStore.data.name }} Version
+          <a class="flex items-center whitespace-nowrap py-2 pr-2  transition duration-150 ease-in-out text-gray-300 hover:text-neutral-700 focus:text-neutral-700 dark:hover:text-white dark:focus:text-white lg:px-2" href="#" data-te-ripple-init data-te-ripple-color="light" type="button" id="dropdownMenuButtonX" data-te-dropdown-toggle-ref aria-expanded="false" data-te-nav-link-ref>
+            {{ helpers.transformGenerationName(versionStore.data.generationName) }} <br>
+            {{ transformedVersionName }}
             <span class=" w-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></span>
           </a>
           <GenSelectMenu/>
         </li>
       </ul>
+      </div>
 
       <!-- pokemon/logo container -->
-      <div class="relative">
-        <span class="hidden-arrow flex items-center whitespace-nowrap transition duration-150 ease-in-out motion-reduce:transition-none">
+      <div
+        class="relative"
+        data-te-dropdown-ref
+        data-te-dropdown-alignment="end">
+        <!-- First dropdown trigger -->
+        <a
+          class=" flex items-center text-neutral-600 dark:text-white"
+          href="#"
+          id="dropdownMenuButton111"
+          role="button"
+          data-te-dropdown-toggle-ref
+          aria-expanded="false">
+          <!-- Dropdown trigger icon -->
+          <!-- Notification counter -->
           <img class="h-8 w-8 rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" src="@/assets/images/defaultPokemon.png" alt="" loading="lazy" />
-        </span>
+        </a>
+        <!-- First dropdown menu -->
+        <ul
+          class="absolute z-[1000] right-0 float-right m-0 hidden min-w-max list-none overflow-hidden rounded-lg border-none bg-white bg-clip-padding text-left text-base shadow-lg data-[te-dropdown-show]:block dark:bg-surface-dark"
+          aria-labelledby="dropdownMenuButton111"
+          data-te-dropdown-menu-ref>
+          <!-- First dropdown menu items -->
+          <li>
+            <a class="block w-full whitespace-nowrap bg-white px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-zinc-200/60 focus:bg-zinc-200/60 focus:outline-none active:bg-zinc-200/60 active:no-underline dark:bg-surface-dark dark:text-white dark:hover:bg-neutral-800/25 dark:focus:bg-neutral-800/25 dark:active:bg-neutral-800/25" data-te-dropdown-item-ref @click="versionStore.reset()">
+              Reload API Data
+            </a>
+          </li>
+        </ul>
       </div>
 
     </div>

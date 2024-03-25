@@ -116,7 +116,7 @@ function getTypeStyle(key: string){
         </tr>
     </thead>
     <tbody v-if="sortedData?.length">
-        <tr v-for="entry in sortedData" class="nonHeaderRow cursor-pointer" @click="storeSelectedPokemon(entry)">
+        <tr v-for="entry in sortedData" class="nonHeaderRow cursor-pointer" @click="storeSelectedPokemon(entry)" type="button" data-te-offcanvas-toggle data-te-target="#offcanvasRight" aria-controls="offcanvasRight"> 
             <td>{{ entry.id }}</td>
             <td>{{ entry.name }}</td>
             <td><span :class="getTypeStyle(entry.type1)">{{ entry.type1 }}</span></td>
