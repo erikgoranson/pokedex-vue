@@ -80,6 +80,7 @@ export interface PokemonData {
     sprites: Sprites,
     stats: Array<PokemonStat>,
     abilities: Array<PokemonAbility>,
+    forms: Array<DefaultDTO>,
 }
 
 export interface PokemonAbility {
@@ -180,7 +181,12 @@ export interface PokemonSpecies {
     //pal_park_encounters	[…],
     //pokedex_numbers	[…],
     shape: {},
-    //varieties	[…],
+    varieties: Array<PokemonSpeciesVariety>,
+}
+
+export interface PokemonSpeciesVariety {
+    is_default: boolean,
+    pokemon: DefaultDTO,
 }
 
 export interface EvolutionChain {

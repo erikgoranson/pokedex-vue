@@ -3,6 +3,7 @@ import InformationSection from './InformationSection.vue';
 import type { PokemonMove, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText, PokemonStat } from '@/types';
 import helpers from '@/helpers';
 import { computed } from 'vue';
+import { usePokemonStore } from '@/stores/pokemon';
 
 const props = defineProps({
   data: {
@@ -14,6 +15,8 @@ const props = defineProps({
     required: true,
   }
 })
+
+const pokemonStore = usePokemonStore();
 
 const generationName = computed(() => {
     if(props.species.generation.name == undefined){
@@ -59,6 +62,15 @@ const genderRatio = computed(() => {
     return arrayTest; 
 })
 
+const forms = computed(() => {
+    if(!props.species.varieties || props.species.varieties.length == 0 || props.species.varieties.length == undefined){
+        return;
+    }
+
+    const forms = props.species.varieties.filter(x => x.is_default != true);
+    return forms;
+})
+
 const baseEggSteps = computed(() => {
     if(!props.species.hatch_counter){
         return;
@@ -67,6 +79,21 @@ const baseEggSteps = computed(() => {
     const steps = Math.round(props.species.hatch_counter*255);
     return steps;
 })
+
+function formatName(name: string){
+    return name
+        .replace('-',' ')
+        .replace('-',' ') //more variants of -
+        .replace('-',' '); //yet more, wat
+}
+
+function changePokemon(url: string){
+    const pokemonID = url
+        .replace('https://pokeapi.co/api/v2/pokemon/','')
+        .replace('/','');
+    console.log(pokemonID);
+    pokemonStore.changePokemon(Number(pokemonID));
+}
 
 </script>
 
@@ -91,7 +118,7 @@ const baseEggSteps = computed(() => {
                 <tr>
                     <td><span>Happiness</span><br>{{ species.base_happiness }}</td>
                     <td><span>Egg Groups</span> <br> {{ eggGroups }}</td>
-                    <td><span>Egg Steps</span><br>{{ baseEggSteps }}</td><td><span>Forms</span><br></td>
+                    <td><span>Egg Steps</span><br>{{ baseEggSteps }}</td><td><span>Forms</span><br><p class="capitalize text-blue-400 hover:text-neutral-700 focus:text-neutral-700 dark:hover:text-white dark:focus:text-white" v-for="form in forms" @click="changePokemon(form.pokemon.url)">{{ formatName(form.pokemon.name) }}</p></td>
                 </tr>
             </table>
         </div>

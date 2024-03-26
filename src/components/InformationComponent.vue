@@ -72,6 +72,7 @@ async function getPkmnEncounters(){
 }
 
 async function updatePokemonData(id: number){
+
   if(selectedPokemonData.value.id != id){
     isLoaded.value = false;
     await getPkmnDataInfo(id);
@@ -115,6 +116,7 @@ onMounted(() => {
   <div v-if="!isLoaded && pokemonStore.isDefaultSelection"><Skeleton/></div>
   <div v-else class="p-3 shadow-lg">
     <Detail :data="selectedPokemonData" :species="selectedPokemonSpeciesData" />
+    <!--stuff goes here for form switcher-->
     <BaseStatistics :stats="selectedPokemonData.stats"/>
     <hr />
     <SpeciesDetails :data="selectedPokemonData" :species="selectedPokemonSpeciesData"/>
