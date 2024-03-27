@@ -38,7 +38,6 @@ const effortValues = computed(() => {
     }
 
     const EVs = props.data.stats.filter(x => x.effort > 0);
-    //return EVs.map(x => `${x.effort} -> ${x.stat.name}`);
     return EVs;
 })
 
@@ -83,15 +82,14 @@ const baseEggSteps = computed(() => {
 function formatName(name: string){
     return name
         .replace('-',' ')
-        .replace('-',' ') //more variants of -
-        .replace('-',' '); //yet more, wat
+        .replace('-',' ')
+        .replace('-',' '); 
 }
 
 function changePokemon(url: string){
     const pokemonID = url
         .replace('https://pokeapi.co/api/v2/pokemon/','')
         .replace('/','');
-    console.log(pokemonID);
     pokemonStore.changePokemon(Number(pokemonID));
 }
 

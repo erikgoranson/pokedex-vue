@@ -16,6 +16,7 @@ import defaultPokemonSpecies from '../json/defaultPokemonSpecies.json';
 import pokeAPI from "@/services/pokeAPI";
 import Skeleton from "./Skeleton.vue";
 import helpers from '@/helpers';
+import Forms from './Forms.vue';
 
 const isLoaded = ref(false);
 
@@ -116,7 +117,7 @@ onMounted(() => {
   <div v-if="!isLoaded && pokemonStore.isDefaultSelection"><Skeleton/></div>
   <div v-else class="p-3 shadow-lg">
     <Detail :data="selectedPokemonData" :species="selectedPokemonSpeciesData" />
-    <!--stuff goes here for form switcher-->
+    <Forms :varieties="selectedPokemonSpeciesData.varieties" :sprites="selectedPokemonData.sprites"/>
     <BaseStatistics :stats="selectedPokemonData.stats"/>
     <hr />
     <SpeciesDetails :data="selectedPokemonData" :species="selectedPokemonSpeciesData"/>

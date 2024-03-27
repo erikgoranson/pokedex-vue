@@ -77,7 +77,7 @@ export interface PokemonData {
     moves: Array<PokemonMove>, 
     order: number,
     species: DefaultDTO, //genus comes from this endpoint "genera"; flavor-text comes from flaror_text_entries. could also get the species name from here for ease of printing. seems to prefer a single name over 'mimikyu-disguised' and other shit
-    sprites: Sprites,
+    sprites: PokemonSprites,
     stats: Array<PokemonStat>,
     abilities: Array<PokemonAbility>,
     forms: Array<DefaultDTO>,
@@ -113,10 +113,11 @@ export interface AbilityPokemon  {
     pokemon: Array<DefaultDTO>,
 }
 
-
-export interface Sprites {
+export interface PokemonSprites {
     front_default: string,
+    front_shiny: string,
     other: OtherArt,
+    versions: PokemonSpriteVersions,
 }
 
 interface OtherArt {
@@ -126,6 +127,19 @@ interface OtherArt {
 interface OfficialArtwork {
     front_default: string,
     front_shiny: string,
+}
+
+interface PokemonSpriteVersions {
+    ['generation-vii']: PokemonIcons,
+    ['generation-viii']: PokemonIcons,
+}
+
+interface PokemonIcons {
+    icons: PokemonIcon,
+}
+
+interface PokemonIcon {
+    front_default: string,
 }
   
 export interface PokemonTypes {
