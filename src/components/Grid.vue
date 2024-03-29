@@ -2,6 +2,7 @@
 import { computed, onRenderTracked, ref, watch } from 'vue';
 import { usePokemonStore } from '@/stores/pokemon';
 import type { GridItem } from '@/types';
+import helpers from '@/helpers';
 
 const props = defineProps({
     data: {
@@ -17,8 +18,6 @@ const props = defineProps({
 //not sure how to accomplish this without manualy entering the keys from GridItem
 //type SortableKey = 'id' | 'name' | 'type1' | 'type2';
 const gridItemKeys = ['id','name','type1','type2'] as const;
-
-
 
 type SortableKey = typeof gridItemKeys[number] | null;
 const sortKey = ref<SortableKey>(null);
@@ -118,7 +117,7 @@ function getTypeStyle(key: string){
     <tbody v-if="sortedData?.length">
         <tr v-for="entry in sortedData" class="nonHeaderRow cursor-pointer" @click="storeSelectedPokemon(entry)" type="button" data-te-offcanvas-toggle data-te-target="#offcanvasRight" aria-controls="offcanvasRight"> 
             <td>{{ entry.id }}</td>
-            <td>{{ entry.name }}</td>
+            <td>{{ helpers.formatPokemonName(entry.name) }}</td>
             <td><span :class="getTypeStyle(entry.type1)">{{ entry.type1 }}</span></td>
             <td><span :class="getTypeStyle(entry.type2)">{{ entry.type2 }}</span></td>
         </tr>

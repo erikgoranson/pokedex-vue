@@ -1,3 +1,4 @@
+import NameExceptions from '@/json/pokemonNameExceptions.json';
 
 export default {
     retrieveLocalStorageData(key: string){
@@ -42,5 +43,15 @@ export default {
 
       const romanNumerals = generationName.replace('generation-','').toUpperCase();
       return `Generation ${romanNumerals}`;
+    },
+
+    formatPokemonName(pokemonName: string) {
+      const exceptions = NameExceptions.map(x => x.name);
+      if(exceptions.includes(pokemonName)){
+        return pokemonName;
+      }
+    
+      const splits = pokemonName.split('-');
+      return splits[0];
     },
 }
