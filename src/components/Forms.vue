@@ -68,7 +68,7 @@ watch( currentFormGroup,(newValue, oldValue) => {
         <img 
           class="flex min-h-[50px] max-h-[50px] max-w-[50px] text-xs object-none rounded-lg cursor-pointer hover:bg-red-700" 
           v-for="form in varietiesData" 
-          :src="form.sprites.versions['generation-viii'].icons.front_default" 
+          :src="form.sprites.versions['generation-viii'].icons.front_default == null ? 'src/assets/images/defaultPokemon.png' : form.sprites.versions['generation-viii'].icons.front_default" 
           :alt="form.name"
           @click="pokemonStore.changePokemon(form.id);"
           :class="{ 'bg-red-700' : form.id == pokemonStore.data.id  }"

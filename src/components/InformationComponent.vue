@@ -47,9 +47,11 @@ async function getPkmnDataInfo(id: number){
 
 async function getPkmnSpeciesInfo() {
   const id = selectedPokemonData.value.id;
-  const species = await pokeAPI.getPokemonSpecies(id);
-  selectedPokemonSpeciesData.value = species;
-  localStorage.setItem(selectedSpeciesDataKey, JSON.stringify(species));
+  if(id < 10001){ 
+    const species = await pokeAPI.getPokemonSpecies(id);
+    selectedPokemonSpeciesData.value = species; 
+    localStorage.setItem(selectedSpeciesDataKey, JSON.stringify(species));
+  }
 }
 
 async function getPkmnAbilitiesInfo() {
