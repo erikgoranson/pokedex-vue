@@ -4,6 +4,7 @@ import type { PokemonMove, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies
 import { computed,reactive } from 'vue';
 import { useVersionStore } from '@/stores/version';
 import GenSelectMenu from './GenSelectMenu.vue';
+import helpers from '@/helpers';
 
 const props = defineProps({
   data: {
@@ -17,10 +18,6 @@ const props = defineProps({
 })
 
 const store = useVersionStore();
-
-function formatPokemonName(pokemonName: string) {
-  return pokemonName.replace('-',' '); 
-}
 
 function getLocalSpritePath(url: string){
   const apiSpritePath = "https://raw.githubusercontent.com/PokeAPI/sprites/master/";
@@ -79,7 +76,7 @@ const spriteUrl = computed(() => {
       </div>
     <div class="w-3/5 md:w-3/5 lg:w-2/5 px-1 mb-2">
       <div  class="border h-28 text-sm text-grey-dark flex flex-col justify-center items-center">
-        <h5 class="text-2xl font-semibold truncate md:text-4xl leading-normal lg:leading-normal">{{formatPokemonName(props.data.name)}}</h5>
+        <h5 class="text-2xl font-semibold truncate md:text-4xl leading-normal lg:leading-normal text-wrap">{{helpers.formatPokemonName(props.data.name)}}</h5>
           <p class="text-0xl">{{ filteredGenus }}</p>
         <div class="mt-2">
             <span class="type-container" v-for="t in props.data.types" :class="t.type.name">
