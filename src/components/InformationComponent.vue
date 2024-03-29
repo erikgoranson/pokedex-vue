@@ -16,6 +16,7 @@ import defaultPokemonSpecies from '../json/defaultPokemonSpecies.json';
 import pokeAPI from "@/services/pokeAPI";
 import Skeleton from "./Skeleton.vue";
 import helpers from '@/helpers';
+import Forms from './Forms.vue';
 
 const isLoaded = ref(false);
 
@@ -46,9 +47,11 @@ async function getPkmnDataInfo(id: number){
 
 async function getPkmnSpeciesInfo() {
   const id = selectedPokemonData.value.id;
-  const species = await pokeAPI.getPokemonSpecies(id);
-  selectedPokemonSpeciesData.value = species;
-  localStorage.setItem(selectedSpeciesDataKey, JSON.stringify(species));
+  if(id < 10001){ 
+    const species = await pokeAPI.getPokemonSpecies(id);
+    selectedPokemonSpeciesData.value = species; 
+    localStorage.setItem(selectedSpeciesDataKey, JSON.stringify(species));
+  }
 }
 
 async function getPkmnAbilitiesInfo() {
@@ -72,6 +75,7 @@ async function getPkmnEncounters(){
 }
 
 async function updatePokemonData(id: number){
+
   if(selectedPokemonData.value.id != id){
     isLoaded.value = false;
     await getPkmnDataInfo(id);
@@ -115,6 +119,7 @@ onMounted(() => {
   <div v-if="!isLoaded && pokemonStore.isDefaultSelection"><Skeleton/></div>
   <div v-else class="p-3 shadow-lg">
     <Detail :data="selectedPokemonData" :species="selectedPokemonSpeciesData" />
+    <Forms :varieties="selectedPokemonSpeciesData.varieties" :sprites="selectedPokemonData.sprites"/>
     <BaseStatistics :stats="selectedPokemonData.stats"/>
     <hr />
     <SpeciesDetails :data="selectedPokemonData" :species="selectedPokemonSpeciesData"/>
