@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { PokemonData, PokemonSpecies, Ability, EvolutionChain, LocationAreaEncounter, PokemonAbility, VersionGroup, Move, PokedexInfo, GridItem, PokemonTypes, DefaultDTO, NamedAPIResourceList, PokemonMove } from '@/types';
+import type { PokemonData, PokemonSpecies, Ability, EvolutionChain, LocationAreaEncounter, PokemonAbility, VersionGroup, Move, PokedexInfo, GridItem, PokemonTypes, DefaultDTO, NamedAPIResourceList, PokemonMove, PokemonSpeciesVariety } from '@/types';
 
 //base url for fragments only
 const PARTIAL_URL = 'https://pokeapi.co';
@@ -27,6 +27,11 @@ function getEndpointFromFragment(urlFragment: string){
 async function getPokemon(id: number){
     const endpoint = `${BASE_URL}/pokemon/${id}/`;
     const response = await axios.get<PokemonData>(endpoint);
+    return response.data;
+}
+
+async function getPokemonByURL(url: string){
+    const response = await axios.get<PokemonData>(url);
     return response.data;
 }
 
@@ -148,4 +153,15 @@ async function getPokedexEntries(pokedexes: DefaultDTO[]){
     return uniqueUrls;
 }
 
-export default { getPokemon, getPokemonSpecies, getAbility, getEvolutionChain, getPokemonLocationAreas, getGenerations, getVersionGroup, getVersionGroups, getMove, getMoves, getPokedex, getGridItem, getGridItems, getPokedexEntries, getAbilities }
+async function getPokemonVarieties(varieties: PokemonSpeciesVariety[]){
+    const promises = varieties.map(v => {
+        //const Id = v.pokemon.url
+        //    .replace('https://pokeapi.co/api/v2/pokemon/','')
+        //    .replace('','');
+        return getPokemonByURL(v.pokemon.url);
+    })
+
+    return await Promise.all(promises);
+}
+
+export default { getPokemon, getPokemonSpecies, getAbility, getEvolutionChain, getPokemonLocationAreas, getGenerations, getVersionGroup, getVersionGroups, getMove, getMoves, getPokedex, getGridItem, getGridItems, getPokedexEntries, getAbilities, getPokemonVarieties }
