@@ -116,7 +116,7 @@ function changePokemon(url: string){
                 <tr>
                     <td><span>Happiness</span><br>{{ species.base_happiness }}</td>
                     <td><span>Egg Groups</span> <br> {{ eggGroups }}</td>
-                    <td><span>Egg Steps</span><br>{{ baseEggSteps }}</td><td><span>Forms</span><br><p class="capitalize text-blue-400 hover:text-neutral-700 focus:text-neutral-700 dark:hover:text-white dark:focus:text-white" v-for="form in forms" @click="changePokemon(form.pokemon.url)">{{ formatName(form.pokemon.name) }}</p></td>
+                    <td><span>Egg Steps</span><br>{{ baseEggSteps }}</td><td><span>Forms</span><br><p class="capitalize text-blue-400 hover:text-neutral-700 focus:text-neutral-700 dark:hover:text-white dark:focus:text-white cursor-pointer" v-for="form in forms" @click="changePokemon(form.pokemon.url)">{{ formatName(form.pokemon.name) }}</p></td>
                 </tr>
             </table>
         </div>
