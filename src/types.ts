@@ -81,6 +81,12 @@ export interface PokemonData {
     stats: Array<PokemonStat>,
     abilities: Array<PokemonAbility>,
     forms: Array<DefaultDTO>,
+    game_indices: Array<VersionGameIndex>,
+}
+
+export interface VersionGameIndex {
+    game_index: number,
+    version: DefaultDTO,
 }
 
 export interface PokemonAbility {
@@ -116,6 +122,8 @@ export interface AbilityPokemon  {
 export interface PokemonSprites {
     front_default: string,
     front_shiny: string,
+    back_default: string,
+    back_shiny: string,
     other: OtherArt,
     versions: PokemonSpriteVersions,
 }
