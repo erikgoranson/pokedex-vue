@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
 import type { PokemonMove, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText } from '@/types';
-import { computed,reactive } from 'vue';
+import { computed, reactive } from 'vue';
 import { useVersionStore } from '@/stores/version';
+import { useShinyStore } from '@/stores/shiny';
 import GenSelectMenu from './GenSelectMenu.vue';
 import helpers from '@/helpers';
 
@@ -17,6 +18,7 @@ const props = defineProps({
   }
 })
 
+const shinyStore = useShinyStore();
 const store = useVersionStore();
 
 function getLocalSpritePath(url: string){
@@ -56,9 +58,12 @@ const filteredFlavorTextEntry = computed(() => {
 });
 
 const spriteUrl = computed(() => {
-  const spriteURL = props.data.sprites.front_default;
-  const defaultSpriteUrl = '/src/assets/images/defaultPokemon.png';
+  let spriteURL = props.data.sprites.front_default;;
+  if(shinyStore.isShiny){
+    spriteURL = props.data.sprites.front_shiny;
+  }
 
+  const defaultSpriteUrl = '/src/assets/images/defaultPokemon.png';
   return (spriteURL) ? spriteURL : defaultSpriteUrl;
 });
 
