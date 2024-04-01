@@ -6,6 +6,7 @@ import { useVersionStore } from '@/stores/version';
 import { useShinyStore } from '@/stores/shiny';
 import GenSelectMenu from './GenSelectMenu.vue';
 import helpers from '@/helpers';
+import defaultPokemonSprite from '@/assets/images/defaultPokemon.png';
 
 const props = defineProps({
   data: {
@@ -49,7 +50,6 @@ const filteredFlavorTextEntry = computed(() => {
   const generation = store.data.version_group?.name; 
 
   if(generation == 'national'){
-    //return "Select a version for more information"
     return generation;
   }
 
@@ -64,8 +64,6 @@ const filteredFlavorTextEntry = computed(() => {
 });
 
 const spriteUrl = computed(() => {
-  const defaultSpriteUrl = '/src/assets/images/defaultPokemon.png';
-
   //default is front/nonShiny
   let spriteURL = props.data.sprites.front_default;
   if(shinyStore.isShiny){
@@ -80,7 +78,7 @@ const spriteUrl = computed(() => {
     }
   }
 
-  return (spriteURL) ? spriteURL : defaultSpriteUrl;
+  return (spriteURL) ? spriteURL : defaultPokemonSprite;
 });
 
 

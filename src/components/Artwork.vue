@@ -3,6 +3,7 @@ import InformationSection from './InformationSection.vue';
 import type { PokemonData, } from '@/types';
 import { computed } from 'vue';
 import { useShinyStore } from '@/stores/shiny';
+import defaultArtwork from '@/assets/images/defaultArtwork.png';
 
 const props = defineProps({
   data: {
@@ -14,10 +15,14 @@ const props = defineProps({
 const shinyStore = useShinyStore();
 
 const artworkUrl = computed(() => {
-  if(shinyStore.isShiny){
-    return props.data.sprites.other['official-artwork'].front_shiny;
+  const frontShinyArtworkUrl = props.data.sprites.other['official-artwork'].front_shiny;
+  const frontDefaultArtworkUrl = props.data.sprites.other['official-artwork'].front_default;
+  let artworkUrl = shinyStore.isShiny ? frontShinyArtworkUrl : frontDefaultArtworkUrl;
+
+  if (!artworkUrl){
+    artworkUrl = defaultArtwork;
   }
-  return props.data.sprites.other['official-artwork'].front_default;
+  return artworkUrl;
 })
 
 </script>
