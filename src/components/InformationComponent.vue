@@ -4,6 +4,7 @@ import { usePokemonStore } from '@/stores/pokemon';
 import { useVersionStore } from '@/stores/version';
 import type { PokemonData, PokemonSpecies, Ability, EvolutionChain, LocationAreaEncounter } from '@/types';
 import Detail from './DetailHeader.vue';
+import Artwork from './Artwork.vue';
 import BaseStatistics from './BaseStatistics.vue';
 import SpeciesDetails from './SpeciesDetails.vue';
 import Evolutions from './Evolutions.vue';
@@ -118,6 +119,7 @@ onMounted(() => {
 <template>
   <div v-if="!isLoaded && pokemonStore.isDefaultSelection"><Skeleton/></div>
   <div v-else class="p-3 shadow-lg">
+    <Artwork :data="selectedPokemonData" />
     <Detail :data="selectedPokemonData" :species="selectedPokemonSpeciesData" />
     <Forms :varieties="selectedPokemonSpeciesData.varieties" :sprites="selectedPokemonData.sprites"/>
     <BaseStatistics :stats="selectedPokemonData.stats"/>
