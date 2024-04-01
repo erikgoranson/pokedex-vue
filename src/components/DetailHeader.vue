@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
 import type { PokemonMove, PokemonData, DefaultDTO, PokemonTypes, PokemonSpecies, Genus, FlavorText } from '@/types';
-import { computed,reactive } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { useVersionStore } from '@/stores/version';
+import { useShinyStore } from '@/stores/shiny';
 import GenSelectMenu from './GenSelectMenu.vue';
 import helpers from '@/helpers';
+import defaultPokemonSprite from '@/assets/images/defaultPokemon.png';
 
 const props = defineProps({
   data: {
@@ -17,7 +19,14 @@ const props = defineProps({
   }
 })
 
+const shinyStore = useShinyStore();
 const store = useVersionStore();
+
+const isSpriteFront = ref(true);
+
+function toggleSpriteDirection() {
+  isSpriteFront.value = !isSpriteFront.value;
+}
 
 function getLocalSpritePath(url: string){
   const apiSpritePath = "https://raw.githubusercontent.com/PokeAPI/sprites/master/";
@@ -41,7 +50,6 @@ const filteredFlavorTextEntry = computed(() => {
   const generation = store.data.version_group?.name; 
 
   if(generation == 'national'){
-    //return "Select a version for more information"
     return generation;
   }
 
@@ -56,11 +64,23 @@ const filteredFlavorTextEntry = computed(() => {
 });
 
 const spriteUrl = computed(() => {
-  const spriteURL = props.data.sprites.front_default;
-  const defaultSpriteUrl = '/src/assets/images/defaultPokemon.png';
+  //default is front/nonShiny
+  let spriteURL = props.data.sprites.front_default;
+  if(shinyStore.isShiny){
+    spriteURL = props.data.sprites.front_shiny;
+  }
 
-  return (spriteURL) ? spriteURL : defaultSpriteUrl;
+  if(!isSpriteFront.value){
+    spriteURL = props.data.sprites.back_default;
+
+    if(shinyStore.isShiny){
+      spriteURL = props.data.sprites.back_shiny;
+    }
+  }
+
+  return (spriteURL) ? spriteURL : defaultPokemonSprite;
 });
+
 
 </script>
 
@@ -70,7 +90,7 @@ const spriteUrl = computed(() => {
     <div class="flex flex-wrap -mx-2 ">
       <div class="w-2/5 md:w-2/5 lg:w-1/5 px-1 mb-2">
         <div id="pkmn-image" class="relative border h-28 text-sm text-grey-dark flex items-center justify-center">
-          <img class="" :src="spriteUrl" />
+          <img class="cursor-pointer" :src="spriteUrl" @click="toggleSpriteDirection()"/>
           <h1 class="absolute text-0xl bottom-0 left-1/2 -translate-x-1/2">No. {{props.data.id}}</h1>
         </div>
       </div>
