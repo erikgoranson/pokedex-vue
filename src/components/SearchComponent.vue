@@ -21,9 +21,10 @@ function retrieveLocalStorageData(key: string){
     return data;
 }
 
-///overwrites the user's previous pokemon selection with the first entry of a recently loaded pokedex
-function populateDefaultEntry() {
-  if(pokemonStore.isDefaultSelection){ 
+function checkDexForSelection() { //rename me plz
+  const currentSelectionId = pokemonStore.data.id;
+  var currentDexContainsSelection = gridData.value.some(x => x.id == currentSelectionId);
+  if(!currentDexContainsSelection){
     const currentDexFirstEntry = gridData.value[0]; 
     pokemonStore.changePokemon(currentDexFirstEntry.id);
   }
@@ -66,7 +67,7 @@ async function getGridData(pokedexes: DefaultDTO[]){
   })
 
   gridData.value = tempGrid;
-  populateDefaultEntry(); 
+  checkDexForSelection();
 }
 
 onMounted(async () => {
