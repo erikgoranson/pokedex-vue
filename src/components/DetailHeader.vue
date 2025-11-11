@@ -117,7 +117,7 @@ const spriteUrl = computed(() => {
               <button href="#" data-te-ripple-init data-te-ripple-color="light" type="button" id="dropdownMenuButtonX" data-te-dropdown-toggle-ref aria-expanded="false" data-te-nav-link-ref>
                 select a version
               </button>
-              <GenSelectMenu/>
+              <GenSelectMenu :currentSelection="props.species"/>
             </li>
           </ul>
         </p>

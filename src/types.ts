@@ -201,9 +201,14 @@ export interface PokemonSpecies {
     //names	[…],
     order: number,
     //pal_park_encounters	[…],
-    //pokedex_numbers	[…],
+    pokedex_numbers: Array<PokemonSpeciesDexEntry>,
     shape: {},
     varieties: Array<PokemonSpeciesVariety>,
+}
+
+export interface PokemonSpeciesDexEntry {
+    entry_number: number,
+    pokedex: DefaultDTO,
 }
 
 export interface PokemonSpeciesVariety {

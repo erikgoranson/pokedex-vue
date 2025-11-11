@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, reactive, computed } from 'vue';
-import type { DefaultDTO, VersionGroup, SelectionGroup, Selection } from '@/types';
+import type { DefaultDTO, VersionGroup, SelectionGroup, Selection, PokemonSpecies } from '@/types';
 import { useVersionStore } from '@/stores/version';
 import pokeAPI from '@/services/pokeAPI';
 import helpers from '@/helpers';
+
+const props = defineProps({
+  currentSelection: {
+    type: Object as () => PokemonSpecies,
+    required: false,
+  },
+})
 
 ///version groups to be excluded for the marked reasons
 const excludedVersionGroups: string[] = [
@@ -74,6 +81,9 @@ async function populateGenerationData() {
 
 function getSelectData(){
     selectData.value = helpers.retrieveLocalStorageData(selectDataKey); 
+    if (props.currentSelection !== undefined){
+        selectData.value = filteredSelectData.value;
+    }
 }
 
 function buildPrettyVersionName(versions: DefaultDTO[]){
@@ -93,6 +103,21 @@ function changeVersion( selectedGroup: VersionGroup ){
     }
     versionStore.changeVersion(output);
 }
+
+const filteredSelectData = computed(() => {
+    if (props.currentSelection !== undefined){
+        var selectionPokedexes = props.currentSelection?.pokedex_numbers.map(pn => pn.pokedex.url);
+
+        return selectData.value.filter(sd => {
+            var matches = sd.version_groups.some(vg => vg.pokedexes.some(x => selectionPokedexes?.includes(x.url)));
+            if (matches) { 
+                return sd;
+            }
+        });
+    }
+
+    return [] as SelectionGroup[];
+});
 
 onMounted(async () => {
     getSelectData();
@@ -114,7 +139,10 @@ watch(versionStore, (newValue, oldValue) => {
 
 <template>
     <div class="absolute left-0 right-0 top-full z-[1000] mt-0 hidden w-full border-none bg-white bg-clip-padding text-neutral-600 shadow-lg dark:bg-neutral-700 dark:text-neutral-200 [&[data-te-dropdown-show]]:block" aria-labelledby="dropdownMenuButtonX" data-te-dropdown-menu-ref>
-        <div class="flex justify-center mt-1">Select a version group</div>
+        <div class="flex justify-center mt-1">
+            Select a version group
+            <span v-if="currentSelection !== undefined">&nbsp;containing this Pokemon</span>
+        </div>
         <div class="px-6 py-5 lg:px-8">
             <div class="grid gap-6 grid-cols-2 lg:grid-cols-4">
                 <div v-for="(sd, index) in selectData" >
