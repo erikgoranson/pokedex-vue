@@ -50,7 +50,7 @@ const filteredAbilities = computed(() => {
     );
 
     //list matches where the ability is not hidden
-    const nonHiddenMatches = vgMatches.filter((a, index) => !props.abilities[index].is_hidden)
+    const nonHiddenMatches = vgMatches.filter((a, index) => !props?.abilities[index].is_hidden);
 
     /* 
     - apparently none of the abilities for pokemon in gen iX have generation name matching 'generation-ix' or version group name matching 'scarlet-violet'. the only reliable way to get abilities to display properly for gen ix seems to be by returning all of them
@@ -76,27 +76,26 @@ const filteredAbilities = computed(() => {
 })
 
 function getHiddenState(index: number){
-    const ability = props.abilities[index];
-    return ability.is_hidden;
+    return (props?.abilities[index] !== undefined) ? props.abilities[index].is_hidden : false;
 }
-
 </script>
 
 <template>
     <InformationSection>
         <div class="relative overflow-x-auto mx-6">
             <div class="flex flex-col mb-2">
-
                 <div class="flex items-center justify-center">ABILITIES</div>
-
-                <div class="flex items-center justify-center" v-if="!genHasAbilities">Abilities were not introduced until Generation III</div>
+                <div class="flex items-center justify-center" v-if="!genHasAbilities">
+                    Abilities were not introduced until Generation III
+                </div>
                 <div class="mb-2" v-else-if="filteredAbilities.length > 0" v-for="ability, index in filteredAbilities">
                     <p class="uppercase font-semibold">
                         {{ ability.name }} {{ getHiddenState(index) ? ' (Hidden Ability)' : '' }}</p>
                     <p class="text-xs md:text-sm">{{ getFlavorText(ability.id) }}</p>
                 </div>
-                <div class="flex items-center justify-center" v-else>Ability information not found for {{ abilitiesInfo.length }} abilities</div>
-
+                <div class="flex items-center justify-center" v-else>
+                    Ability information not found for {{ abilitiesInfo.length }} abilities
+                </div>
             </div>
         </div>
     </InformationSection>

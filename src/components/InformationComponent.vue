@@ -27,7 +27,7 @@ const selectedPokemonDataKey = "selectedPokemonData";
 
 const versionStore = useVersionStore();
 
-const selectedPokemonSpeciesData = ref<PokemonSpecies>(defaultPokemonSpecies as PokemonSpecies); 
+const selectedPokemonSpeciesData = ref<PokemonSpecies>(defaultPokemonSpecies as unknown as PokemonSpecies); 
 const selectedSpeciesDataKey = "selectedPokemonSpeciesData";
 
 const selectedPokemonAbilities = ref<Ability[]>([] as Ability[]); 
@@ -49,41 +49,72 @@ async function getPkmnDataInfo(id: number){
 async function getPkmnSpeciesInfo() {
   const id = selectedPokemonData.value.id;
   if(id < 10001){ 
-    const species = await pokeAPI.getPokemonSpecies(id);
+    let species = {} as PokemonSpecies;
+    try {
+      species = await pokeAPI.getPokemonSpecies(id);
+    }
+    catch (error) {
+      console.log(error);
+      species = defaultPokemonSpecies as unknown as PokemonSpecies;
+    }
+
     selectedPokemonSpeciesData.value = species; 
     localStorage.setItem(selectedSpeciesDataKey, JSON.stringify(species));
   }
 }
 
 async function getPkmnAbilitiesInfo() {
-  const abilities = await pokeAPI.getAbilities(selectedPokemonData.value.abilities);
+  let abilities = [] as Ability[];
+  try {
+    abilities = await pokeAPI.getAbilities(selectedPokemonData.value.abilities);
+  }
+  catch (error){
+    console.log(error);
+  }
+
   selectedPokemonAbilities.value = abilities;
   localStorage.setItem(selectedPokemonAbilitiesKey, JSON.stringify(abilities));
 }
 
 async function getPkmnEvolutionChain(){
   const partialEndpoint = selectedPokemonSpeciesData.value.evolution_chain.url;
-  const chains = await pokeAPI.getEvolutionChain(partialEndpoint);
+
+  let chains = {} as EvolutionChain;
+  try {
+    chains = await pokeAPI.getEvolutionChain(partialEndpoint);
+  }
+  catch (error){
+    console.log(error);
+    chains = { id: 0 } as EvolutionChain;
+  }
+
   selectedPokemonEvolutionChain.value = chains;
   localStorage.setItem(selectedPokemonEvolutionChainKey, JSON.stringify(chains));
 }
 
 async function getPkmnEncounters(){
   const id = selectedPokemonData.value.id;
-  const encounters = await pokeAPI.getPokemonLocationAreas(id);
+
+  let encounters = [] as LocationAreaEncounter[];
+  try {
+    encounters = await pokeAPI.getPokemonLocationAreas(id);
+  }
+  catch (error){
+    console.log(error);
+  }
+  
   selectedPokemonEncounters.value = encounters;
   localStorage.setItem(selectedPokemonEncountersKey, JSON.stringify(encounters));
 }
 
 async function updatePokemonData(id: number){
-
   if(selectedPokemonData.value.id != id){
     isLoaded.value = false;
     await getPkmnDataInfo(id);
-    await getPkmnSpeciesInfo();
-    await getPkmnEvolutionChain();
     await getPkmnEncounters();
     await getPkmnAbilitiesInfo();
+    await getPkmnSpeciesInfo();
+    await getPkmnEvolutionChain();
     isLoaded.value = true; 
   }
 }
@@ -136,6 +167,6 @@ onMounted(() => {
       <Locations :data="selectedPokemonEncounters"/>
       <hr />
     </div>
-    <Links :data="selectedPokemonSpeciesData"/>
+    <Links :data="selectedPokemonData"/>
   </div>
 </template>

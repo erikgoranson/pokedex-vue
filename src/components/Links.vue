@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
 import { useVersionStore } from '@/stores/version';
-import type { PokemonSpecies } from '@/types';
+import type { PokemonData } from '@/types';
 import { computed } from 'vue';
 
 const props = defineProps({
   data: {
-    type: Object as () => PokemonSpecies,
+    type: Object as () => PokemonData,
     required: true
   },
 })
@@ -73,7 +73,6 @@ const links = computed(() => {
 
     return output;
 }) 
-
 </script>
 
 <template>

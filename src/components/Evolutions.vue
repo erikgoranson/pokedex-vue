@@ -162,6 +162,7 @@ function getSpriteUrl(url: string){
                 </div>
             </div>
         </div>
+        <div v-else-if="props.chain.id == 0" class="overflow-x-auto w-auto">Evolution data currently unavailable</div>
         <div v-else class="overflow-x-auto">No evolutions</div>
 
 

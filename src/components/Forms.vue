@@ -25,7 +25,7 @@ const currentFormGroup = computed(() => {
   let { varieties } = props;
   let pokemonWithForms: PokemonSpeciesVariety[] = [];
 
-  if (varieties.length > 1){
+  if (varieties?.length > 1){
     pokemonWithForms = varieties;
   }
 
@@ -40,9 +40,14 @@ async function populateVarietyData(){
     const previousFormGroupPokemon = (storedVarietyData) ? storedVarietyData.map(p => p.name) : [];
 
     if(!previousFormGroupPokemon.includes(currentPokemon)){
-      const varieties = await pokeAPI.getPokemonVarieties(currentFormGroup.value);
+      let varieties = [] as PokemonData[];
+      try {
+        varieties = await pokeAPI.getPokemonVarieties(currentFormGroup.value);
+      }
+      catch (error) {
+        console.log(error);
+      }
       varietiesData.value = varieties;
-
       localStorage.setItem(varietiesDataKey, JSON.stringify(varieties));
     }
   }
