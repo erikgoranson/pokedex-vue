@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InformationSection from './InformationSection.vue';
 import type { PokemonData, } from '@/types';
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import { useShinyStore } from '@/stores/shiny';
 import defaultArtwork from '@/assets/images/defaultArtwork.png';
 
@@ -12,6 +12,8 @@ const props = defineProps({
   },
 })
 
+const isError = ref(false);
+
 const shinyStore = useShinyStore();
 
 const artworkUrl = computed(() => {
@@ -19,9 +21,11 @@ const artworkUrl = computed(() => {
   const frontDefaultArtworkUrl = props.data.sprites.other['official-artwork'].front_default;
   let artworkUrl = shinyStore.isShiny ? frontShinyArtworkUrl : frontDefaultArtworkUrl;
 
-  if (!artworkUrl){
+  if (!artworkUrl || isError.value){
     artworkUrl = defaultArtwork;
   }
+
+  isError.value = false; 
   return artworkUrl;
 })
 
@@ -30,7 +34,7 @@ const artworkUrl = computed(() => {
 <template>
     <InformationSection>
         <div class="flex items-center justify-center">
-            <img class="" :src="artworkUrl"/>
+            <img class="" :src="artworkUrl" @error="isError = true"/>
         </div>
     </InformationSection>
 </template>

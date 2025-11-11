@@ -22,22 +22,19 @@ const props = defineProps({
 const shinyStore = useShinyStore();
 const store = useVersionStore();
 
+const spriteFailedToLoad = ref(false);
 const isSpriteFront = ref(true);
 
 function toggleSpriteDirection() {
   isSpriteFront.value = !isSpriteFront.value;
 }
 
-function getLocalSpritePath(url: string){
-  const apiSpritePath = "https://raw.githubusercontent.com/PokeAPI/sprites/master/";
-  const localSpritePath = "/src/assets/images/";
-  
-  const fullLocalPath = url.replace(apiSpritePath, localSpritePath);
-  return fullLocalPath;
-}
-
 const filteredGenus = computed(() => {
   const genus = props.species.genera.filter(x => x.language.name == "en").map(obj => obj.genus).toString();
+
+  if(props.species.id == 0){
+    return '';
+  }
 
   if(genus === ''){
     return '-----';
@@ -58,8 +55,8 @@ const filteredFlavorTextEntry = computed(() => {
   if(filteredEntries.length == 0 || filteredEntries.length == undefined){
     return "No flavortext entries found";
   } 
+
   let flavortext = filteredEntries[0].flavor_text.replace('\f'," ");
-  
   return flavortext;
 });
 
@@ -78,9 +75,13 @@ const spriteUrl = computed(() => {
     }
   }
 
+  if (spriteFailedToLoad.value){
+    spriteURL = defaultPokemonSprite;
+    spriteFailedToLoad.value = false;
+  }
+
   return (spriteURL) ? spriteURL : defaultPokemonSprite;
 });
-
 
 </script>
 
@@ -90,7 +91,7 @@ const spriteUrl = computed(() => {
     <div class="flex flex-wrap -mx-2 ">
       <div class="w-2/5 md:w-2/5 lg:w-1/5 px-1 mb-2">
         <div id="pkmn-image" class="relative border h-28 text-sm text-grey-dark flex items-center justify-center">
-          <img class="cursor-pointer" :src="spriteUrl" @click="toggleSpriteDirection()"/>
+          <img class="cursor-pointer" :src="spriteUrl" @click="toggleSpriteDirection()" @error="spriteFailedToLoad = true"/>
           <h1 class="absolute text-0xl bottom-0 left-1/2 -translate-x-1/2">No. {{props.data.id}}</h1>
         </div>
       </div>
