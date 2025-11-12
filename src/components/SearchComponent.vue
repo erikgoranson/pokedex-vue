@@ -66,6 +66,7 @@ async function getGridData(pokedexes: DefaultDTO[]){
     }
   })
 
+  //TODO: cache this value for other use 
   gridData.value = tempGrid;
   checkDexForSelection();
 }

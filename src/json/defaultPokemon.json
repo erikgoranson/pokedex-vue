@@ -58,6 +58,12 @@
         "url": "/src/assets/data/api/v2/pokemon-species/666/index.json"
     },
     "sprites": {
+        "other": {
+            "official-artwork": {
+                "front_default": "/src/assets/images/defaultPokemon.png",
+                "front_shiny": "/src/assets/images/defaultPokemon.png"
+            }
+        },
         "front_default": "/src/assets/images/defaultPokemon.png"
     },
     "stats": [{
